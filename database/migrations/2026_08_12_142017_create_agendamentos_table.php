@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('agendamentos', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('cliente_id');
+            $table->unsignedBigInteger('barbeiro_id');
+            $table->unsignedBigInteger('servico_id');
+            $table->dateTime('data_hora');
+            $table->string('status')->default('pendente');
+            $table->text('observacoes')->nullable();
             $table->timestamps();
         });
     }
