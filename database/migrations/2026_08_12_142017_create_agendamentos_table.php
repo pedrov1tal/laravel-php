@@ -13,13 +13,16 @@ return new class extends Migration
     {
         Schema::create('agendamentos', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('cliente_id');
-            $table->unsignedBigInteger('barbeiro_id');
-            $table->unsignedBigInteger('servico_id');
+            $table->foreignId('cliente_id')->constrained('clientes')->onDelete('cascade');
+            $table->foreignId('barbeiro_id')->constrained('barbeiros')->onDelete('cascade');
+            $table->foreignId('servico_id')->constrained('servicos')->onDelete('cascade');
             $table->dateTime('data_hora');
-            $table->string('status')->default('pendente');
+            $table->enum('status', ['pendente', 'confirmado', 'cancelado', 'concluido'])
+                ->default('pendente');
             $table->text('observacoes')->nullable();
             $table->timestamps();
+
+            $table->index(['barbeiro_id', 'data_hora']);
         });
     }
 
