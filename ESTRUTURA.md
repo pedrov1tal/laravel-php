@@ -123,6 +123,26 @@ PUT    /api/v1/agendamentos/{agendamento}
 DELETE /api/v1/agendamentos/{agendamento}
 ```
 
+## Teste de conexão
+
+O endpoint `GET /api/v1/health` existe para verificar a comunicação entre as aplicações.
+
+Em um terminal, inicie o backend:
+
+```bash
+cd back-end
+php artisan serve
+```
+
+Em outro terminal, inicie o frontend:
+
+```bash
+cd front-end
+npm run dev
+```
+
+Abra a URL exibida pelo Vite e clique em **Testar conexão**. Uma resposta de sucesso confirma que o React alcançou o Laravel.
+
 ## Instalação do React
 
 Para criar outro frontend React do zero, execute na raiz:
