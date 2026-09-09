@@ -6,13 +6,14 @@ body { background: var(--paper); color: var(--ink); font-family: 'Manrope', sans
 a { color: inherit; text-decoration: none; }
 .site-shell { overflow: hidden; }
 .site-header, .section-wrap, .site-footer { width: min(1180px, calc(100% - 80px)); margin: auto; }
-.site-header { height: 96px; display: flex; align-items: center; justify-content: space-between; gap: 30px; }
+.site-header { position: relative; z-index: 10; height: 96px; display: flex; align-items: center; justify-content: space-between; gap: 30px; }
 .brand { display: inline-flex; align-items: center; gap: 11px; font-size: 13px; letter-spacing: .16em; font-weight: 800; line-height: 1.1; }
 .brand small { display: block; color: var(--copper); font-family: 'DM Mono', monospace; font-size: 7px; letter-spacing: .24em; margin-top: 5px; }
 .brand-mark { display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid var(--ink); font-family: Georgia, serif; font-size: 20px; font-weight: 400; }
 .main-nav { display: flex; gap: 32px; color: #69716a; font-size: 12px; font-weight: 700; }
 .main-nav a, .site-footer a { transition: color .25s ease; }
 .main-nav a:hover, .site-footer a:hover { color: var(--copper); }
+.menu-toggle, .mobile-booking-link { display: none; }
 .button { display: inline-flex; align-items: center; gap: 20px; padding: 15px 20px; font-size: 11px; font-weight: 800; letter-spacing: .02em; transition: transform .25s ease, background .25s ease; }
 .button:hover { transform: translateY(-3px); }
 .button span { font-size: 16px; line-height: .7; }
@@ -75,6 +76,24 @@ h1 em, h2 em { color: var(--copper); font-style: italic; }
 .barber-image span { position: absolute; bottom: 14px; left: 16px; color: white; font: 11px 'DM Mono', monospace; }
 .barber-card h3 { margin: 18px 0 5px; }
 .barber-card p { color: var(--copper); font: 10px 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .1em; }
+.testimonials { display: grid; grid-template-columns: .8fr 1.2fr; gap: 10%; padding-top: 10px; padding-bottom: 140px; }
+.testimonial-heading h2 { margin-bottom: 0; }
+.testimonial-content { align-self: end; border-top: 1px solid var(--line); }
+.testimonial-content blockquote { min-height: 270px; margin: 0; padding: 42px 0 34px; animation: testimonial-in .45s ease both; }
+.testimonial-content blockquote > p { max-width: 690px; margin: 0; font: 500 clamp(25px, 2.7vw, 39px)/1.35 'Playfair Display', Georgia, serif; letter-spacing: -.025em; }
+.testimonial-content blockquote footer { display: flex; flex-direction: column; gap: 5px; margin-top: 34px; }
+.testimonial-content blockquote strong { font-size: 12px; }
+.testimonial-content blockquote footer span { color: var(--copper); font: 9px 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .1em; }
+.testimonial-selector { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.testimonial-selector button { display: flex; align-items: center; gap: 11px; min-width: 0; padding: 17px 15px; color: var(--muted); background: transparent; border: 0; cursor: pointer; font: inherit; text-align: left; transition: color .25s, background .25s; }
+.testimonial-selector button + button { border-left: 1px solid var(--line); }
+.testimonial-selector button:hover, .testimonial-selector button.is-active { color: var(--ink); background: #f0ece3; }
+.testimonial-initials { display: grid; flex: 0 0 auto; place-items: center; width: 37px; height: 37px; color: var(--paper); background: var(--green); border-radius: 50%; font: 9px 'DM Mono', monospace; }
+.testimonial-selector button.is-active .testimonial-initials { background: var(--copper); }
+.testimonial-selector button > span:last-child { min-width: 0; }
+.testimonial-selector strong, .testimonial-selector small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.testimonial-selector strong { font-size: 10px; }
+.testimonial-selector small { margin-top: 4px; color: var(--muted); font-size: 8px; }
 .place-section { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 10%; padding: 20px 0 140px; }
 .place-image { height: 510px; }
 .place-image img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.75); }
@@ -88,4 +107,7 @@ h1 em, h2 em { color: var(--copper); font-style: italic; }
 .site-footer p, .site-footer div { color: var(--muted); font-size: 10px; }
 .site-footer div { display: flex; gap: 20px; }
 @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
-@media (max-width: 760px) { .site-header, .section-wrap, .site-footer, .hero { width: min(100% - 40px, 560px); } .site-header { height: 82px; } .main-nav { display: none; } .header-button { padding: 12px 13px; gap: 8px; } .hero { display: flex; flex-direction: column; align-items: stretch; padding: 55px 0 90px; gap: 55px; } h1 { font-size: clamp(58px, 16vw, 85px); } .hero-visual { height: 430px; margin-right: 12px; } .hero-visual:before { right: -12px; top: 16px; } .hero-stamp { left: -13px; } .section-heading, .process-content { display: block; } .section-intro { margin-top: 28px; } .services, .barbers { padding: 80px 0; } .service-grid, .barber-grid, .place-section { grid-template-columns: 1fr; } .service-card, .service-card + .service-card { min-height: 190px; padding: 24px 0; border-left: 0; } .process-content { padding-top: 80px; padding-bottom: 80px; } .steps { margin-top: 55px; } .barber-image { height: 430px; } .place-section { gap: 45px; padding: 0 0 90px; } .place-image { height: 370px; } .contact-details { gap: 24px; } .site-footer { flex-wrap: wrap; padding: 28px 0; } .site-footer p { order: 3; width: 100%; } }
+@keyframes testimonial-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 760px) { .site-header, .section-wrap, .site-footer, .hero { width: min(100% - 40px, 560px); } .site-header { height: 82px; } .menu-toggle { display: block; order: 2; padding: 10px 0; color: var(--ink); background: transparent; border: 0; border-bottom: 1px solid currentColor; font: 700 10px 'Manrope', sans-serif; text-transform: uppercase; letter-spacing: .08em; cursor: pointer; } .main-nav { position: absolute; top: 72px; left: 0; right: 0; display: none; flex-direction: column; gap: 0; padding: 9px 20px; color: var(--ink); background: var(--paper); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); box-shadow: 0 18px 30px rgba(23,35,31,.08); } .main-nav.is-open { display: flex; } .main-nav a { padding: 14px 0; border-bottom: 1px solid var(--line); } .main-nav a:last-child { border-bottom: 0; } .main-nav .mobile-booking-link { display: block; color: var(--copper); } .header-button { order: 3; padding: 12px 13px; gap: 8px; } .hero { display: flex; flex-direction: column; align-items: stretch; padding: 55px 0 90px; gap: 55px; } h1 { font-size: clamp(58px, 16vw, 85px); } .hero-visual { height: 430px; margin-right: 12px; } .hero-visual:before { right: -12px; top: 16px; } .hero-stamp { left: -13px; } .section-heading, .process-content { display: block; } .section-intro { margin-top: 28px; } .services, .barbers { padding: 80px 0; } .service-grid, .barber-grid, .place-section { grid-template-columns: 1fr; } .service-card, .service-card + .service-card { min-height: 190px; padding: 24px 0; border-left: 0; } .process-content { padding-top: 80px; padding-bottom: 80px; } .steps { margin-top: 55px; } .barber-image { height: 430px; } .testimonials { grid-template-columns: 1fr; gap: 50px; padding-top: 0; padding-bottom: 90px; } .testimonial-content blockquote { min-height: 310px; padding-top: 34px; } .testimonial-selector { grid-template-columns: 1fr; } .testimonial-selector button + button { border-left: 0; border-top: 1px solid var(--line); } .place-section { gap: 45px; padding: 0 0 90px; } .place-image { height: 370px; } .contact-details { gap: 24px; } .site-footer { flex-wrap: wrap; padding: 28px 0; } .site-footer p { order: 3; width: 100%; } }
+@media (max-width: 520px) { .header-button { display: none; } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .hero-copy, .hero-visual, .testimonial-content blockquote { animation: none; } .button, .service-card, .barber-image img { transition: none; } }
