@@ -1,73 +1,91 @@
-.connection-page {
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: 24px;
-  background: #e7f0ed;
-}
-
-.connection-panel {
-  width: min(100%, 560px);
-  padding: 48px;
-  background: #fffdf7;
-  border: 1px solid #c6d8d0;
-  border-radius: 8px;
-  box-shadow: 12px 12px 0 #9bb8aa;
-}
-
-.eyebrow {
-  margin: 0 0 16px;
-  color: #39705f;
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-h1 {
-  margin: 0;
-  color: #15352e;
-  font-family: Georgia, serif;
-  font-size: clamp(2.5rem, 8vw, 4.5rem);
-  line-height: 0.95;
-}
-
-.description {
-  max-width: 38ch;
-  margin: 24px 0 32px;
-  color: #52665e;
-}
-
-button {
-  border: 0;
-  border-radius: 4px;
-  padding: 14px 20px;
-  color: #fffdf7;
-  background: #15352e;
-  font: inherit;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-button:hover:not(:disabled) { background: #39705f; }
-button:disabled { cursor: wait; opacity: 0.65; }
-
-.result {
-  display: grid;
-  gap: 8px;
-  margin-top: 32px;
-  padding: 18px;
-  border-left: 4px solid #9bb8aa;
-  color: #52665e;
-  background: #eef5f1;
-}
-
-.result strong { color: #15352e; }
-.result small { font-size: 0.8rem; }
-.result-success { border-left-color: #39705f; }
-.result-error { border-left-color: #b04a3a; background: #fff0eb; }
-.result-error strong { color: #8a3024; }
-
-@media (max-width: 600px) {
-  .connection-panel { padding: 32px 24px; box-shadow: 7px 7px 0 #9bb8aa; }
-}
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&display=swap');
+:root { --ink: #17231f; --paper: #fbfaf7; --copper: #bd704c; --muted: #747a72; --line: #d9d6ce; --green: #29433a; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--paper); color: var(--ink); font-family: 'Manrope', sans-serif; }
+a { color: inherit; text-decoration: none; }
+.site-shell { overflow: hidden; }
+.site-header, .section-wrap, .site-footer { width: min(1180px, calc(100% - 80px)); margin: auto; }
+.site-header { height: 96px; display: flex; align-items: center; justify-content: space-between; gap: 30px; }
+.brand { display: inline-flex; align-items: center; gap: 11px; font-size: 13px; letter-spacing: .16em; font-weight: 800; line-height: 1.1; }
+.brand small { display: block; color: var(--copper); font-family: 'DM Mono', monospace; font-size: 7px; letter-spacing: .24em; margin-top: 5px; }
+.brand-mark { display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid var(--ink); font-family: Georgia, serif; font-size: 20px; font-weight: 400; }
+.main-nav { display: flex; gap: 32px; color: #69716a; font-size: 12px; font-weight: 700; }
+.main-nav a, .site-footer a { transition: color .25s ease; }
+.main-nav a:hover, .site-footer a:hover { color: var(--copper); }
+.button { display: inline-flex; align-items: center; gap: 20px; padding: 15px 20px; font-size: 11px; font-weight: 800; letter-spacing: .02em; transition: transform .25s ease, background .25s ease; }
+.button:hover { transform: translateY(-3px); }
+.button span { font-size: 16px; line-height: .7; }
+.button-dark { color: var(--paper); background: var(--ink); }
+.button-dark:hover { background: var(--green); }
+.button-copper { color: white; background: var(--copper); }
+.button-copper:hover { background: #9f5c3d; }
+.hero { width: min(1180px, calc(100% - 80px)); min-height: 650px; margin: 0 auto; display: grid; grid-template-columns: .9fr 1.1fr; align-items: center; gap: 8%; padding: 50px 0 100px; }
+.hero-copy { padding: 30px 0 0; animation: rise .8s both; }
+.eyebrow { display: flex; align-items: center; gap: 10px; color: var(--copper); font: 10px 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .16em; }
+.eyebrow span { width: 26px; height: 1px; background: currentColor; }
+h1, h2 { margin: 22px 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 500; letter-spacing: -.045em; line-height: .98; }
+h1 { font-size: clamp(58px, 7vw, 95px); }
+h2 { font-size: clamp(42px, 5vw, 68px); }
+h1 em, h2 em { color: var(--copper); font-style: italic; }
+.hero-description { max-width: 340px; color: var(--muted); font-size: 14px; line-height: 1.8; }
+.hero-actions { display: flex; align-items: center; gap: 26px; margin-top: 34px; }
+.text-link { display: inline-flex; align-items: center; gap: 12px; color: var(--ink); font-size: 11px; font-weight: 800; border-bottom: 1px solid var(--ink); padding-bottom: 6px; transition: color .25s; }
+.text-link:hover { color: var(--copper); border-color: var(--copper); }
+.text-link span { font-size: 16px; }
+.hero-note { display: flex; gap: 12px; align-items: center; margin-top: 60px; color: var(--muted); font-size: 10px; }
+.hero-note strong { color: var(--ink); font-size: 14px; }
+.hero-visual { position: relative; height: 540px; animation: rise .8s .15s both; }
+.hero-visual:before { content: ''; position: absolute; z-index: -1; top: 30px; right: -40px; width: 75%; height: 100%; background: #dce1da; }
+.hero-visual img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.75); }
+.hero-stamp { position: absolute; top: 28px; left: -28px; width: 88px; height: 88px; display: grid; place-content: center; text-align: center; color: var(--paper); background: var(--copper); border-radius: 50%; font: 9px/1.5 'DM Mono', monospace; letter-spacing: .1em; transform: rotate(-12deg); }
+.hero-stamp strong { font: italic 22px 'Playfair Display', serif; }
+.hero-caption { position: absolute; bottom: -16px; right: 30px; display: flex; gap: 16px; padding: 17px 20px; color: var(--paper); background: var(--ink); font: 10px 'DM Mono', monospace; }
+.hero-caption span:first-child { color: var(--copper); }
+.services { padding: 110px 0; }
+.section-heading { display: flex; align-items: end; justify-content: space-between; gap: 40px; margin-bottom: 52px; }
+.section-heading h2 { margin-bottom: 0; }
+.section-intro { max-width: 280px; color: var(--muted); font-size: 13px; line-height: 1.8; }
+.service-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); }
+.service-card { position: relative; display: flex; gap: 22px; min-height: 240px; padding: 28px 26px 30px 0; border-bottom: 1px solid var(--line); transition: background .3s, padding .3s; }
+.service-card + .service-card { border-left: 1px solid var(--line); padding-left: 26px; }
+.service-card:hover { background: #f0ece3; padding-top: 34px; }
+.service-number { color: var(--copper); font: 11px 'DM Mono', monospace; }
+.service-card h3, .barber-card h3 { margin: 42px 0 12px; font-size: 16px; }
+.service-card p { max-width: 200px; color: var(--muted); font-size: 12px; line-height: 1.7; }
+.service-card strong { display: block; margin-top: 22px; font: 14px 'DM Mono', monospace; }
+.card-arrow { position: absolute; top: 27px; right: 22px; font-size: 20px; transition: transform .25s; }
+.service-card:hover .card-arrow { transform: translate(4px, -4px); }
+.process-section { color: var(--paper); background: var(--green); }
+.process-content { display: grid; grid-template-columns: .9fr 1.1fr; gap: 15%; padding-top: 110px; padding-bottom: 110px; }
+.eyebrow.light { color: #d78a63; }
+.process-content h2 { margin-top: 26px; }
+.process-intro { max-width: 270px; color: #b8c1b9; font-size: 13px; line-height: 1.8; }
+.steps { border-top: 1px solid rgba(255,255,255,.2); }
+.step { display: flex; gap: 30px; padding: 26px 0; border-bottom: 1px solid rgba(255,255,255,.2); }
+.step > span { color: #d78a63; font: 11px 'DM Mono', monospace; }
+.step h3 { margin: 0 0 8px; font-size: 15px; }
+.step p { color: #b8c1b9; font-size: 12px; }
+.barbers { padding: 110px 0 130px; }
+.barbers-heading { margin-bottom: 42px; }
+.barber-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.barber-image { position: relative; height: 380px; overflow: hidden; background: #ddd; }
+.barber-image img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) saturate(.7); transition: transform .5s, filter .5s; }
+.barber-card:hover img { transform: scale(1.04); filter: grayscale(.2); }
+.barber-image span { position: absolute; bottom: 14px; left: 16px; color: white; font: 11px 'DM Mono', monospace; }
+.barber-card h3 { margin: 18px 0 5px; }
+.barber-card p { color: var(--copper); font: 10px 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .1em; }
+.place-section { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 10%; padding: 20px 0 140px; }
+.place-image { height: 510px; }
+.place-image img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.75); }
+.place-copy p:not(.eyebrow) { max-width: 420px; color: var(--muted); font-size: 13px; line-height: 1.8; }
+.contact-details { display: flex; gap: 45px; margin: 38px 0; padding: 24px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.contact-details span { display: block; margin-bottom: 10px; color: var(--copper); font: 9px 'DM Mono', monospace; }
+.contact-details strong { font-size: 11px; line-height: 1.8; }
+.final-cta { display: flex; flex-direction: column; align-items: center; padding: 110px 20px 120px; color: var(--paper); text-align: center; background: var(--ink); }
+.final-cta h2 { margin: 25px 0 35px; font-size: clamp(52px, 7vw, 90px); }
+.site-footer { display: flex; justify-content: space-between; align-items: center; min-height: 105px; gap: 25px; }
+.site-footer p, .site-footer div { color: var(--muted); font-size: 10px; }
+.site-footer div { display: flex; gap: 20px; }
+@keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 760px) { .site-header, .section-wrap, .site-footer, .hero { width: min(100% - 40px, 560px); } .site-header { height: 82px; } .main-nav { display: none; } .header-button { padding: 12px 13px; gap: 8px; } .hero { display: flex; flex-direction: column; align-items: stretch; padding: 55px 0 90px; gap: 55px; } h1 { font-size: clamp(58px, 16vw, 85px); } .hero-visual { height: 430px; margin-right: 12px; } .hero-visual:before { right: -12px; top: 16px; } .hero-stamp { left: -13px; } .section-heading, .process-content { display: block; } .section-intro { margin-top: 28px; } .services, .barbers { padding: 80px 0; } .service-grid, .barber-grid, .place-section { grid-template-columns: 1fr; } .service-card, .service-card + .service-card { min-height: 190px; padding: 24px 0; border-left: 0; } .process-content { padding-top: 80px; padding-bottom: 80px; } .steps { margin-top: 55px; } .barber-image { height: 430px; } .place-section { gap: 45px; padding: 0 0 90px; } .place-image { height: 370px; } .contact-details { gap: 24px; } .site-footer { flex-wrap: wrap; padding: 28px 0; } .site-footer p { order: 3; width: 100%; } }
