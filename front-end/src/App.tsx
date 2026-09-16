@@ -5,6 +5,7 @@ import {
   autenticarUsuario,
   cadastrarUsuario,
   destinoSeguro,
+  obterUsuarioAutenticado,
 } from './features/autenticacao/session'
 import './App.css'
 
@@ -98,6 +99,8 @@ export function RegisterPage() {
 function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [activeTestimonial, setActiveTestimonial] = useState(0)
+  const usuario = obterUsuarioAutenticado()
+  const primeiroNome = usuario?.nome.trim().split(/\s+/)[0]
 
   const testimonial = testimonials[activeTestimonial]
 
@@ -106,8 +109,8 @@ function App() {
       <header className="site-header">
         <a className="brand" href="#inicio" aria-label="Nexo Agenda, início"><span className="brand-mark">N</span><span>NEXO <small>AGENDA PARA BARBEARIAS</small></span></a>
         <button className="menu-toggle" type="button" aria-expanded={mobileMenuOpen} aria-controls="main-navigation" onClick={() => setMobileMenuOpen((open) => !open)}>{mobileMenuOpen ? 'Fechar' : 'Menu'}</button>
-        <nav className={`main-nav${mobileMenuOpen ? ' is-open' : ''}`} id="main-navigation" aria-label="Navegação principal"><a href="#recursos" onClick={() => setMobileMenuOpen(false)}>Recursos</a><a href="#como-funciona" onClick={() => setMobileMenuOpen(false)}>Como funciona</a><a href="#planos" onClick={() => setMobileMenuOpen(false)}>Planos</a><a href="#clientes" onClick={() => setMobileMenuOpen(false)}>Clientes</a><a className="mobile-booking-link" href="#contato">Falar com especialista</a></nav>
-        <a className="button button-dark header-button" href="#contato">Falar com especialista <span>↗</span></a>
+        <nav className={`main-nav${mobileMenuOpen ? ' is-open' : ''}`} id="main-navigation" aria-label="Navegação principal"><a href="#recursos" onClick={() => setMobileMenuOpen(false)}>Recursos</a><a href="#como-funciona" onClick={() => setMobileMenuOpen(false)}>Como funciona</a><a href="#planos" onClick={() => setMobileMenuOpen(false)}>Planos</a><a href="#clientes" onClick={() => setMobileMenuOpen(false)}>Clientes</a><a className="header-booking-link" href="/agendar" onClick={() => setMobileMenuOpen(false)}>Agendar</a></nav>
+        <a className="button button-dark header-button" href="/login">{primeiroNome ? `Olá, ${primeiroNome}` : 'Login'} <span>↗</span></a>
       </header>
 
       <main>
