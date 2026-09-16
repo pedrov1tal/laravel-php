@@ -400,6 +400,62 @@
   font-size: 11px;
 }
 
+.booking-account {
+  max-width: 680px;
+  border-top: 1px solid var(--line);
+}
+
+.booking-account-heading {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 26px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.booking-account-heading > div {
+  display: grid;
+  gap: 6px;
+}
+
+.booking-account-heading > div span,
+.booking-account dt {
+  color: var(--copper);
+  font: 9px 'DM Mono', monospace;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.booking-account-heading strong {
+  font: 500 24px 'Playfair Display', Georgia, serif;
+}
+
+.booking-account dl {
+  margin: 0;
+}
+
+.booking-account dl div {
+  display: grid;
+  grid-template-columns: 130px minmax(0, 1fr);
+  gap: 20px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.booking-account dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.booking-account > p {
+  margin: 22px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
 .booking-review {
   border-top: 1px solid var(--line);
 }
@@ -654,6 +710,11 @@
   .booking-review-row {
     grid-template-columns: 1fr auto;
     gap: 12px 18px;
+  }
+
+  .booking-account dl div {
+    grid-template-columns: 1fr;
+    gap: 8px;
   }
 
   .booking-review-row > span {

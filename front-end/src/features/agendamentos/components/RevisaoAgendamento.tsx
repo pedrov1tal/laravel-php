@@ -91,10 +91,10 @@ export function RevisaoAgendamento({
         onEditar={() => onEditar('data-horario')}
       />
       <LinhaRevisao
-        rotulo="Seus dados"
+        rotulo="Sua conta"
         titulo={cliente.nome}
         detalhe={[cliente.telefone, cliente.email].filter(Boolean).join(' · ')}
-        editar="Editar seus dados"
+        editar="Ver conta"
         onEditar={() => onEditar('cliente')}
       />
 

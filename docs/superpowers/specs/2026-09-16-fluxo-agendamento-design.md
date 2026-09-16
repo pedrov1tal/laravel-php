@@ -12,7 +12,7 @@ A entrega inclui:
 
 - rota pública `/agendar`;
 - resolução opcional do estabelecimento por `?estabelecimento=<slug>`;
-- fluxo progressivo para serviço, profissional, data e horário, dados do cliente e revisão;
+- fluxo progressivo para serviço, profissional, data e horário, conta do cliente e revisão;
 - confirmação simulada;
 - retorno a etapas anteriores sem perda indevida de estado;
 - estados de carregamento, erro e listas vazias;
@@ -24,7 +24,7 @@ A entrega não inclui:
 - endpoints ou mudanças no backend Laravel existente;
 - implementação da futura API Node.js;
 - mudanças em migrations ou banco de dados;
-- autenticação;
+- autenticação real conectada à API;
 - busca ou seleção de estabelecimentos;
 - área de gestão;
 - listagem de agendamentos existentes;
@@ -55,6 +55,8 @@ Será instalada somente a dependência `react-router-dom`.
 - `/`: Home existente.
 - `/agendar`: fluxo público de agendamento.
 - `/agendar?estabelecimento=<slug>`: o mesmo fluxo com estabelecimento resolvido pelo slug.
+- `/login`: entrada do cliente, com retorno opcional ao agendamento.
+- `/cadastro`: criação do perfil simulado do cliente.
 
 Um novo `AppRouter.tsx` concentrará as rotas. `App.tsx` continuará sendo a Home para evitar uma refatoração ampla sem relação com a feature.
 
@@ -65,7 +67,7 @@ O domínio possui sete momentos funcionais, organizados em cinco etapas visuais 
 1. Serviço.
 2. Profissional.
 3. Data e horário.
-4. Seus dados.
+4. Sua conta.
 5. Revisar.
 
 Depois da revisão, a página entra no estado de confirmação.
@@ -84,19 +86,15 @@ A data será escolhida por navegação horizontal entre dias, evitando comprimir
 
 Após selecionar uma data, uma grade mostra os horários válidos para estabelecimento, serviço e profissional. Horários indisponíveis permanecem visíveis e desabilitados. Uma grade vazia informa que não há horários naquele dia e mantém a troca de data acessível.
 
-### Dados do cliente
+### Conta do cliente
 
-Os campos seguem o Model `Cliente` existente:
+O agendamento não coleta dados pessoais em um segundo formulário. A etapa usa nome, telefone e e-mail do perfil autenticado e apresenta esses dados em modo leitura.
 
-- nome: obrigatório;
-- telefone: obrigatório;
-- e-mail: opcional.
-
-Os erros aparecem junto ao campo correspondente. O formulário não solicitará cadastro, senha, CPF ou dados sem necessidade para o agendamento.
+Sem sessão, o rascunho é preservado em `sessionStorage` e o cliente é encaminhado a `/login` com uma URL interna de retorno. Como a API de autenticação ainda não existe, login e cadastro usam uma sessão simulada no frontend; essa camada deverá ser substituída pelo contrato real da API sem alterar as etapas do agendamento.
 
 ### Revisão
 
-O resumo mostra estabelecimento, serviço, profissional, data, horário, duração, valor e dados do cliente. Cada grupo oferece ação de edição que retorna à etapa apropriada sem apagar escolhas ainda válidas.
+O resumo mostra estabelecimento, serviço, profissional, data, horário, duração, valor e conta do cliente. Cada grupo oferece ação de edição que retorna à etapa apropriada sem apagar escolhas ainda válidas.
 
 ### Confirmação
 
@@ -111,7 +109,7 @@ As invalidações obedecem às dependências:
 - trocar serviço limpa profissional, data e horário;
 - trocar profissional limpa data e horário;
 - trocar data limpa horário;
-- editar dados do cliente não altera escolhas anteriores;
+- consultar a conta do cliente não altera escolhas anteriores;
 - retornar sem alterar uma seleção preserva todo o estado.
 
 A revisão só será acessível quando todas as seleções obrigatórias e os campos válidos estiverem preenchidos.
@@ -145,7 +143,7 @@ front-end/src/
 │       │   ├── SelecaoServico.tsx
 │       │   ├── SelecaoProfissional.tsx
 │       │   ├── SelecaoDataHorario.tsx
-│       │   ├── DadosClienteForm.tsx
+│       │   ├── DadosUsuarioAutenticado.tsx
 │       │   ├── RevisaoAgendamento.tsx
 │       │   ├── ConfirmacaoAgendamento.tsx
 │       │   └── EstadoFeedback.tsx
@@ -166,7 +164,7 @@ front-end/src/
 - `AppRouter.tsx`: mapeia URLs para Home e agendamento.
 - `AgendarPage.tsx`: carrega o estabelecimento, mantém estado e coordena as etapas.
 - componentes de seleção: apresentam opções e emitem escolhas sem conhecer a origem dos dados.
-- `DadosClienteForm.tsx`: controla campos, validação local e mensagens de erro.
+- `DadosUsuarioAutenticado.tsx`: apresenta os dados da sessão em modo leitura.
 - `RevisaoAgendamento.tsx`: apresenta resumo e ações de edição.
 - `ConfirmacaoAgendamento.tsx`: apresenta o estado final simulado.
 - `EstadoFeedback.tsx`: padroniza carregamento, erro e vazio.
@@ -197,7 +195,7 @@ O indicador de progresso será uma sequência numerada discreta no desktop e um 
 - Horários reorganizarão suas colunas conforme o espaço disponível.
 - A ordem visual acompanhará a ordem de leitura.
 - Seleções usarão controles semânticos e estados acessíveis.
-- Campos terão rótulos persistentes e mensagens associadas.
+- Dados da conta serão apresentados com estrutura semântica e rótulos persistentes.
 - Mudanças relevantes de carregamento, erro e confirmação serão anunciadas.
 - Foco visível e `prefers-reduced-motion` serão respeitados.
 
@@ -213,7 +211,7 @@ A experiência contemplará:
 - nenhuma data disponível;
 - nenhum horário disponível para uma data;
 - seleções atual e indisponível;
-- erros de validação dos dados do cliente;
+- ausência de sessão com encaminhamento ao login;
 - revisão;
 - confirmação simulada.
 

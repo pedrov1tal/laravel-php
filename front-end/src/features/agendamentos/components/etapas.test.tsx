@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { ConfirmacaoAgendamento } from './ConfirmacaoAgendamento'
-import { DadosClienteForm } from './DadosClienteForm'
+import { DadosUsuarioAutenticado } from './DadosUsuarioAutenticado'
 import { RevisaoAgendamento } from './RevisaoAgendamento'
 import { SelecaoDataHorario } from './SelecaoDataHorario'
 import { SelecaoProfissional } from './SelecaoProfissional'
@@ -146,25 +146,24 @@ describe('etapas de seleção', () => {
   })
 })
 
-describe('dados, revisão e confirmação', () => {
-  it('mostra erros de nome e telefone e aceita e-mail opcional', async () => {
+describe('conta, revisão e confirmação', () => {
+  it('mostra os dados da sessão sem campos editáveis', async () => {
     const user = userEvent.setup()
     const onContinuar = vi.fn()
     render(
-      <DadosClienteForm
-        valor={{ nome: '', telefone: '', email: '' }}
-        onChange={vi.fn()}
+      <DadosUsuarioAutenticado
+        usuario={{ id: 'u1', ...cliente }}
         onContinuar={onContinuar}
       />,
     )
 
+    expect(screen.getByText('Ana Souza')).toBeInTheDocument()
+    expect(screen.getByText('(11) 99999-0000')).toBeInTheDocument()
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
     await user.click(
       screen.getByRole('button', { name: 'Continuar para revisão' }),
     )
-
-    expect(screen.getByText('Informe seu nome.')).toBeInTheDocument()
-    expect(screen.getByText('Informe seu telefone.')).toBeInTheDocument()
-    expect(onContinuar).not.toHaveBeenCalled()
+    expect(onContinuar).toHaveBeenCalledOnce()
   })
 
   it('permite editar a etapa de serviço pela revisão', async () => {
