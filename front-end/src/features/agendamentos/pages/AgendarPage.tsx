@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { obterUsuarioAutenticado } from '../../autenticacao/session'
 import { AgendamentoHeader } from '../components/AgendamentoHeader'
 import { ConfirmacaoAgendamento } from '../components/ConfirmacaoAgendamento'
-import { DadosClienteForm } from '../components/DadosClienteForm'
+import { DadosUsuarioAutenticado } from '../components/DadosUsuarioAutenticado'
 import { EstadoFeedback } from '../components/EstadoFeedback'
 import { IndicadorProgresso } from '../components/IndicadorProgresso'
 import { RevisaoAgendamento } from '../components/RevisaoAgendamento'
@@ -17,7 +18,12 @@ import {
 import {
   agendamentoReducer,
   criarEstadoInicial,
+  type EstadoAgendamento,
 } from '../state/agendamentoReducer'
+import {
+  consumirAgendamentoPendente,
+  salvarAgendamentoPendente,
+} from '../state/agendamentoPendente'
 import type {
   ContextoAgendamento,
   EtapaAgendamento,
@@ -27,7 +33,7 @@ const titulos: Record<Exclude<EtapaAgendamento, 'confirmacao'>, string> = {
   servico: 'Escolha o serviço',
   profissional: 'Escolha o profissional',
   'data-horario': 'Escolha data e horário',
-  cliente: 'Conte como podemos falar com você',
+  cliente: 'Confirme sua conta',
   revisao: 'Revise seu agendamento',
 }
 
@@ -35,12 +41,14 @@ const descricoes: Record<Exclude<EtapaAgendamento, 'confirmacao'>, string> = {
   servico: 'Comece escolhendo o cuidado que combina com o seu momento.',
   profissional: 'Veja quem atende ao serviço escolhido e reserve sua cadeira.',
   'data-horario': 'Escolha entre os próximos horários disponíveis.',
-  cliente: 'Precisamos apenas dos dados essenciais para confirmar seu horário.',
+  cliente: 'Usaremos os dados do seu perfil para identificar este agendamento.',
   revisao: 'Confira cada detalhe antes de concluir.',
 }
 
 export function AgendarPage() {
   const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
+  const location = useLocation()
   const slug = searchParams.get('estabelecimento') ?? undefined
   const [carregamento, setCarregamento] = useState<{
     slug: string | undefined
@@ -50,13 +58,17 @@ export function AgendarPage() {
   const [estado, dispatch] = useReducer(
     agendamentoReducer,
     undefined,
-    criarEstadoInicial,
+    criarEstadoInicialComSessao,
   )
   const conteudoRef = useRef<HTMLElement>(null)
+  const slugAnteriorRef = useRef(slug)
 
   useEffect(() => {
     let ativo = true
-    dispatch({ type: 'reiniciar' })
+    if (slugAnteriorRef.current !== slug) {
+      slugAnteriorRef.current = slug
+      dispatch({ type: 'reiniciar' })
+    }
 
     carregarContextoAgendamento(slug)
       .then((resultado) => {
@@ -147,6 +159,26 @@ export function AgendarPage() {
     if (anterior) irPara(anterior)
   }
 
+  function continuarParaConta() {
+    const usuarioAtual = obterUsuarioAutenticado()
+    if (!usuarioAtual) {
+      salvarAgendamentoPendente({ ...estado, etapa: 'cliente' })
+      const retorno = `${location.pathname}${location.search}`
+      navigate(`/login?retorno=${encodeURIComponent(retorno)}`)
+      return
+    }
+
+    dispatch({
+      type: 'atualizar-cliente',
+      cliente: {
+        nome: usuarioAtual.nome,
+        telefone: usuarioAtual.telefone,
+        email: usuarioAtual.email,
+      },
+    })
+    irPara('cliente')
+  }
+
   if (erro) {
     return (
       <main className="booking-shell booking-state-shell">
@@ -176,6 +208,7 @@ export function AgendarPage() {
 
   const etapa = estado.etapa
   const confirmacao = etapa === 'confirmacao'
+  const usuario = obterUsuarioAutenticado()
 
   return (
     <div className="booking-shell">
@@ -250,7 +283,7 @@ export function AgendarPage() {
               />
               <NavegacaoEtapa
                 onVoltar={voltar}
-                onContinuar={() => irPara('cliente')}
+                onContinuar={continuarParaConta}
                 podeContinuar={Boolean(
                   estado.rascunho.data && estado.rascunho.horario,
                 )}
@@ -267,13 +300,21 @@ export function AgendarPage() {
               >
                 Voltar
               </button>
-              <DadosClienteForm
-                valor={estado.rascunho.cliente}
-                onChange={(cliente) =>
-                  dispatch({ type: 'atualizar-cliente', cliente })
-                }
-                onContinuar={() => irPara('revisao')}
-              />
+              {usuario ? (
+                <DadosUsuarioAutenticado
+                  usuario={usuario}
+                  onContinuar={() => irPara('revisao')}
+                />
+              ) : (
+                <EstadoFeedback
+                  titulo="Entre para continuar"
+                  descricao="Seu agendamento precisa ficar vinculado à sua conta."
+                  acao={{
+                    rotulo: 'Entrar na minha conta',
+                    onClick: continuarParaConta,
+                  }}
+                />
+              )}
             </>
           )}
 
@@ -320,6 +361,27 @@ export function AgendarPage() {
       </main>
     </div>
   )
+}
+
+function criarEstadoInicialComSessao(): EstadoAgendamento {
+  const usuario = obterUsuarioAutenticado()
+  if (!usuario) return criarEstadoInicial()
+
+  const pendente = consumirAgendamentoPendente()
+  if (!pendente) return criarEstadoInicial()
+
+  return {
+    ...pendente,
+    etapa: 'cliente',
+    rascunho: {
+      ...pendente.rascunho,
+      cliente: {
+        nome: usuario.nome,
+        telefone: usuario.telefone,
+        email: usuario.email,
+      },
+    },
+  }
 }
 
 interface NavegacaoEtapaProps {

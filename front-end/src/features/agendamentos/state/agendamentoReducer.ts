@@ -88,18 +88,3 @@ export function agendamentoReducer(
       return criarEstadoInicial()
   }
 }
-
-export function validarDadosCliente(cliente: DadosCliente) {
-  const erros: Partial<Record<keyof DadosCliente, string>> = {}
-
-  if (!cliente.nome.trim()) erros.nome = 'Informe seu nome.'
-  if (!cliente.telefone.trim()) erros.telefone = 'Informe seu telefone.'
-  if (
-    cliente.email.trim() &&
-    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cliente.email.trim())
-  ) {
-    erros.email = 'Informe um e-mail válido.'
-  }
-
-  return erros
-}

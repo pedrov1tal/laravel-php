@@ -1,5 +1,11 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import {
+  autenticarUsuario,
+  cadastrarUsuario,
+  destinoSeguro,
+} from './features/autenticacao/session'
 import './App.css'
 
 const features = [
@@ -20,49 +26,78 @@ const testimonials = [
   { initials: 'JL', name: 'Julia Lima', role: 'Fundadora da Navalha Club', quote: 'A Nexo nos ajudou a abrir uma segunda unidade sem multiplicar a complexidade da operação.' },
 ]
 
-function LoginPage() {
+export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
+  const [erro, setErro] = useState('')
+  const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
+  const retorno = destinoSeguro(searchParams.get('retorno'))
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    setSubmitted(true)
+    const dados = new FormData(event.currentTarget)
+    const usuario = autenticarUsuario(String(dados.get('email') ?? ''))
+    if (!usuario) {
+      setErro('Conta não encontrada. Crie seu cadastro para continuar.')
+      return
+    }
+    navigate(retorno, { replace: true })
   }
 
   return (
     <div className="login-shell">
-      <header className="login-header"><a className="brand" href="#inicio" aria-label="Nexo Agenda, início"><span className="brand-mark">N</span><span>NEXO <small>AGENDA PARA BARBEARIAS</small></span></a><a className="login-back-link" href="#inicio">Voltar para o início <span>↗</span></a></header>
-      <main className="login-main"><section className="login-intro"><p className="eyebrow"><span /> Área do cliente</p><h1>Bom ter você<br /><em>por aqui.</em></h1><p>Entre para consultar seus horários, acompanhar seus agendamentos e manter sua operação em dia.</p></section><section className="login-panel" aria-labelledby="login-title"><div className="login-panel-heading"><p className="eyebrow"><span /> Acesso seguro</p><h2 id="login-title">Entrar na<br /><em>sua conta.</em></h2></div><form className="login-form" onSubmit={handleSubmit}><label htmlFor="email">E-mail<input id="email" name="email" type="email" placeholder="voce@email.com" autoComplete="email" required /></label><label htmlFor="password">Senha<div className="password-field"><input id="password" name="password" type={showPassword ? 'text' : 'password'} placeholder="Digite sua senha" autoComplete="current-password" required /><button type="button" onClick={() => setShowPassword((visible) => !visible)}>{showPassword ? 'Ocultar' : 'Mostrar'}</button></div></label><button className="button button-copper login-submit" type="submit">Entrar na minha conta <span>↗</span></button>{submitted && <p className="login-feedback" role="status">Dados recebidos. A autenticação será conectada à API em seguida.</p>}</form><p className="login-signup">Ainda não tem uma conta?</p><a className="button button-outline login-create-account" href="/cadastro">Criar minha conta <span>↗</span></a></section></main>
+      <header className="login-header"><a className="brand" href="/" aria-label="Nexo Agenda, início"><span className="brand-mark">N</span><span>NEXO <small>AGENDA PARA BARBEARIAS</small></span></a><a className="login-back-link" href="/">Voltar para o início <span>↗</span></a></header>
+      <main className="login-main"><section className="login-intro"><p className="eyebrow"><span /> Área do cliente</p><h1>Bom ter você<br /><em>por aqui.</em></h1><p>Entre para consultar seus horários, acompanhar seus agendamentos e manter sua operação em dia.</p></section><section className="login-panel" aria-labelledby="login-title"><div className="login-panel-heading"><p className="eyebrow"><span /> Acesso seguro</p><h2 id="login-title">Entrar na<br /><em>sua conta.</em></h2></div><form className="login-form" onSubmit={handleSubmit}><label htmlFor="email">E-mail<input id="email" name="email" type="email" placeholder="voce@email.com" autoComplete="email" required /></label><label htmlFor="password">Senha<div className="password-field"><input id="password" name="password" type={showPassword ? 'text' : 'password'} placeholder="Digite sua senha" autoComplete="current-password" required /><button type="button" onClick={() => setShowPassword((visible) => !visible)}>{showPassword ? 'Ocultar' : 'Mostrar'}</button></div></label><button className="button button-copper login-submit" type="submit">Entrar na minha conta <span>↗</span></button>{erro && <p className="login-feedback login-error" role="alert">{erro}</p>}</form><p className="login-signup">Ainda não tem uma conta?</p><a className="button button-outline login-create-account" href={`/cadastro?retorno=${encodeURIComponent(retorno)}`}>Criar minha conta <span>↗</span></a></section></main>
       <footer className="login-footer"><span>© 2026 Nexo Agenda</span><span>Privacidade · Termos de uso</span></footer>
     </div>
   )
 }
 
-function RegisterPage() {
+export function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
+  const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
+  const retorno = destinoSeguro(searchParams.get('retorno'))
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    setSubmitted(true)
+    const dados = new FormData(event.currentTarget)
+    cadastrarUsuario({
+      nome: String(dados.get('name') ?? ''),
+      telefone: String(dados.get('phone') ?? ''),
+      email: String(dados.get('email') ?? ''),
+    })
+    navigate(retorno, { replace: true })
   }
 
   return (
-    <div className="login-shell"><header className="login-header"><a className="brand" href="#inicio" aria-label="Nexo Agenda, início"><span className="brand-mark">N</span><span>NEXO <small>AGENDA PARA BARBEARIAS</small></span></a><a className="login-back-link" href="/login">Já tenho uma conta <span>↗</span></a></header><main className="login-main"><section className="login-intro"><p className="eyebrow"><span /> Novo cliente</p><h1>Seu negócio<br /><em>cresce aqui.</em></h1><p>Crie sua conta para organizar sua agenda e cuidar melhor da sua operação.</p></section><section className="login-panel" aria-labelledby="register-title"><div className="login-panel-heading"><p className="eyebrow"><span /> Cadastro rápido</p><h2 id="register-title">Criar sua<br /><em>conta.</em></h2></div><form className="login-form" onSubmit={handleSubmit}><label htmlFor="register-name">Nome completo<input id="register-name" name="name" type="text" autoComplete="name" required /></label><label htmlFor="register-email">E-mail<input id="register-email" name="email" type="email" autoComplete="email" required /></label><label htmlFor="register-password">Crie uma senha<div className="password-field"><input id="register-password" name="password" type={showPassword ? 'text' : 'password'} minLength={8} autoComplete="new-password" required /><button type="button" onClick={() => setShowPassword((visible) => !visible)}>{showPassword ? 'Ocultar' : 'Mostrar'}</button></div></label><button className="button button-copper login-submit" type="submit">Criar minha conta <span>↗</span></button>{submitted && <p className="login-feedback" role="status">Cadastro recebido.</p>}</form><p className="login-signup">Já possui uma conta? <a href="/login">Entrar agora</a></p></section></main><footer className="login-footer"><span>© 2026 Nexo Agenda</span><span>Privacidade · Termos de uso</span></footer></div>
+    <div className="login-shell">
+      <header className="login-header">
+        <a className="brand" href="/" aria-label="Nexo Agenda, início"><span className="brand-mark">N</span><span>NEXO <small>AGENDA PARA BARBEARIAS</small></span></a>
+        <a className="login-back-link" href={`/login?retorno=${encodeURIComponent(retorno)}`}>Já tenho uma conta <span>↗</span></a>
+      </header>
+      <main className="login-main">
+        <section className="login-intro"><p className="eyebrow"><span /> Novo cliente</p><h1>Seu negócio<br /><em>cresce aqui.</em></h1><p>Crie sua conta para organizar sua agenda e cuidar melhor da sua operação.</p></section>
+        <section className="login-panel" aria-labelledby="register-title">
+          <div className="login-panel-heading"><p className="eyebrow"><span /> Cadastro rápido</p><h2 id="register-title">Criar sua<br /><em>conta.</em></h2></div>
+          <form className="login-form" onSubmit={handleSubmit}>
+            <label htmlFor="register-name">Nome completo<input id="register-name" name="name" type="text" autoComplete="name" required /></label>
+            <label htmlFor="register-phone">Telefone<input id="register-phone" name="phone" type="tel" inputMode="tel" autoComplete="tel" required /></label>
+            <label htmlFor="register-email">E-mail<input id="register-email" name="email" type="email" autoComplete="email" required /></label>
+            <label htmlFor="register-password">Crie uma senha<div className="password-field"><input id="register-password" name="password" type={showPassword ? 'text' : 'password'} minLength={8} autoComplete="new-password" required /><button type="button" onClick={() => setShowPassword((visible) => !visible)}>{showPassword ? 'Ocultar' : 'Mostrar'}</button></div></label>
+            <button className="button button-copper login-submit" type="submit">Criar minha conta <span>↗</span></button>
+          </form>
+          <p className="login-signup">Já possui uma conta? <a href={`/login?retorno=${encodeURIComponent(retorno)}`}>Entrar agora</a></p>
+        </section>
+      </main>
+      <footer className="login-footer"><span>© 2026 Nexo Agenda</span><span>Privacidade · Termos de uso</span></footer>
+    </div>
   )
 }
 
 function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [activeTestimonial, setActiveTestimonial] = useState(0)
-
-  if (window.location.pathname === '/login') {
-    return <LoginPage />
-  }
-
-  if (window.location.pathname === '/cadastro') {
-    return <RegisterPage />
-  }
 
   const testimonial = testimonials[activeTestimonial]
 

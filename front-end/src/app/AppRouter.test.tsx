@@ -12,7 +12,7 @@ describe('AppRouter', () => {
     )
 
     expect(
-      screen.getByRole('heading', { name: /Seu estilo/ }),
+      screen.getByRole('heading', { name: /Sua agenda/ }),
     ).toBeInTheDocument()
   })
 

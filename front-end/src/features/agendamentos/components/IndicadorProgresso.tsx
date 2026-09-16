@@ -4,7 +4,7 @@ const etapas = [
   ['servico', 'Serviço'],
   ['profissional', 'Profissional'],
   ['data-horario', 'Data e horário'],
-  ['cliente', 'Seus dados'],
+  ['cliente', 'Sua conta'],
   ['revisao', 'Confirmar'],
 ] as const
 

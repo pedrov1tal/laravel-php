@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest'
 import {
   agendamentoReducer,
   criarEstadoInicial,
-  validarDadosCliente,
 } from './agendamentoReducer'
 
 describe('agendamentoReducer', () => {
@@ -119,33 +118,5 @@ describe('agendamentoReducer', () => {
     expect(
       agendamentoReducer(preenchido, { type: 'reiniciar' }),
     ).toEqual(criarEstadoInicial())
-  })
-})
-
-describe('validarDadosCliente', () => {
-  it('exige nome e telefone e aceita e-mail vazio', () => {
-    expect(
-      validarDadosCliente({ nome: '', telefone: '', email: '' }),
-    ).toEqual({
-      nome: 'Informe seu nome.',
-      telefone: 'Informe seu telefone.',
-    })
-    expect(
-      validarDadosCliente({
-        nome: 'Ana Souza',
-        telefone: '(11) 99999-0000',
-        email: '',
-      }),
-    ).toEqual({})
-  })
-
-  it('rejeita e-mail preenchido em formato inválido', () => {
-    expect(
-      validarDadosCliente({
-        nome: 'Ana Souza',
-        telefone: '(11) 99999-0000',
-        email: 'ana@',
-      }),
-    ).toEqual({ email: 'Informe um e-mail válido.' })
   })
 })
