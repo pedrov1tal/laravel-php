@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import type { FormEvent } from 'react'
 import './App.css'
 
 const services = [
@@ -34,15 +35,65 @@ const testimonials = [
   },
 ]
 
+function LoginPage() {
+  const [showPassword, setShowPassword] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    setSubmitted(true)
+  }
+
+  return (
+    <div className="login-shell">
+      <header className="login-header"><a className="brand" href="/" aria-label="Norte Barbearia, início"><span className="brand-mark">N</span><span>NORTE <small>BARBEARIA</small></span></a><a className="login-back-link" href="/">Voltar para o início <span>↗</span></a></header>
+      <main className="login-main">
+        <section className="login-intro"><p className="eyebrow"><span /> Área do cliente</p><h1>Bom ter você<br /><em>por aqui.</em></h1><p>Entre para consultar seus horários, acompanhar seus agendamentos e manter seu estilo em dia.</p><div className="login-note"><span>“</span><p>Seu próximo momento começa com um simples clique.</p></div></section>
+        <section className="login-panel" aria-labelledby="login-title"><div className="login-panel-heading"><p className="eyebrow"><span /> Acesso seguro</p><h2 id="login-title">Entrar na<br /><em>sua conta.</em></h2></div><form className="login-form" onSubmit={handleSubmit}><label htmlFor="email">E-mail<input id="email" name="email" type="email" placeholder="voce@email.com" autoComplete="email" required /></label><label htmlFor="password">Senha<div className="password-field"><input id="password" name="password" type={showPassword ? 'text' : 'password'} placeholder="Digite sua senha" autoComplete="current-password" required /><button type="button" aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'} onClick={() => setShowPassword((visible) => !visible)}>{showPassword ? 'Ocultar' : 'Mostrar'}</button></div></label><div className="login-options"><label className="remember-option"><input type="checkbox" name="remember" /> <span>Manter conectado</span></label><a href="mailto:oi@nortebarber.com?subject=Recuperar%20senha">Esqueci minha senha</a></div><button className="button button-copper login-submit" type="submit">Entrar na minha conta <span>↗</span></button>{submitted && <p className="login-feedback" role="status">Dados recebidos. A autenticação será conectada à API em seguida.</p>}</form><p className="login-signup">Ainda não tem uma conta?</p><a className="button button-outline login-create-account" href="/cadastro">Criar minha conta <span>↗</span></a></section>
+      </main>
+      <footer className="login-footer"><span>© 2026 Norte Barbearia</span><span>Privacidade · Termos de uso</span></footer>
+    </div>
+  )
+}
+
+function RegisterPage() {
+  const [showPassword, setShowPassword] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    setSubmitted(true)
+  }
+
+  return (
+    <div className="login-shell">
+      <header className="login-header"><a className="brand" href="/" aria-label="Norte Barbearia, início"><span className="brand-mark">N</span><span>NORTE <small>BARBEARIA</small></span></a><a className="login-back-link" href="/login">Já tenho uma conta <span>↗</span></a></header>
+      <main className="login-main register-main">
+        <section className="login-intro"><p className="eyebrow"><span /> Novo cliente</p><h1>Seu próximo<br /><em>corte começa aqui.</em></h1><p>Crie sua conta para agendar com mais rapidez e ter seus horários sempre à mão.</p><div className="login-note"><span>+</span><p>Uma conta simples para uma experiência ainda melhor.</p></div></section>
+        <section className="login-panel" aria-labelledby="register-title"><div className="login-panel-heading"><p className="eyebrow"><span /> Cadastro rápido</p><h2 id="register-title">Criar sua<br /><em>conta.</em></h2></div><form className="login-form" onSubmit={handleSubmit}><label htmlFor="register-name">Nome completo<input id="register-name" name="name" type="text" placeholder="Como podemos chamar você?" autoComplete="name" required /></label><label htmlFor="register-email">E-mail<input id="register-email" name="email" type="email" placeholder="voce@email.com" autoComplete="email" required /></label><label htmlFor="register-phone">Telefone<input id="register-phone" name="phone" type="tel" placeholder="(00) 00000-0000" autoComplete="tel" required /></label><label htmlFor="register-password">Crie uma senha<div className="password-field"><input id="register-password" name="password" type={showPassword ? 'text' : 'password'} placeholder="Mínimo de 8 caracteres" minLength={8} autoComplete="new-password" required /><button type="button" aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'} onClick={() => setShowPassword((visible) => !visible)}>{showPassword ? 'Ocultar' : 'Mostrar'}</button></div></label><label className="terms-option"><input type="checkbox" required /> <span>Concordo com os <a href="#termos">termos de uso</a> e a política de privacidade.</span></label><button className="button button-copper login-submit" type="submit">Criar minha conta <span>↗</span></button>{submitted && <p className="login-feedback" role="status">Cadastro recebido. Em breve sua conta estará pronta para agendamentos.</p>}</form><p className="login-signup">Já possui uma conta? <a href="/login">Entrar agora</a></p></section>
+      </main>
+      <footer className="login-footer"><span>© 2026 Norte Barbearia</span><span>Privacidade · Termos de uso</span></footer>
+    </div>
+  )
+}
+
 function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [activeTestimonial, setActiveTestimonial] = useState(0)
+
+  if (window.location.pathname === '/login') {
+    return <LoginPage />
+  }
+
+  if (window.location.pathname === '/cadastro') {
+    return <RegisterPage />
+  }
 
   const testimonial = testimonials[activeTestimonial]
 
   return (
     <div className="site-shell">
-      <header className="site-header"><a className="brand" href="#inicio" aria-label="Norte Barbearia, início"><span className="brand-mark">N</span><span>NORTE <small>BARBEARIA</small></span></a><button className="menu-toggle" type="button" aria-expanded={mobileMenuOpen} aria-controls="main-navigation" onClick={() => setMobileMenuOpen((open) => !open)}>{mobileMenuOpen ? 'Fechar' : 'Menu'}</button><nav className={`main-nav${mobileMenuOpen ? ' is-open' : ''}`} id="main-navigation" aria-label="Navegação principal"><a href="#inicio" onClick={() => setMobileMenuOpen(false)}>Início</a><a href="#servicos" onClick={() => setMobileMenuOpen(false)}>Serviços</a><a href="#sobre" onClick={() => setMobileMenuOpen(false)}>Sobre</a><a href="#contato" onClick={() => setMobileMenuOpen(false)}>Contato</a><a className="mobile-booking-link" href="/agendar">Agendar horário</a></nav><a className="button button-dark header-button" href="/agendar">Agendar horário <span>↗</span></a></header>
+      <header className="site-header"><a className="brand" href="#inicio" aria-label="Norte Barbearia, início"><span className="brand-mark">N</span><span>NORTE <small>BARBEARIA</small></span></a><button className="menu-toggle" type="button" aria-expanded={mobileMenuOpen} aria-controls="main-navigation" onClick={() => setMobileMenuOpen((open) => !open)}>{mobileMenuOpen ? 'Fechar' : 'Menu'}</button><nav className={`main-nav${mobileMenuOpen ? ' is-open' : ''}`} id="main-navigation" aria-label="Navegação principal"><a href="#inicio" onClick={() => setMobileMenuOpen(false)}>Início</a><a href="#servicos" onClick={() => setMobileMenuOpen(false)}>Serviços</a><a href="#sobre" onClick={() => setMobileMenuOpen(false)}>Sobre</a><a href="#contato" onClick={() => setMobileMenuOpen(false)}>Contato</a><a href="/login" onClick={() => setMobileMenuOpen(false)}>Entrar</a><a className="mobile-booking-link" href="/agendar">Agendar horário</a></nav><div className="header-actions"><a className="header-login-link" href="/login">Entrar</a><a className="button button-dark header-button" href="/agendar">Agendar horário <span>↗</span></a></div></header>
       <main>
         <section className="hero" id="inicio"><div className="hero-copy"><p className="eyebrow"><span /> Estilo feito sob medida</p><h1>Seu estilo.<br /><em>Nosso cuidado.</em></h1><p className="hero-description">Agende seu próximo horário de forma rápida e simples. Um momento seu, cuidado em cada detalhe.</p><div className="hero-actions"><a className="button button-copper" href="/agendar">Agendar horário <span>↗</span></a><a className="text-link" href="#servicos">Conheça nossos serviços <span>↓</span></a></div><div className="hero-note"><strong>★ 4.9</strong><span>mais de 800 clientes satisfeitos</span></div></div><div className="hero-visual"><img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=1200&q=90" alt="Barbeiro finalizando o corte de um cliente" /><div className="hero-stamp">DESDE<br /><strong>2018</strong></div><div className="hero-caption"><span>01</span><span>Precisão em cada corte</span></div></div></section>
         <section className="services section-wrap" id="servicos"><div className="section-heading"><div><p className="eyebrow"><span /> O que fazemos</p><h2>Serviços que<br /><em>combinam com você.</em></h2></div><p className="section-intro">Mais do que um corte, entregamos uma experiência pensada para você sair se sentindo ainda melhor.</p></div><div className="service-grid">{services.map((service) => <article className="service-card" key={service.number}><span className="service-number">{service.number}</span><div><h3>{service.name}</h3><p>{service.description}</p><strong>{service.price}</strong></div><span className="card-arrow">↗</span></article>)}</div></section>
