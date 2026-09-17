@@ -1,0 +1,142 @@
+.tubelight-navbar {
+  position: fixed;
+  z-index: 50;
+  top: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tubelight-navbar__track {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px;
+  background: rgba(251, 250, 247, .84);
+  border: 1px solid rgba(217, 214, 206, .9);
+  border-radius: 999px;
+  box-shadow: 0 12px 32px rgba(23, 35, 31, .1);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.tubelight-navbar__item {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 17px;
+  color: var(--muted);
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  white-space: nowrap;
+  transition: color .25s ease;
+}
+
+.tubelight-navbar__item:hover,
+.tubelight-navbar__item.is-active {
+  color: var(--copper);
+}
+
+.tubelight-navbar__label {
+  position: relative;
+  z-index: 2;
+}
+
+.tubelight-navbar__icon {
+  position: relative;
+  z-index: 2;
+  display: none;
+}
+
+.tubelight-navbar__active {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: rgba(189, 112, 76, .1);
+  border-radius: inherit;
+}
+
+.tubelight-navbar__lamp {
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  width: 28px;
+  height: 3px;
+  background: var(--copper);
+  border-radius: 4px 4px 0 0;
+  transform: translateX(-50%);
+  box-shadow: 0 3px 12px rgba(189, 112, 76, .55);
+}
+
+.tubelight-navbar__lamp span {
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  display: block;
+  border-radius: 50%;
+  background: rgba(189, 112, 76, .18);
+  filter: blur(5px);
+  transform: translateX(-50%);
+}
+
+.tubelight-navbar__lamp span:nth-child(1) {
+  width: 44px;
+  height: 18px;
+}
+
+.tubelight-navbar__lamp span:nth-child(2) {
+  width: 28px;
+  height: 22px;
+}
+
+.tubelight-navbar__lamp span:nth-child(3) {
+  width: 14px;
+  height: 14px;
+  filter: blur(3px);
+}
+
+@media (max-width: 900px) {
+  .site-shell,
+  .booking-shell,
+  .login-shell {
+    padding-bottom: 78px;
+  }
+
+  .tubelight-navbar {
+    top: auto;
+    bottom: max(18px, env(safe-area-inset-bottom));
+  }
+
+  .tubelight-navbar__track {
+    gap: 6px;
+    background: rgba(251, 250, 247, .92);
+    box-shadow: 0 12px 35px rgba(23, 35, 31, .18);
+  }
+
+  .tubelight-navbar__item {
+    width: 46px;
+    min-height: 42px;
+    padding: 0;
+  }
+
+  .tubelight-navbar__label {
+    display: none;
+  }
+
+  .tubelight-navbar__icon {
+    display: block;
+  }
+
+  .tubelight-navbar__lamp {
+    top: -7px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tubelight-navbar__item {
+    transition: none;
+  }
+}

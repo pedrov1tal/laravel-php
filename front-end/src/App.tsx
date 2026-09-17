@@ -8,6 +8,8 @@ import {
   obterUsuarioAutenticado,
 } from './features/autenticacao/session'
 import { CircularTestimonials } from './features/home/components/CircularTestimonials'
+import { TubelightNavbar } from './shared/components/TubelightNavbar'
+import { siteNavigationItems } from './shared/navigation/siteNavigation'
 import './App.css'
 
 const features = [
@@ -48,7 +50,7 @@ export function LoginPage() {
 
   return (
     <div className="login-shell">
-      <header className="login-header"><a className="brand" href="/" aria-label="Nexo Agenda, início"><span className="brand-mark">N</span><span>NEXO <small>AGENDA PARA BARBEARIAS</small></span></a><a className="login-back-link" href="/">Voltar para o início <span>↗</span></a></header>
+      <header className="login-header"><a className="brand" href="/" aria-label="Nexo Agenda, início"><span className="brand-mark">N</span><span>NEXO <small>AGENDA PARA BARBEARIAS</small></span></a><TubelightNavbar items={siteNavigationItems} /><a className="login-back-link" href="/">Voltar para o início <span>↗</span></a></header>
       <main className="login-main"><section className="login-intro"><p className="eyebrow"><span /> Área do cliente</p><h1>Bom ter você<br /><em>por aqui.</em></h1><p>Entre para consultar seus horários, acompanhar seus agendamentos e manter sua operação em dia.</p></section><section className="login-panel" aria-labelledby="login-title"><div className="login-panel-heading"><p className="eyebrow"><span /> Acesso seguro</p><h2 id="login-title">Entrar na<br /><em>sua conta.</em></h2></div><form className="login-form" onSubmit={handleSubmit}><label htmlFor="email">E-mail<input id="email" name="email" type="email" placeholder="voce@email.com" autoComplete="email" required /></label><label htmlFor="password">Senha<div className="password-field"><input id="password" name="password" type={showPassword ? 'text' : 'password'} placeholder="Digite sua senha" autoComplete="current-password" required /><button type="button" onClick={() => setShowPassword((visible) => !visible)}>{showPassword ? 'Ocultar' : 'Mostrar'}</button></div></label><button className="button button-copper login-submit" type="submit">Entrar na minha conta <span>↗</span></button>{erro && <p className="login-feedback login-error" role="alert">{erro}</p>}</form><p className="login-signup">Ainda não tem uma conta?</p><a className="button button-outline login-create-account" href={`/cadastro?retorno=${encodeURIComponent(retorno)}`}>Criar minha conta <span>↗</span></a></section></main>
       <footer className="login-footer"><span>© 2026 Nexo Agenda</span><span>Privacidade · Termos de uso</span></footer>
     </div>
@@ -76,6 +78,7 @@ export function RegisterPage() {
     <div className="login-shell">
       <header className="login-header">
         <a className="brand" href="/" aria-label="Nexo Agenda, início"><span className="brand-mark">N</span><span>NEXO <small>AGENDA PARA BARBEARIAS</small></span></a>
+        <TubelightNavbar items={siteNavigationItems} />
         <a className="login-back-link" href={`/login?retorno=${encodeURIComponent(retorno)}`}>Já tenho uma conta <span>↗</span></a>
       </header>
       <main className="login-main">
@@ -98,7 +101,6 @@ export function RegisterPage() {
 }
 
 function App() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const usuario = obterUsuarioAutenticado()
   const primeiroNome = usuario?.nome.trim().split(/\s+/)[0]
 
@@ -106,8 +108,7 @@ function App() {
     <div className="site-shell">
       <header className="site-header">
         <a className="brand" href="#inicio" aria-label="Nexo Agenda, início"><span className="brand-mark">N</span><span>NEXO <small>AGENDA PARA BARBEARIAS</small></span></a>
-        <button className="menu-toggle" type="button" aria-expanded={mobileMenuOpen} aria-controls="main-navigation" onClick={() => setMobileMenuOpen((open) => !open)}>{mobileMenuOpen ? 'Fechar' : 'Menu'}</button>
-        <nav className={`main-nav${mobileMenuOpen ? ' is-open' : ''}`} id="main-navigation" aria-label="Navegação principal"><a href="#recursos" onClick={() => setMobileMenuOpen(false)}>Recursos</a><a href="#como-funciona" onClick={() => setMobileMenuOpen(false)}>Como funciona</a><a href="#planos" onClick={() => setMobileMenuOpen(false)}>Planos</a><a href="#clientes" onClick={() => setMobileMenuOpen(false)}>Clientes</a><a className="header-booking-link" href="/agendar" onClick={() => setMobileMenuOpen(false)}>Agendar</a></nav>
+        <TubelightNavbar items={siteNavigationItems} />
         <a className="button button-dark header-button" href="/login">{primeiroNome ? `Olá, ${primeiroNome}` : 'Login'} <span>↗</span></a>
       </header>
 
