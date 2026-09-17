@@ -6,7 +6,8 @@
 | /agendamentos      | Lista       |     —     | não       |
 | /agendamentos/:id  | Detalhe     |     id    | não       |
 | /meus-agendamentos | Agendamentos|     —     | sim       |
-
-Em `/agendar`, serviço, profissional e horário podem ser escolhidos sem sessão. Para avançar à identificação e confirmação, o cliente precisa entrar ou criar uma conta; o rascunho é retomado após o retorno.
 | /dashboard         | Dashboard   |     —     | sim       |
 | /meus-agendamentos | Agendamentos|     —     | sim       |
+
+Em `/agendar`, serviço, profissional e horário podem ser escolhidos sem sessão. Para avançar à identificação e confirmação, o cliente precisa entrar ou criar uma conta; o rascunho é retomado após o retorno.
+
