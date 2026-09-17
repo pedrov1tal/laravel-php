@@ -1,43 +1,49 @@
-# Design QA
+# Design QA — depoimentos circulares
 
-## Comparison target
+**Fonte visual e funcional**
 
-- Source visual truth: existing Norte Barbearia home at `http://127.0.0.1:5174/` before this change, plus the Minimal Testimonial reference at `https://21st.dev/@jatin-yadav05/components/minimal-testimonial`.
-- Implementation: `http://127.0.0.1:5174/#testimonials-title`.
-- State: testimonial section with the first item selected; mobile header with menu closed and open.
+- Seção anterior: `C:\Users\henri\AppData\Local\Temp\codex-clipboard-58a49373-c30d-4d13-8031-de8c1e5b4933.png` (1365 × 518 px).
+- Componente solicitado: `C:\Users\henri\.codex\attachments\4da9213c-6e7f-4a1c-9bb2-c05e32d79c87\pasted-text.txt`.
+- Implementação: `http://127.0.0.1:5173/#clientes`, capturada e inspecionada no navegador interno do Codex.
+- Viewport observado: aproximadamente 727 × 600 CSS px, densidade padrão.
+- Estado: tema claro, usuário deslogado, primeiro e segundo depoimentos.
 
-## Capture details
+**Evidência comparativa**
 
-- Source reference capture: browser viewport screenshot, approximately 1274 x 720 pixels, DPR 1.
-- Desktop implementation capture: 1280 x 800 CSS pixels, 1280 x 800 output pixels, DPR 1.
-- Mobile implementation capture: 390 x 844 CSS pixels, 390 x 844 output pixels, DPR 1.
-- Density normalization: none required because all captures used DPR 1.
+- A seção antiga foi substituída pelo carrossel definido no prompt: três imagens sobrepostas, citação animada, identificação do cliente e controles anterior/próximo.
+- O componente preserva os tokens visuais existentes da Nexo: fundo claro, verde escuro, cobre, Playfair Display, Manrope e DM Mono.
+- As imagens remotas fornecidas no prompt carregaram corretamente e mantiveram recorte, nitidez e proporção consistentes.
+- A inspeção focada foi necessária para validar o espaçamento entre as palavras animadas e os controles circulares.
 
-## Full-view comparison evidence
+**Histórico da comparação**
 
-- Typography: the new section retains Playfair Display for editorial headings and quotations, Manrope for interface text, and DM Mono for small labels.
-- Spacing and layout: the desktop section follows the established two-column rhythm; the mobile version becomes one column without horizontal overflow.
-- Colors and tokens: all new states use the existing `--ink`, `--paper`, `--copper`, `--muted`, `--line`, and `--green` tokens.
-- Image quality: no new image assets or placeholder images were introduced. Testimonial identities use initials as content rather than decorative imagery.
-- Copy and content: Portuguese copy follows the existing brand tone. Testimonial names and quotes are sample content and must be replaced with approved customer statements before publication.
+- P2 inicial: as palavras animadas apareciam visualmente concatenadas porque cada palavra era um bloco separado sem espaçamento persistente.
+- Correção: aplicado espaçamento lateral explícito aos spans animados, sem alterar o ritmo tipográfico.
+- Evidência posterior: a citação voltou a apresentar separação normal entre todas as palavras no navegador.
 
-## Focused region comparison evidence
+**Findings**
 
-- Testimonials: the reference's spacious quote, compact customer selector, and restrained transition were preserved while adapting the colors, type and border treatment to the existing home.
-- Mobile navigation: verified at 390 x 844 with both closed and open states. The menu exposes all navigation links and a booking link, and closes after selecting a section.
-- Interaction: switching between testimonial selectors updates the quote, customer name, pressed state and live region.
+- Nenhum P0, P1 ou P2 restante.
+- P3: as fotos são as imagens demonstrativas fornecidas pelo componente original e podem ser trocadas futuramente por retratos aprovados dos clientes da Nexo.
 
-## Findings
+**Interações verificadas**
 
-- No actionable P0, P1 or P2 visual differences remain.
-- No browser console warnings or errors were present during the interaction checks.
+- Carregamento das três imagens.
+- Troca de Ana Martins para Rafael Costa pelo controle de próximo depoimento.
+- Atualização animada da citação, nome e cargo.
+- Layout responsivo em viewport estreito.
+- Respeito à preferência de redução de movimento implementado no componente.
 
-## Comparison history
+**Console**
 
-- First pass: desktop and mobile layouts matched the existing visual language; no blocking differences required another visual iteration.
+- O navegador interno usado para a inspeção não expôs o console nesta sessão; o build de produção é a verificação técnica complementar.
 
-## Follow-up polish
+**Implementation Checklist**
 
-- Replace the three sample testimonials with customer-approved names and quotes before publishing the section.
+- [x] Substituir o seletor antigo.
+- [x] Manter os depoimentos atuais em português.
+- [x] Integrar imagens, animações e setas do prompt.
+- [x] Preservar a identidade visual da Home.
+- [x] Adaptar o componente para mobile e teclado.
 
 final result: passed
