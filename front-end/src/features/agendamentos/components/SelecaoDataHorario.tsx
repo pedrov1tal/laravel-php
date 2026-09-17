@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button'
 import {
   formatarDataLonga,
   formatarDiaMes,
@@ -39,7 +40,8 @@ export function SelecaoDataHorario({
           const ativo = item.data === dataSelecionada
 
           return (
-            <button
+            <Button
+              variant="unstyled"
               type="button"
               key={item.data}
               disabled={!item.disponivel}
@@ -49,7 +51,7 @@ export function SelecaoDataHorario({
             >
               <span>{formatarDiaSemana(item.data)}</span>
               <strong>{formatarDiaMes(item.data)}</strong>
-            </button>
+            </Button>
           )
         })}
       </div>
@@ -63,7 +65,8 @@ export function SelecaoDataHorario({
       {dataAtiva && dataAtiva.horarios.length > 0 && (
         <div className="booking-time-grid" aria-label="Horários disponíveis">
           {dataAtiva.horarios.map((item) => (
-            <button
+            <Button
+              variant="unstyled"
               type="button"
               key={item.horario}
               disabled={!item.disponivel}
@@ -71,7 +74,7 @@ export function SelecaoDataHorario({
               onClick={() => onSelecionarHorario(item.horario)}
             >
               {item.horario}
-            </button>
+            </Button>
           ))}
         </div>
       )}

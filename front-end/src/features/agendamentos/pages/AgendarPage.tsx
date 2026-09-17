@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Button } from '@/components/ui/button'
 import { obterUsuarioAutenticado } from '../../autenticacao/session'
 import { AgendamentoHeader } from '../components/AgendamentoHeader'
 import { ConfirmacaoAgendamento } from '../components/ConfirmacaoAgendamento'
@@ -242,14 +243,15 @@ export function AgendarPage() {
                 }
               />
               <div className="booking-actions">
-                <button
+                <Button
+                  variant="unstyled"
                   className="booking-primary-action"
                   type="button"
                   disabled={!servico}
                   onClick={() => irPara('profissional')}
                 >
                   Continuar
-                </button>
+                </Button>
               </div>
             </>
           )}
@@ -296,13 +298,14 @@ export function AgendarPage() {
 
           {etapa === 'cliente' && (
             <>
-              <button
+              <Button
+                variant="unstyled"
                 className="booking-secondary-action booking-back-step"
                 type="button"
                 onClick={voltar}
               >
                 Voltar
-              </button>
+              </Button>
               {usuario ? (
                 <DadosUsuarioAutenticado
                   usuario={usuario}
@@ -327,13 +330,14 @@ export function AgendarPage() {
             estado.rascunho.data &&
             estado.rascunho.horario && (
               <>
-                <button
+                <Button
+                  variant="unstyled"
                   className="booking-secondary-action booking-back-step"
                   type="button"
                   onClick={voltar}
                 >
                   Voltar
-                </button>
+                </Button>
                 <RevisaoAgendamento
                   estabelecimento={contexto.estabelecimento}
                   servico={servico}
@@ -400,21 +404,23 @@ function NavegacaoEtapa({
 }: NavegacaoEtapaProps) {
   return (
     <div className="booking-actions">
-      <button
+      <Button
+        variant="unstyled"
         className="booking-secondary-action"
         type="button"
         onClick={onVoltar}
       >
         Voltar
-      </button>
-      <button
+      </Button>
+      <Button
+        variant="unstyled"
         className="booking-primary-action"
         type="button"
         disabled={!podeContinuar}
         onClick={onContinuar}
       >
         Continuar
-      </button>
+      </Button>
     </div>
   )
 }

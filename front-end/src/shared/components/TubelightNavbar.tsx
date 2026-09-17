@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { LucideIcon } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { Button } from '@/components/ui/button'
 import './tubelight-navbar.css'
 
 export interface TubelightNavItem {
@@ -47,33 +48,34 @@ export function TubelightNavbar({ items }: TubelightNavbarProps) {
           const isActive = activeItem === item.name
 
           return (
-            <a
-              className={`tubelight-navbar__item${isActive ? ' is-active' : ''}`}
-              href={item.url}
-              key={item.name}
-              onClick={() => setActiveItem(item.name)}
-              aria-current={isActive ? 'page' : undefined}
-              aria-label={item.name}
-            >
-              <span className="tubelight-navbar__label">{item.name}</span>
-              <Icon className="tubelight-navbar__icon" size={18} strokeWidth={2.2} aria-hidden="true" />
+            <Button asChild variant="unstyled" key={item.name}>
+              <a
+                className={`tubelight-navbar__item${isActive ? ' is-active' : ''}`}
+                href={item.url}
+                onClick={() => setActiveItem(item.name)}
+                aria-current={isActive ? 'page' : undefined}
+                aria-label={item.name}
+              >
+                <span className="tubelight-navbar__label">{item.name}</span>
+                <Icon className="tubelight-navbar__icon" size={18} strokeWidth={2.2} aria-hidden="true" />
 
-              {isActive && (
-                <motion.span
-                  className="tubelight-navbar__active"
-                  layoutId="tubelight-active-item"
-                  initial={false}
-                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                  aria-hidden="true"
-                >
-                  <span className="tubelight-navbar__lamp">
-                    <span />
-                    <span />
-                    <span />
-                  </span>
-                </motion.span>
-              )}
-            </a>
+                {isActive && (
+                  <motion.span
+                    className="tubelight-navbar__active"
+                    layoutId="tubelight-active-item"
+                    initial={false}
+                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                    aria-hidden="true"
+                  >
+                    <span className="tubelight-navbar__lamp">
+                      <span />
+                      <span />
+                      <span />
+                    </span>
+                  </motion.span>
+                )}
+              </a>
+            </Button>
           )
         })}
       </div>

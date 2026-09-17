@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button'
 import { formatarDataLonga } from '../../../lib/formatters'
 import type {
   Estabelecimento,
@@ -44,9 +45,11 @@ export function ConfirmacaoAgendamento({
           <dd>{profissional.nome}</dd>
         </div>
       </dl>
-      <a className="booking-primary-action" href="/">
-        Voltar para o início
-      </a>
+      <Button asChild variant="unstyled">
+        <a className="booking-primary-action" href="/">
+          Voltar para o início
+        </a>
+      </Button>
     </section>
   )
 }

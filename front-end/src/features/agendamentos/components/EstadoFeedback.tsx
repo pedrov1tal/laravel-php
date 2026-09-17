@@ -1,3 +1,5 @@
+import { Button } from '@/components/ui/button'
+
 interface EstadoFeedbackProps {
   titulo: string
   descricao: string
@@ -23,13 +25,14 @@ export function EstadoFeedback({
       <h2>{titulo}</h2>
       <p>{descricao}</p>
       {acao && (
-        <button
+        <Button
+          variant="unstyled"
           className="booking-text-action"
           type="button"
           onClick={acao.onClick}
         >
           {acao.rotulo}
-        </button>
+        </Button>
       )}
     </section>
   )

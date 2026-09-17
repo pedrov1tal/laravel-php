@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button'
 import type { UsuarioAutenticado } from '../../autenticacao/session'
 
 interface DadosUsuarioAutenticadoProps {
@@ -39,13 +40,14 @@ export function DadosUsuarioAutenticado({
         A confirmação deste horário ficará vinculada a esta conta.
       </p>
       <div className="booking-actions">
-        <button
+        <Button
+          variant="unstyled"
           className="booking-primary-action"
           type="button"
           onClick={onContinuar}
         >
           Continuar para revisão
-        </button>
+        </Button>
       </div>
     </section>
   )

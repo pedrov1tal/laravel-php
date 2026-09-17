@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button'
 import { formatarDuracao, formatarPreco } from '../../../lib/formatters'
 import type { ServicoAgendamento } from '../types/agendamento'
 import { EstadoFeedback } from './EstadoFeedback'
@@ -28,7 +29,8 @@ export function SelecaoServico({
         const ativo = servico.id === selecionado
 
         return (
-          <button
+          <Button
+            variant="unstyled"
             className={`booking-option${ativo ? ' is-selected' : ''}`}
             type="button"
             key={servico.id}
@@ -41,7 +43,7 @@ export function SelecaoServico({
             <strong>{servico.nome}</strong>
             <span>{servico.descricao}</span>
             <b>{formatarPreco(servico.precoCentavos)}</b>
-          </button>
+          </Button>
         )
       })}
     </div>

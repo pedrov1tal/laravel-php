@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button'
 import { obterUsuarioAutenticado } from '../../autenticacao/session'
 import { TubelightNavbar } from '../../../shared/components/TubelightNavbar'
 import { siteNavigationItems } from '../../../shared/navigation/siteNavigation'
@@ -22,9 +23,11 @@ export function AgendamentoHeader({
         <strong>{estabelecimento.nome}</strong>
       </a>
       <TubelightNavbar items={siteNavigationItems} />
-      <a className="booking-account" href={`/login?retorno=${encodeURIComponent(retorno)}`}>
-        {primeiroNome ? `Olá, ${primeiroNome}` : 'Login'} <span aria-hidden="true">↗</span>
-      </a>
+      <Button asChild variant="unstyled">
+        <a className="booking-header-account" href={`/login?retorno=${encodeURIComponent(retorno)}`}>
+          {primeiroNome ? `Olá, ${primeiroNome}` : 'Login'} <span aria-hidden="true">↗</span>
+        </a>
+      </Button>
     </header>
   )
 }

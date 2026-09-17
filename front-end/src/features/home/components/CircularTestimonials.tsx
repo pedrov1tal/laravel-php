@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { CSSProperties, KeyboardEvent } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa'
+import { Button } from '@/components/ui/button'
 import './circular-testimonials.css'
 
 export interface CircularTestimonial {
@@ -133,7 +134,8 @@ export function CircularTestimonials({
       <div className="circular-testimonials__grid">
         <div className="circular-testimonials__images" ref={imageContainerRef}>
           {testimonials.map((testimonial, index) => (
-            <button
+            <Button
+              variant="unstyled"
               className="circular-testimonials__image-button"
               type="button"
               key={testimonial.name}
@@ -146,7 +148,7 @@ export function CircularTestimonials({
               aria-current={index === activeIndex}
             >
               <img src={testimonial.src} alt="" loading="lazy" />
-            </button>
+            </Button>
           ))}
         </div>
 
@@ -179,12 +181,12 @@ export function CircularTestimonials({
           </AnimatePresence>
 
           <div className="circular-testimonials__controls">
-            <button type="button" onClick={handlePrevious} aria-label="Depoimento anterior">
+            <Button variant="unstyled" type="button" onClick={handlePrevious} aria-label="Depoimento anterior">
               <FaArrowLeft aria-hidden="true" />
-            </button>
-            <button type="button" onClick={handleNext} aria-label="Próximo depoimento">
+            </Button>
+            <Button variant="unstyled" type="button" onClick={handleNext} aria-label="Próximo depoimento">
               <FaArrowRight aria-hidden="true" />
-            </button>
+            </Button>
           </div>
         </div>
       </div>

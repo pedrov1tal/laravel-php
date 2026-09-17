@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button'
 import {
   formatarDataLonga,
   formatarDuracao,
@@ -44,9 +45,9 @@ function LinhaRevisao({
         <strong>{titulo}</strong>
         <p>{detalhe}</p>
       </div>
-      <button type="button" onClick={onEditar}>
+      <Button variant="unstyled" type="button" onClick={onEditar}>
         {editar}
-      </button>
+      </Button>
     </div>
   )
 }
@@ -104,13 +105,14 @@ export function RevisaoAgendamento({
       </div>
 
       <div className="booking-actions">
-        <button
+        <Button
+          variant="unstyled"
           className="booking-primary-action"
           type="button"
           onClick={onConfirmar}
         >
           Confirmar agendamento
-        </button>
+        </Button>
       </div>
     </div>
   )
