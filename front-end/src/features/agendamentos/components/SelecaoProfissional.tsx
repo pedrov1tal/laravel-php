@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button'
 import type { Profissional } from '../types/agendamento'
 import { EstadoFeedback } from './EstadoFeedback'
 
@@ -27,7 +28,8 @@ export function SelecaoProfissional({
         const ativo = profissional.id === selecionado
 
         return (
-          <button
+          <Button
+            variant="unstyled"
             className={`booking-option booking-professional${ativo ? ' is-selected' : ''}`}
             type="button"
             key={profissional.id}
@@ -39,7 +41,7 @@ export function SelecaoProfissional({
             </span>
             <strong>{profissional.nome}</strong>
             <span>{profissional.especialidade}</span>
-          </button>
+          </Button>
         )
       })}
     </div>
