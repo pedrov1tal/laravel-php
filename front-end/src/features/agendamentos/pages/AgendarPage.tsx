@@ -212,7 +212,10 @@ export function AgendarPage() {
 
   return (
     <div className="booking-shell">
-      <AgendamentoHeader estabelecimento={contexto.estabelecimento} />
+      <AgendamentoHeader
+        estabelecimento={contexto.estabelecimento}
+        retorno={`${location.pathname}${location.search}`}
+      />
       <main className="booking-layout">
         <IndicadorProgresso etapaAtual={etapa} />
         <section
