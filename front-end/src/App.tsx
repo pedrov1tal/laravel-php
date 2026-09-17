@@ -7,6 +7,7 @@ import {
   destinoSeguro,
   obterUsuarioAutenticado,
 } from './features/autenticacao/session'
+import { CircularTestimonials } from './features/home/components/CircularTestimonials'
 import './App.css'
 
 const features = [
@@ -22,9 +23,9 @@ const plans = [
 ]
 
 const testimonials = [
-  { initials: 'AM', name: 'Ana Martins', role: 'Sócia da Estúdio 45', quote: 'Em uma semana, a equipe já tinha parado de depender do caderno. Hoje a agenda trabalha pela gente.' },
-  { initials: 'RC', name: 'Rafael Costa', role: 'Gestor da Barba & Cia', quote: 'O cliente agenda em poucos cliques e nós enxergamos o negócio inteiro em uma única tela.' },
-  { initials: 'JL', name: 'Julia Lima', role: 'Fundadora da Navalha Club', quote: 'A Nexo nos ajudou a abrir uma segunda unidade sem multiplicar a complexidade da operação.' },
+  { name: 'Ana Martins', designation: 'Sócia da Estúdio 45', quote: 'Em uma semana, a equipe já tinha parado de depender do caderno. Hoje a agenda trabalha pela gente.', src: 'https://cdn.21st.dev/assets/mirror/02/0204be31ac91de05dc9a78ea3438dda481ff3deaaffa40cb28e3bc1822ba3650.jpg' },
+  { name: 'Rafael Costa', designation: 'Gestor da Barba & Cia', quote: 'O cliente agenda em poucos cliques e nós enxergamos o negócio inteiro em uma única tela.', src: 'https://cdn.21st.dev/assets/mirror/bb/bb5e69602eca31b29b15db66d5f95f5d6e1534037d1cc2c06e8cbb22cafb3a8f.jpg' },
+  { name: 'Julia Lima', designation: 'Fundadora da Navalha Club', quote: 'A Nexo nos ajudou a abrir uma segunda unidade sem multiplicar a complexidade da operação.', src: 'https://cdn.21st.dev/assets/mirror/b1/b1e3120d49307c1e99ec979e6d05e79f67d7ecea727b27eb716a2b7bff5fe0bb.jpg' },
 ]
 
 export function LoginPage() {
@@ -98,11 +99,8 @@ export function RegisterPage() {
 
 function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [activeTestimonial, setActiveTestimonial] = useState(0)
   const usuario = obterUsuarioAutenticado()
   const primeiroNome = usuario?.nome.trim().split(/\s+/)[0]
-
-  const testimonial = testimonials[activeTestimonial]
 
   return (
     <div className="site-shell">
@@ -127,7 +125,7 @@ function App() {
 
         <section className="plans section-wrap" id="planos"><div className="section-heading"><div><p className="eyebrow"><span /> Feito para cada fase</p><h2>Um plano para<br /><em>o seu momento.</em></h2></div><p className="section-intro">Comece pequeno, evolua com liberdade e tenha as ferramentas certas quando sua operação crescer.</p></div><div className="plan-grid">{plans.map((plan, index) => <article className={`plan-card${index === 1 ? ' featured' : ''}`} key={plan.label}><span className="plan-number">0{index + 1}</span><h3>{plan.label}</h3><strong>{plan.value}</strong><p>{plan.detail}</p><a href="#contato">Conhecer plano <span>↗</span></a></article>)}</div></section>
 
-        <section className="testimonials section-wrap" id="clientes" aria-labelledby="testimonials-title"><div className="testimonial-heading"><p className="eyebrow"><span /> Quem cresce com a Nexo</p><h2>Negócios reais,<br /><em>rotinas mais leves.</em></h2></div><div className="testimonial-content"><blockquote key={testimonial.name} aria-live="polite"><p>“{testimonial.quote}”</p><footer><strong>{testimonial.name}</strong><span>{testimonial.role}</span></footer></blockquote><div className="testimonial-selector" role="group" aria-label="Escolha um depoimento">{testimonials.map((item, index) => <button className={index === activeTestimonial ? 'is-active' : ''} type="button" key={item.name} aria-pressed={index === activeTestimonial} onClick={() => setActiveTestimonial(index)}><span className="testimonial-initials" aria-hidden="true">{item.initials}</span><span><strong>{item.name}</strong><small>{item.role}</small></span></button>)}</div></div></section>
+        <section className="testimonials section-wrap" id="clientes" aria-labelledby="testimonials-title"><div className="testimonial-heading"><p className="eyebrow"><span /> Quem cresce com a Nexo</p><h2 id="testimonials-title">Histórias que<br /><em>movem negócios.</em></h2></div><CircularTestimonials testimonials={testimonials} autoplay /></section>
 
         <section className="contact-section section-wrap" id="contato"><div className="contact-copy"><p className="eyebrow"><span /> Vamos conversar</p><h2>Seu negócio tem<br /><em>muito a conquistar.</em></h2><p>Conte um pouco sobre sua barbearia. Nosso time entende sua rotina e mostra como a Nexo pode ajudar.</p><a className="button button-copper" href="mailto:oi@nexoagenda.com">Falar com um especialista <span>↗</span></a></div><div className="contact-panel"><span className="panel-kicker">NEXO AGENDA</span><strong>Uma agenda mais inteligente para uma barbearia mais forte.</strong><div><span>oi@nexoagenda.com</span><span>Atendimento de segunda a sexta</span></div></div></section>
         <section className="final-cta"><p className="eyebrow light"><span /> O próximo passo é seu</p><h2>Abra espaço para<br /><em>o que faz crescer.</em></h2><a className="button button-copper" href="#contato">Conhecer a Nexo <span>↗</span></a></section>
