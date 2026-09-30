@@ -21,9 +21,11 @@ export function AgendamentoHeader({
 
   return (
     <header className="booking-header">
-      <a className="booking-brand" href="/" aria-label="Voltar para o início">
-        <span aria-hidden="true">{estabelecimento.iniciais}</span>
-        <strong>{estabelecimento.nome}</strong>
+      <a
+        className="booking-brand brand"
+        href="/"
+        aria-label={`Voltar para o início. Agendamento para ${estabelecimento.nome}.`}
+      >
       </a>
       <TubelightNavbar items={siteNavigationItems} />
       <Button asChild variant="unstyled">

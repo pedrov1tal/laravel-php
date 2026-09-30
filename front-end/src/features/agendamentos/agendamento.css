@@ -25,31 +25,13 @@
   border-bottom: 1px solid var(--line);
 }
 
-.booking-brand {
+.booking-header .booking-brand {
   display: inline-flex;
+  flex: 0 0 auto;
+  width: 160px;
+  height: 40px;
   min-width: 0;
   align-items: center;
-  gap: 12px;
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-}
-
-.booking-brand > span {
-  display: grid;
-  width: 38px;
-  height: 38px;
-  flex: 0 0 auto;
-  place-items: center;
-  border: 1px solid var(--ink);
-  font: 500 16px 'Playfair Display', Georgia, serif;
-}
-
-.booking-brand strong {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .booking-text-action {
@@ -663,8 +645,9 @@
     min-height: 82px;
   }
 
-  .booking-brand strong {
-    max-width: 150px;
+  .booking-header .booking-brand {
+    width: 128px;
+    height: 32px;
   }
 
   .booking-header-account {
