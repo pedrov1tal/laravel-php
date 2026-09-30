@@ -5,6 +5,11 @@ Funcionalidades Principais
 • Cadastro de usuário
 • Cadastro barbeiro
 
+* Acesso de teste
+
+- Login: `ana@exemplo.com`
+- Senha: `senha123`
+
 Substantivo de dominio 
 
 Barbearia -> nome, endereço, telefone

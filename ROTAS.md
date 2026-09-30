@@ -3,6 +3,7 @@
 | /agendar           | Novo agendamento | estabelecimento (query, opcional) | não | FEITO
 | /login             | Login       |     —     | não       |  FEITO
 | /cadastro          | Cadastro    |     —     | não       |  FEITO
+| /conta             | Conta do cliente | —     | sim       |  FEITO
 | /agendamentos      | Lista       |     —     | não       |
 | /agendamentos/:id  | Detalhe     |     id    | não       |
 | /meus-agendamentos | Agendamentos|     —     | sim       |
