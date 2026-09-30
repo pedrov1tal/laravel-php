@@ -1,4 +1,5 @@
 import { Navigate, useNavigate } from 'react-router-dom'
+import { LogOut } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { TubelightNavbar } from '../../shared/components/TubelightNavbar'
 import { siteNavigationItems } from '../../shared/navigation/siteNavigation'
@@ -84,6 +85,7 @@ export function ContaPage() {
               type="button"
               onClick={sair}
             >
+              <LogOut size={15} strokeWidth={1.8} aria-hidden="true" />
               Sair da conta
             </Button>
           </div>
