@@ -110,7 +110,7 @@ function App() {
       <header className="site-header">
         <a className="brand" href="#inicio" aria-label="Nexo Agenda, início"><span className="brand-mark">N</span><span>NEXO <small>AGENDA PARA BARBEARIAS</small></span></a>
         <TubelightNavbar items={siteNavigationItems} />
-        <Button asChild variant="unstyled"><a className="button button-dark header-button" href="/login">{primeiroNome ? `Olá, ${primeiroNome}` : 'Login'} <span>↗</span></a></Button>
+        <Button asChild variant="unstyled"><a className="button button-dark header-button" href={usuario ? '/conta' : '/login'}>{primeiroNome ? `Olá, ${primeiroNome}` : 'Login'} <span>↗</span></a></Button>
       </header>
 
       <main>

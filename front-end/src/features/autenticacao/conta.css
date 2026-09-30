@@ -1,0 +1,205 @@
+.account-shell {
+  min-height: 100vh;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+.account-shell button {
+  font: inherit;
+}
+
+.account-header,
+.account-main,
+.account-footer {
+  width: min(1180px, calc(100% - 80px));
+  margin: 0 auto;
+}
+
+.account-header {
+  display: flex;
+  min-height: 96px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+  border-bottom: 1px solid var(--line);
+}
+
+.account-back-link {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.account-back-link span {
+  margin-left: 8px;
+  color: var(--copper);
+  font-size: 16px;
+}
+
+.account-main {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(420px, 1.1fr);
+  align-items: center;
+  gap: clamp(60px, 9vw, 130px);
+  min-height: calc(100vh - 162px);
+  padding: 70px 0 90px;
+}
+
+.account-intro > p:last-child {
+  max-width: 420px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.account-card {
+  border-top: 1px solid var(--line);
+}
+
+.account-profile {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 30px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.account-avatar {
+  display: grid;
+  width: 58px;
+  height: 58px;
+  flex: 0 0 auto;
+  place-items: center;
+  color: var(--paper);
+  background: var(--green);
+  border-radius: 50%;
+  font: 11px 'DM Mono', monospace;
+  letter-spacing: .08em;
+}
+
+.account-profile > div {
+  display: grid;
+  gap: 6px;
+}
+
+.account-profile > div span,
+.account-details dt {
+  color: var(--copper);
+  font: 9px 'DM Mono', monospace;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.account-profile strong {
+  font: 500 28px 'Playfair Display', Georgia, serif;
+}
+
+.account-details {
+  margin: 0;
+}
+
+.account-details div {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 24px;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.account-details dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.account-actions {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding-top: 34px;
+}
+
+.account-logout {
+  padding: 8px 0;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid currentColor;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.account-logout:hover {
+  color: var(--copper);
+}
+
+.account-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 22px 0;
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+  font: 9px 'DM Mono', monospace;
+  letter-spacing: .05em;
+}
+
+.account-shell button:focus-visible,
+.account-shell a:focus-visible {
+  outline: 2px solid var(--copper);
+  outline-offset: 3px;
+}
+
+@media (max-width: 900px) {
+  .account-main {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    gap: 54px;
+    padding: 58px 0 90px;
+  }
+}
+
+@media (max-width: 600px) {
+  .account-header,
+  .account-main,
+  .account-footer {
+    width: min(100% - 40px, 560px);
+  }
+
+  .account-header {
+    min-height: 82px;
+  }
+
+  .account-back-link {
+    max-width: 118px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .account-back-link span {
+    display: none;
+  }
+
+  .account-main {
+    padding-top: 48px;
+  }
+
+  .account-details div {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .account-actions {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  .account-footer {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+}

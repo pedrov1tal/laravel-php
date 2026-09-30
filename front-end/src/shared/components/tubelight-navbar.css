@@ -101,7 +101,8 @@
 @media (max-width: 900px) {
   .site-shell,
   .booking-shell,
-  .login-shell {
+  .login-shell,
+  .account-shell {
     padding-bottom: 78px;
   }
 
