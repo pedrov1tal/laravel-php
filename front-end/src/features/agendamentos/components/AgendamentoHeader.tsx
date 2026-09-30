@@ -15,6 +15,9 @@ export function AgendamentoHeader({
 }: AgendamentoHeaderProps) {
   const usuario = obterUsuarioAutenticado()
   const primeiroNome = usuario?.nome.trim().split(/\s+/)[0]
+  const destinoConta = usuario
+    ? '/conta'
+    : `/login?retorno=${encodeURIComponent(retorno)}`
 
   return (
     <header className="booking-header">
@@ -24,7 +27,7 @@ export function AgendamentoHeader({
       </a>
       <TubelightNavbar items={siteNavigationItems} />
       <Button asChild variant="unstyled">
-        <a className="booking-header-account" href={`/login?retorno=${encodeURIComponent(retorno)}`}>
+        <a className="booking-header-account" href={destinoConta}>
           {primeiroNome ? `Olá, ${primeiroNome}` : 'Login'} <span aria-hidden="true">↗</span>
         </a>
       </Button>
