@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import type { LucideIcon } from 'lucide-react'
+import { Moon, Sun } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
+import { definirModoEscuro, useDarkModeStore } from '../state/darkModeStore'
 import './tubelight-navbar.css'
 
 export interface TubelightNavItem {
@@ -29,6 +31,7 @@ function itemFromLocation(items: TubelightNavItem[]) {
 
 export function TubelightNavbar({ items }: TubelightNavbarProps) {
   const [activeItem, setActiveItem] = useState(() => itemFromLocation(items))
+  const modoEscuro = useDarkModeStore((estado) => estado.modoEscuro)
 
   useEffect(() => {
     const updateActiveItem = () => setActiveItem(itemFromLocation(items))
@@ -78,6 +81,17 @@ export function TubelightNavbar({ items }: TubelightNavbarProps) {
             </Button>
           )
         })}
+        <Button
+          variant="unstyled"
+          className="tubelight-navbar__theme-toggle"
+          type="button"
+          aria-label={modoEscuro ? 'Ativar tema claro' : 'Ativar tema escuro'}
+          aria-pressed={modoEscuro}
+          title={modoEscuro ? 'Ativar tema claro' : 'Ativar tema escuro'}
+          onClick={() => definirModoEscuro(!modoEscuro)}
+        >
+          {modoEscuro ? <Sun size={17} aria-hidden="true" /> : <Moon size={17} aria-hidden="true" />}
+        </Button>
       </div>
     </nav>
   )

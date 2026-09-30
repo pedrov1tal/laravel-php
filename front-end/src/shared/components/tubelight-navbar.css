@@ -40,6 +40,28 @@
   color: var(--copper);
 }
 
+.tubelight-navbar__theme-toggle {
+  display: grid;
+  width: 38px;
+  min-height: 38px;
+  flex: 0 0 auto;
+  place-items: center;
+  color: var(--ink);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: color .25s ease, background .25s ease;
+}
+
+.tubelight-navbar__theme-toggle:hover {
+  color: var(--copper);
+  background: rgba(189, 112, 76, .12);
+}
+
+.tubelight-navbar__theme-toggle:focus-visible {
+  outline: 2px solid var(--copper);
+  outline-offset: 2px;
+}
+
 .tubelight-navbar__label {
   position: relative;
   z-index: 2;
@@ -125,6 +147,11 @@
 
   .tubelight-navbar__label {
     display: none;
+  }
+
+  .tubelight-navbar__theme-toggle {
+    width: 38px;
+    min-height: 42px;
   }
 
   .tubelight-navbar__icon {

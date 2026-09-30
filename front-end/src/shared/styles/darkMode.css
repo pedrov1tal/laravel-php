@@ -1,0 +1,102 @@
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --ink: #edf1ed;
+  --paper: #161d19;
+  --copper: #d8916c;
+  --muted: #a9b2ac;
+  --line: #3b4740;
+  --green: #335647;
+  --theme-surface: #202823;
+  --theme-surface-alt: #1b221e;
+  --theme-surface-hover: #29342e;
+  --theme-disabled-surface: #313832;
+  --theme-disabled-ink: #939c95;
+  --theme-on-strong: #f6f4ee;
+  --theme-on-accent: #21160f;
+}
+
+:root[data-theme='dark'] body {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+:root[data-theme='dark'] .main-nav,
+:root[data-theme='dark'] .trust-bar div {
+  color: var(--muted);
+}
+
+:root[data-theme='dark'] .hero-visual::before,
+:root[data-theme='dark'] .barber-image,
+:root[data-theme='dark'] .circular-testimonials__image-button {
+  background: var(--theme-surface-hover);
+}
+
+:root[data-theme='dark'] .service-card:hover,
+:root[data-theme='dark'] .plan-card:hover,
+:root[data-theme='dark'] .plan-card.featured,
+:root[data-theme='dark'] .booking-option:hover,
+:root[data-theme='dark'] .booking-option.is-selected {
+  background: var(--theme-surface-hover);
+}
+
+:root[data-theme='dark'] .login-panel,
+:root[data-theme='dark'] .dashboard-window {
+  background: var(--theme-surface);
+  border-color: var(--line);
+}
+
+:root[data-theme='dark'] .dashboard-body,
+:root[data-theme='dark'] .metric-row > div {
+  background: var(--theme-surface-alt);
+  border-color: var(--line);
+}
+
+:root[data-theme='dark'] .dashboard-top,
+:root[data-theme='dark'] .schedule-head,
+:root[data-theme='dark'] .schedule-list > div {
+  border-color: var(--line);
+}
+
+:root[data-theme='dark'] .tubelight-navbar__track {
+  background: rgba(22, 29, 25, .94);
+  border-color: rgba(59, 71, 64, .9);
+}
+
+:root[data-theme='dark'] .process-section,
+:root[data-theme='dark'] .contact-panel {
+  color: var(--theme-on-strong);
+}
+
+:root[data-theme='dark'] .avatar,
+:root[data-theme='dark'] .account-avatar,
+:root[data-theme='dark'] .booking-avatar,
+:root[data-theme='dark'] .booking-date-strip button[aria-pressed='true'],
+:root[data-theme='dark'] .booking-time-grid button[aria-pressed='true'] {
+  color: var(--theme-on-strong);
+}
+
+:root[data-theme='dark'] .button-copper,
+:root[data-theme='dark'] .main-nav .header-booking-link,
+:root[data-theme='dark'] .hero-stamp,
+:root[data-theme='dark'] .circular-testimonials__controls button:hover {
+  color: var(--theme-on-accent);
+}
+
+:root[data-theme='dark'] .button-dark:hover,
+:root[data-theme='dark'] .booking-header-account:hover,
+:root[data-theme='dark'] .booking-primary-action:hover {
+  color: var(--theme-on-strong);
+}
+
+:root[data-theme='dark'] .booking-date-strip button:disabled,
+:root[data-theme='dark'] .booking-time-grid button:disabled,
+:root[data-theme='dark'] .booking-primary-action:disabled {
+  color: var(--theme-disabled-ink);
+  background: var(--theme-disabled-surface);
+}
+
+:root[data-theme='dark'] .booking-field label span,
+:root[data-theme='dark'] .booking-field-error,
+:root[data-theme='dark'] .login-feedback.login-error {
+  color: #e39a89;
+}
