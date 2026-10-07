@@ -7,6 +7,9 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -28,5 +31,26 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function cliente(): HasOne
+    {
+        return $this->hasOne(Cliente::class);
+    }
+
+    public function perfisBarbeiro(): HasMany
+    {
+        return $this->hasMany(Barbeiro::class);
+    }
+
+    public function barbeariasAdministradas(): BelongsToMany
+    {
+        return $this->belongsToMany(Barbearia::class, 'barbearia_administradores')
+            ->withTimestamps();
+    }
+
+    public function agendamentosCancelados(): HasMany
+    {
+        return $this->hasMany(Agendamento::class, 'cancelado_por_user_id');
     }
 }
