@@ -5,7 +5,7 @@ namespace App\Http\Resources\Api\V1;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserResource extends JsonResource
+class ClienteResource extends JsonResource
 {
     /**
      * @return array<string, mixed>
@@ -14,9 +14,9 @@ class UserResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'nome' => $this->name,
+            'nome' => $this->nome,
+            'telefone' => $this->telefone,
             'email' => $this->email,
-            'deve_trocar_senha' => (bool) $this->deve_trocar_senha,
         ];
     }
 }
