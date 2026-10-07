@@ -29,6 +29,11 @@ class Barbearia extends Model
         'ativa' => 'boolean',
     ];
 
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
     public function administradores(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'barbearia_administradores')
