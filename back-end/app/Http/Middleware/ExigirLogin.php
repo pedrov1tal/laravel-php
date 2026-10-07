@@ -12,6 +12,12 @@ use Throwable;
 
 class ExigirLogin
 {
+    private const ROTAS_PUBLICAS = [
+        'api.v1.health',
+        'api.v1.auth.registro',
+        'api.v1.auth.login',
+    ];
+
     public function __construct(private readonly JwtService $jwt) {}
 
     public function handle(Request $request, Closure $next): Response
@@ -47,12 +53,7 @@ class ExigirLogin
             return true;
         }
 
-        if ($request->routeIs('api.v1.auth.registro', 'api.v1.auth.login')) {
-            return true;
-        }
-
-        return $request->isMethod('GET')
-            && ! $request->routeIs('api.v1.auth.me');
+        return $request->routeIs(...self::ROTAS_PUBLICAS);
     }
 
     private function naoAutorizado(): JsonResponse
