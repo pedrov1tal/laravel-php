@@ -16,5 +16,6 @@ Route::prefix('v1')->scopeBindings()->group(function () {
         Route::post('/registro', 'registro')->name('api.v1.auth.registro');
         Route::post('/login', 'login')->name('api.v1.auth.login');
         Route::get('/me', 'me')->name('api.v1.auth.me');
+        Route::put('/senha', 'alterarSenha')->name('api.v1.auth.senha.update');
     });
 });

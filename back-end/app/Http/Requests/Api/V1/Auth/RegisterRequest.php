@@ -11,6 +11,7 @@ class RegisterRequest extends FormRequest
         $this->merge([
             'nome' => is_string($this->nome) ? trim($this->nome) : $this->nome,
             'email' => is_string($this->email) ? strtolower(trim($this->email)) : $this->email,
+            'telefone' => is_string($this->telefone) ? trim($this->telefone) : $this->telefone,
         ]);
     }
 
@@ -27,6 +28,7 @@ class RegisterRequest extends FormRequest
         return [
             'nome' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'telefone' => ['required', 'string', 'max:30'],
             'senha' => ['required', 'string', 'min:8'],
         ];
     }

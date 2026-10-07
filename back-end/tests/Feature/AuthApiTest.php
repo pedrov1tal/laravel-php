@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Cliente;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -29,6 +30,7 @@ class AuthApiTest extends TestCase
         $response = $this->postJson('/api/v1/auth/registro', [
             'nome' => 'Ana Martins',
             'email' => 'ana@exemplo.com',
+            'telefone' => '(11) 99999-0000',
             'senha' => 'senha123',
         ]);
 
@@ -36,6 +38,7 @@ class AuthApiTest extends TestCase
             ->assertCreated()
             ->assertJsonPath('usuario.nome', 'Ana Martins')
             ->assertJsonPath('usuario.email', 'ana@exemplo.com')
+            ->assertJsonPath('cliente.telefone', '(11) 99999-0000')
             ->assertJsonMissingPath('usuario.senha')
             ->assertJsonMissingPath('usuario.password');
 
@@ -43,6 +46,12 @@ class AuthApiTest extends TestCase
 
         $this->assertNotSame('senha123', $usuario->getRawOriginal('password'));
         $this->assertTrue(Hash::check('senha123', $usuario->password));
+        $this->assertTrue(
+            Cliente::query()
+                ->whereBelongsTo($usuario)
+                ->where('telefone', '(11) 99999-0000')
+                ->exists(),
+        );
     }
 
     public function test_login_retorna_token_com_validade_de_uma_hora_e_usuario(): void
