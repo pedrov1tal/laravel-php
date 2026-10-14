@@ -18,8 +18,12 @@ export default defineConfig({
     globals: true,
   },
   server: {
+    watch: {
+      usePolling: process.env.CHOKIDAR_USEPOLLING === 'true',
+      interval: Number(process.env.CHOKIDAR_INTERVAL ?? 100),
+    },
     proxy: {
-      '/api': 'http://127.0.0.1:8000',
+      '/api': process.env.VITE_API_PROXY_TARGET ?? 'http://127.0.0.1:8000',
     },
   },
 })
