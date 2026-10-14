@@ -1,0 +1,38 @@
+services:
+  api:
+    build:
+      context: ./back-end
+      target: dev
+    env_file:
+      - ./back-end/.env
+    environment:
+      DB_CONNECTION: sqlite
+      DB_DATABASE: /app/data/database.sqlite
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./back-end:/app
+      - laravel_vendor:/app/vendor
+      - laravel_data:/app/data
+
+  web:
+    build:
+      context: ./front-end
+      target: dev
+    depends_on:
+      - api
+    environment:
+      VITE_API_URL: /api
+      VITE_API_PROXY_TARGET: http://api:8000
+      CHOKIDAR_USEPOLLING: "true"
+      CHOKIDAR_INTERVAL: "1000"
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./front-end:/app
+      - frontend_node_modules:/app/node_modules
+
+volumes:
+  laravel_data:
+  laravel_vendor:
+  frontend_node_modules:
