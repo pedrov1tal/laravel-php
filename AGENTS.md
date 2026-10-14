@@ -66,6 +66,14 @@ npm run dev -- --host 127.0.0.1
 
 Se a porta padrão do Vite estiver ocupada, use outra porta e informe a URL escolhida.
 
+## Docker de desenvolvimento
+
+- O `compose.yaml` da raiz usa `back-end/` como serviço `api` (Laravel na porta 8000) e `front-end/` como serviço `web` (Vite na porta 5173). Preserve estes contextos e targets `dev` ao atualizar os Dockerfiles.
+- Suba o ambiente com `docker compose up --build`. Mantenha os bind mounts do código e os volumes separados de dependências para não substituir `vendor` ou `node_modules` com pastas do host.
+- O Vite usa polling no Compose para detectar alterações em Windows/macOS e encaminha `/api` ao serviço `api`; mantenha o proxy local para `http://127.0.0.1:8000` quando executado fora do Docker.
+- Configure o Laravel a partir de `back-end/.env`, nunca versionado ou copiado para uma imagem. O SQLite de desenvolvimento fica no volume nomeado `laravel_data`; `docker compose down` o preserva e `docker compose down -v` o apaga.
+- Execute migrations explicitamente no ambiente de desenvolvimento; não apague nem recrie o volume do banco sem autorização.
+
 ## Qualidade e segurança
 
 - Faça mudanças pequenas e compatíveis com a estrutura existente.
