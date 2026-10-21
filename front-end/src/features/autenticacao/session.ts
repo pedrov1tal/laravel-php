@@ -7,6 +7,14 @@ export interface UsuarioAutenticado {
 
 type NovoUsuario = Omit<UsuarioAutenticado, 'id'> & { senha?: string }
 
+interface SessaoLocal {
+  token: string
+  usuario: UsuarioAutenticado
+  adminSlug: string | null
+  cliente: boolean
+  possuiPerfilOperacional: boolean
+}
+
 const CHAVE_SESSAO = 'nexo:sessao-cliente'
 const API_URL = import.meta.env.VITE_API_URL ?? '/api/v1'
 
@@ -39,11 +47,16 @@ export function autenticarUsuario(email: string, senha = ''): Promise<UsuarioAut
   const corpo = await requisitar('/auth/login', { method: 'POST', body: JSON.stringify({ email: normalizarEmail(email), senha }) })
   const usuario: UsuarioAutenticado = { id: String(corpo.usuario.id), nome: corpo.usuario.nome, email: corpo.usuario.email, telefone: '' }
   let adminSlug: string | null = null
+  let cliente = false
+  let possuiPerfilOperacional = false
   try {
     const sessao = await requisitar('/auth/me', { method: 'GET', headers: { Authorization: `Bearer ${corpo.token}` } })
-    adminSlug = sessao.barbearias?.find((barbearia: { slug: string; papeis: string[] }) => barbearia.papeis.includes('administrador'))?.slug ?? null
+    const barbearias = (sessao.barbearias ?? []) as Array<{ slug: string; papeis: string[] }>
+    adminSlug = barbearias.find((barbearia) => barbearia.papeis.includes('administrador'))?.slug ?? null
+    possuiPerfilOperacional = barbearias.some((barbearia) => barbearia.papeis.some((papel) => papel === 'administrador' || papel === 'barbeiro'))
+    cliente = Boolean(sessao.cliente) || !possuiPerfilOperacional
   } catch { /* A sessão básica continua válida mesmo se o contexto não puder ser carregado. */ }
-  localStorage.setItem(CHAVE_SESSAO, JSON.stringify({ token: corpo.token, usuario, adminSlug }))
+  localStorage.setItem(CHAVE_SESSAO, JSON.stringify({ token: corpo.token, usuario, adminSlug, cliente, possuiPerfilOperacional } satisfies SessaoLocal))
   return usuario
   })() as Promise<UsuarioAutenticado> & Partial<UsuarioAutenticado>
 }
@@ -55,6 +68,15 @@ export function obterUsuarioAutenticado() {
 
 export function obterToken() {
   return lerJson<{ token?: string } | null>(CHAVE_SESSAO, null)?.token ?? null
+}
+
+export function usuarioAutenticadoEhCliente() {
+  const sessao = lerJson<Partial<SessaoLocal> | null>(CHAVE_SESSAO, null)
+  if (!sessao) return false
+  if (sessao.cliente === true) return true
+  if (sessao.possuiPerfilOperacional === true) return false
+
+  return !sessao.adminSlug
 }
 
 export function destinoInicialDaSessao() {

@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
-import { CalendarDays, CircleAlert, Scissors, Users } from 'lucide-react'
+import { CalendarDays, CircleAlert, Menu, Scissors, Users, X } from 'lucide-react'
 import { Navigate, useParams } from 'react-router-dom'
+import { Button } from '@/components/ui/button'
 import { encerrarSessao, obterToken, obterUsuarioAutenticado } from '../autenticacao/session'
 import './admin.css'
 
@@ -24,6 +25,7 @@ export function DashboardPage() {
   const usuario = obterUsuarioAutenticado()
   const [painel, setPainel] = useState<Painel | null>(null)
   const [erro, setErro] = useState<string | null>(null)
+  const [menuAberto, setMenuAberto] = useState(false)
 
   useEffect(() => {
     const token = obterToken()
@@ -41,10 +43,18 @@ export function DashboardPage() {
   if (!usuario) return <Navigate to={`/login?retorno=${encodeURIComponent(`/admin/${slug ?? ''}/dashboard`)}`} replace />
 
   return <div className="admin-shell">
-    <aside className="admin-sidebar">
+    <header className="admin-mobile-header">
+      <a className="admin-mobile-brand" href="/" aria-label="Corte Rápido, início"><span>CR</span><strong>Painel</strong></a>
+      <div className="admin-mobile-context"><strong>{painel?.barbearia.nome ?? 'Corte Rápido'}</strong><span>Administração</span></div>
+      <Button variant="unstyled" className="admin-menu-button" type="button" aria-controls="admin-navigation" aria-expanded={menuAberto} aria-label={menuAberto ? 'Fechar menu' : 'Abrir menu'} onClick={() => setMenuAberto((aberto) => !aberto)}>
+        {menuAberto ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
+      </Button>
+    </header>
+    {menuAberto && <Button variant="unstyled" className="admin-mobile-backdrop" type="button" aria-label="Fechar menu" onClick={() => setMenuAberto(false)} />}
+    <aside className={`admin-sidebar${menuAberto ? ' is-open' : ''}`} id="admin-navigation">
       <a className="admin-brand" href="/"><span>CR</span> Corte Rápido</a>
-      <nav aria-label="Navegação administrativa">{menu.map((item) => <a className={item === 'Dashboard' ? 'active' : ''} href={item === 'Dashboard' ? `/admin/${slug}/dashboard` : '#conteudo'} key={item}>{item}</a>)}</nav>
-      <div className="admin-account"><strong>{usuario.nome}</strong><span>{painel?.barbearia.nome ?? 'Carregando barbearia…'}</span><button onClick={() => { encerrarSessao(); window.location.assign('/') }}>Sair</button></div>
+      <nav aria-label="Navegação administrativa">{menu.map((item) => <a className={item === 'Dashboard' ? 'active' : ''} href={item === 'Dashboard' ? `/admin/${slug}/dashboard` : '#conteudo'} key={item} onClick={() => setMenuAberto(false)}>{item}</a>)}</nav>
+      <div className="admin-account"><strong>{usuario.nome}</strong><span>{painel?.barbearia.nome ?? 'Carregando barbearia…'}</span><Button variant="unstyled" type="button" onClick={() => { encerrarSessao(); window.location.assign('/') }}>Sair</Button></div>
     </aside>
     <main className="admin-main" id="conteudo">
       <header className="admin-header"><div><p>Visão geral</p><h1>Dashboard</h1></div><div className="admin-header-meta"><span>{painel?.barbearia.nome}</span><time>{painel ? new Date(`${painel.data}T12:00:00`).toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' }) : ''}</time></div></header>

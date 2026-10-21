@@ -2,8 +2,8 @@ import { Navigate, useNavigate } from 'react-router-dom'
 import { LogOut } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { TubelightNavbar } from '../../shared/components/TubelightNavbar'
-import { siteNavigationItems } from '../../shared/navigation/siteNavigation'
-import { encerrarSessao, obterUsuarioAutenticado } from './session'
+import { clientSiteNavigationItems, siteNavigationItems } from '../../shared/navigation/siteNavigation'
+import { encerrarSessao, obterUsuarioAutenticado, usuarioAutenticadoEhCliente } from './session'
 import './conta.css'
 
 function obterIniciais(nome: string) {
@@ -19,6 +19,7 @@ function obterIniciais(nome: string) {
 export function ContaPage() {
   const navigate = useNavigate()
   const usuario = obterUsuarioAutenticado()
+  const navigationItems = usuarioAutenticadoEhCliente() ? clientSiteNavigationItems : siteNavigationItems
 
   if (!usuario) {
     return <Navigate to="/login?retorno=%2Fconta" replace />
@@ -36,7 +37,7 @@ export function ContaPage() {
           <span className="brand-mark">N</span>
           <span>NEXO <small>AGENDA PARA BARBEARIAS</small></span>
         </a>
-        <TubelightNavbar items={siteNavigationItems} />
+        <TubelightNavbar items={navigationItems} />
         <Button asChild variant="unstyled">
           <a className="account-back-link" href="/">
             Voltar para o início <span aria-hidden="true">↗</span>

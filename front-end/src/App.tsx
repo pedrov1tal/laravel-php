@@ -8,10 +8,11 @@ import {
   destinoSeguro,
   destinoInicialDaSessao,
   obterUsuarioAutenticado,
+  usuarioAutenticadoEhCliente,
 } from './features/autenticacao/session'
 import { CircularTestimonials } from './features/home/components/CircularTestimonials'
 import { TubelightNavbar } from './shared/components/TubelightNavbar'
-import { siteNavigationItems } from './shared/navigation/siteNavigation'
+import { clientSiteNavigationItems, siteNavigationItems } from './shared/navigation/siteNavigation'
 import './App.css'
 
 const features = [
@@ -106,12 +107,13 @@ export function RegisterPage() {
 function App() {
   const usuario = obterUsuarioAutenticado()
   const primeiroNome = usuario?.nome.trim().split(/\s+/)[0]
+  const navigationItems = usuarioAutenticadoEhCliente() ? clientSiteNavigationItems : siteNavigationItems
 
   return (
     <div className="site-shell">
       <header className="site-header">
         <a className="brand" href="#inicio" aria-label="Nexo Agenda, início"><span className="brand-mark">N</span><span>NEXO <small>AGENDA PARA BARBEARIAS</small></span></a>
-        <TubelightNavbar items={siteNavigationItems} />
+        <TubelightNavbar items={navigationItems} />
         <Button asChild variant="unstyled"><a className="button button-dark header-button" href={usuario ? '/conta' : '/login'}>{primeiroNome ? `Olá, ${primeiroNome}` : 'Login'} <span>↗</span></a></Button>
       </header>
 
