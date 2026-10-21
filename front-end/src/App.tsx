@@ -6,6 +6,7 @@ import {
   autenticarUsuario,
   cadastrarUsuario,
   destinoSeguro,
+  destinoInicialDaSessao,
   obterUsuarioAutenticado,
 } from './features/autenticacao/session'
 import { CircularTestimonials } from './features/home/components/CircularTestimonials'
@@ -38,15 +39,15 @@ export function LoginPage() {
   const navigate = useNavigate()
   const retorno = destinoSeguro(searchParams.get('retorno'))
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const dados = new FormData(event.currentTarget)
-    const usuario = autenticarUsuario(String(dados.get('email') ?? ''))
-    if (!usuario) {
-      setErro('Conta não encontrada. Crie seu cadastro para continuar.')
-      return
+    try {
+      await autenticarUsuario(String(dados.get('email') ?? ''), String(dados.get('password') ?? ''))
+      navigate(retorno === '/' ? destinoInicialDaSessao() : retorno, { replace: true })
+    } catch (falha) {
+      setErro(falha instanceof Error ? falha.message : 'Não foi possível entrar.')
     }
-    navigate(retorno, { replace: true })
   }
 
   return (
@@ -64,15 +65,16 @@ export function RegisterPage() {
   const navigate = useNavigate()
   const retorno = destinoSeguro(searchParams.get('retorno'))
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const dados = new FormData(event.currentTarget)
-    cadastrarUsuario({
+    await cadastrarUsuario({
       nome: String(dados.get('name') ?? ''),
       telefone: String(dados.get('phone') ?? ''),
       email: String(dados.get('email') ?? ''),
+      senha: String(dados.get('password') ?? ''),
     })
-    navigate(retorno, { replace: true })
+    navigate(`/login?retorno=${encodeURIComponent(retorno)}`, { replace: true })
   }
 
   return (

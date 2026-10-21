@@ -14,8 +14,9 @@ import { SelecaoServico } from '../components/SelecaoServico'
 import {
   agendaParaProfissional,
   carregarContextoAgendamento,
+  criarAgendamento,
   profissionaisParaServico,
-} from '../data/agendamentosMock'
+} from '../data/agendamentosApi'
 import {
   agendamentoReducer,
   criarEstadoInicial,
@@ -61,6 +62,7 @@ export function AgendarPage() {
     undefined,
     criarEstadoInicialComSessao,
   )
+  const [erroConfirmacao, setErroConfirmacao] = useState<string | null>(null)
   const conteudoRef = useRef<HTMLElement>(null)
   const slugAnteriorRef = useRef(slug)
 
@@ -178,6 +180,17 @@ export function AgendarPage() {
       },
     })
     irPara('cliente')
+  }
+
+  async function confirmarAgendamento() {
+    if (!slug || !estado.rascunho.servicoId || !estado.rascunho.profissionalId || !estado.rascunho.data || !estado.rascunho.horario) return
+    setErroConfirmacao(null)
+    try {
+      await criarAgendamento(slug, { servicoId: estado.rascunho.servicoId, profissionalId: estado.rascunho.profissionalId, data: estado.rascunho.data, horario: estado.rascunho.horario })
+      dispatch({ type: 'confirmar' })
+    } catch (falha) {
+      setErroConfirmacao(falha instanceof Error ? falha.message : 'Não foi possível confirmar o agendamento.')
+    }
   }
 
   if (erro) {
@@ -346,8 +359,9 @@ export function AgendarPage() {
                   horario={estado.rascunho.horario}
                   cliente={estado.rascunho.cliente}
                   onEditar={irPara}
-                  onConfirmar={() => dispatch({ type: 'confirmar' })}
+                  onConfirmar={confirmarAgendamento}
                 />
+                {erroConfirmacao && <p className="booking-error" role="alert">{erroConfirmacao}</p>}
               </>
             )}
 

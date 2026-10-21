@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Cliente extends Model
@@ -23,5 +24,10 @@ class Cliente extends Model
     public function agendamentos(): HasMany
     {
         return $this->hasMany(Agendamento::class);
+    }
+
+    public function barbearias(): BelongsToMany
+    {
+        return $this->belongsToMany(Barbearia::class, 'barbearia_cliente')->withTimestamps();
     }
 }

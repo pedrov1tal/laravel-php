@@ -5,10 +5,10 @@ export interface UsuarioAutenticado {
   telefone: string
 }
 
-type NovoUsuario = Omit<UsuarioAutenticado, 'id'>
+type NovoUsuario = Omit<UsuarioAutenticado, 'id'> & { senha?: string }
 
-const CHAVE_PERFIS = 'nexo:perfis-clientes'
 const CHAVE_SESSAO = 'nexo:sessao-cliente'
+const API_URL = import.meta.env.VITE_API_URL ?? '/api/v1'
 
 function lerJson<T>(chave: string, fallback: T): T {
   try {
@@ -23,33 +23,43 @@ function normalizarEmail(email: string) {
   return email.trim().toLocaleLowerCase('pt-BR')
 }
 
-function listarPerfis() {
-  return lerJson<Record<string, UsuarioAutenticado>>(CHAVE_PERFIS, {})
+async function requisitar(caminho: string, init: RequestInit) {
+  const resposta = await fetch(`${API_URL}${caminho}`, { headers: { 'Content-Type': 'application/json', ...(init.headers ?? {}) }, ...init })
+  const corpo = await resposta.json().catch(() => ({}))
+  if (!resposta.ok) throw new Error(corpo.message ?? 'Não foi possível concluir a solicitação.')
+  return corpo
 }
 
-export function cadastrarUsuario(dados: NovoUsuario) {
-  const email = normalizarEmail(dados.email)
-  const usuario: UsuarioAutenticado = {
-    id: `cliente-${Date.now()}`,
-    nome: dados.nome.trim(),
-    email,
-    telefone: dados.telefone.trim(),
-  }
-  const perfis = listarPerfis()
-  perfis[email] = usuario
-  localStorage.setItem(CHAVE_PERFIS, JSON.stringify(perfis))
-  localStorage.setItem(CHAVE_SESSAO, JSON.stringify(usuario))
-  return usuario
+export async function cadastrarUsuario(dados: NovoUsuario) {
+  await requisitar('/auth/registro', { method: 'POST', body: JSON.stringify({ nome: dados.nome.trim(), email: normalizarEmail(dados.email), telefone: dados.telefone.trim(), senha: dados.senha ?? '' }) })
 }
 
-export function autenticarUsuario(emailInformado: string) {
-  const usuario = listarPerfis()[normalizarEmail(emailInformado)] ?? null
-  if (usuario) localStorage.setItem(CHAVE_SESSAO, JSON.stringify(usuario))
+export function autenticarUsuario(email: string, senha = ''): Promise<UsuarioAutenticado> & Partial<UsuarioAutenticado> {
+  return (async () => {
+  const corpo = await requisitar('/auth/login', { method: 'POST', body: JSON.stringify({ email: normalizarEmail(email), senha }) })
+  const usuario: UsuarioAutenticado = { id: String(corpo.usuario.id), nome: corpo.usuario.nome, email: corpo.usuario.email, telefone: '' }
+  let adminSlug: string | null = null
+  try {
+    const sessao = await requisitar('/auth/me', { method: 'GET', headers: { Authorization: `Bearer ${corpo.token}` } })
+    adminSlug = sessao.barbearias?.find((barbearia: { slug: string; papeis: string[] }) => barbearia.papeis.includes('administrador'))?.slug ?? null
+  } catch { /* A sessão básica continua válida mesmo se o contexto não puder ser carregado. */ }
+  localStorage.setItem(CHAVE_SESSAO, JSON.stringify({ token: corpo.token, usuario, adminSlug }))
   return usuario
+  })() as Promise<UsuarioAutenticado> & Partial<UsuarioAutenticado>
 }
 
 export function obterUsuarioAutenticado() {
-  return lerJson<UsuarioAutenticado | null>(CHAVE_SESSAO, null)
+  const sessao = lerJson<UsuarioAutenticado | { usuario: UsuarioAutenticado } | null>(CHAVE_SESSAO, null)
+  return sessao && 'usuario' in sessao ? sessao.usuario : sessao
+}
+
+export function obterToken() {
+  return lerJson<{ token?: string } | null>(CHAVE_SESSAO, null)?.token ?? null
+}
+
+export function destinoInicialDaSessao() {
+  const sessao = lerJson<{ adminSlug?: string } | null>(CHAVE_SESSAO, null)
+  return sessao?.adminSlug ? `/admin/${sessao.adminSlug}/dashboard` : '/conta'
 }
 
 export function encerrarSessao() {

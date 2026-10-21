@@ -16,6 +16,7 @@ class ExigirLogin
         'api.v1.health',
         'api.v1.auth.registro',
         'api.v1.auth.login',
+        'api.v1.barbearias.contexto',
     ];
 
     public function __construct(private readonly JwtService $jwt) {}

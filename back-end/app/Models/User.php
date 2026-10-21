@@ -31,6 +31,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'deve_trocar_senha' => 'boolean',
+            'is_superadmin' => 'boolean',
         ];
     }
 
