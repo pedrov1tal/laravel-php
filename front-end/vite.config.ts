@@ -18,6 +18,8 @@ export default defineConfig({
     globals: true,
   },
   server: {
+    port: 3001,
+    strictPort: true,
     watch: {
       usePolling: process.env.CHOKIDAR_USEPOLLING === 'true',
       interval: Number(process.env.CHOKIDAR_INTERVAL ?? 100),

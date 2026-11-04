@@ -27,7 +27,7 @@ services:
       CHOKIDAR_USEPOLLING: "true"
       CHOKIDAR_INTERVAL: "1000"
     ports:
-      - "5173:5173"
+      - "3001:3001"
     volumes:
       - ./front-end:/app
       - frontend_node_modules:/app/node_modules

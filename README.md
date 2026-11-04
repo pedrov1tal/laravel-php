@@ -65,7 +65,7 @@ Depois, suba os serviços:
 docker compose up --build
 ```
 
-- Frontend: http://localhost:5173
+- Frontend: http://localhost:3001
 - API: http://localhost:8000 (health check: `/api/v1/health`)
 - As chamadas `/api` do Vite são encaminhadas ao serviço `api` dentro da rede Docker.
 - A primeira vez, crie as tabelas como o usuário Apache para manter a permissão de escrita do SQLite: `docker compose exec -u www-data api php artisan migrate --force`.
