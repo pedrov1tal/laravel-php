@@ -1,6 +1,6 @@
-import { useEffect, useState, type ReactNode } from 'react'
-import { CalendarDays, CircleAlert, Menu, Scissors, Users, X } from 'lucide-react'
-import { Navigate, useParams } from 'react-router-dom'
+import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
+import { CalendarDays, CircleAlert, Home, Menu, Scissors, Users, X } from 'lucide-react'
+import { Link, Navigate, useParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { encerrarSessao, obterToken, obterUsuarioAutenticado } from '../autenticacao/session'
 import './admin.css'
@@ -17,7 +17,11 @@ type Painel = {
   limites: { financeiro: string }
 }
 
-const menu = ['Dashboard', 'Agenda', 'Agendamentos', 'Profissionais', 'Clientes', 'Serviços', 'Horários', 'Relatórios', 'Configurações']
+const menu = [
+  { nome: 'Dashboard', destino: '#inicio' },
+  { nome: 'Agenda', destino: '#agenda' },
+  { nome: 'Profissionais', destino: '#profissionais' },
+]
 const status: Record<string, string> = { pendente: 'Pendente', confirmado: 'Confirmado', concluido: 'Concluído', cancelado: 'Cancelado' }
 
 export function DashboardPage() {
@@ -25,7 +29,9 @@ export function DashboardPage() {
   const usuario = obterUsuarioAutenticado()
   const [painel, setPainel] = useState<Painel | null>(null)
   const [erro, setErro] = useState<string | null>(null)
+  const [mensagem, setMensagem] = useState<string | null>(null)
   const [menuAberto, setMenuAberto] = useState(false)
+  const [atualizacao, setAtualizacao] = useState(0)
 
   useEffect(() => {
     const token = obterToken()
@@ -38,27 +44,68 @@ export function DashboardPage() {
       })
       .then(setPainel)
       .catch((falha: unknown) => setErro(falha instanceof Error ? falha.message : 'Não foi possível carregar o painel.'))
-  }, [slug])
+  }, [slug, atualizacao])
 
   if (!usuario) return <Navigate to={`/login?retorno=${encodeURIComponent(`/admin/${slug ?? ''}/dashboard`)}`} replace />
 
-  return <div className="admin-shell">
+  async function cadastrarBarbeiro(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if (!slug) return
+    const form = event.currentTarget
+    const dadosForm = new FormData(form)
+    const token = obterToken()
+    try {
+      const resposta = await fetch(`${apiUrl}/admin/barbearias/${encodeURIComponent(slug)}/barbeiros`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ nome: dadosForm.get('nome'), telefone: dadosForm.get('telefone'), email: dadosForm.get('email') || null }),
+      })
+      const corpo = await resposta.json().catch(() => ({}))
+      if (!resposta.ok) throw new Error(corpo.message ?? 'Não foi possível cadastrar o barbeiro.')
+      form.reset()
+      setMensagem('Barbeiro cadastrado com sucesso.')
+      setAtualizacao((valor) => valor + 1)
+    } catch (falha) {
+      setMensagem(falha instanceof Error ? falha.message : 'Não foi possível cadastrar o barbeiro.')
+    }
+  }
+
+  async function cancelarHorario(id: number) {
+    if (!slug || !window.confirm('Deseja cancelar este horário? O agendamento será liberado para uma nova reserva.')) return
+    const token = obterToken()
+    try {
+      const resposta = await fetch(`${apiUrl}/admin/barbearias/${encodeURIComponent(slug)}/agendamentos/${id}/cancelamento`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ motivo: 'Cancelado pelo administrador.' }),
+      })
+      const corpo = await resposta.json().catch(() => ({}))
+      if (!resposta.ok) throw new Error(corpo.message ?? 'Não foi possível cancelar o horário.')
+      setMensagem('Horário cancelado. Ele já está liberado na agenda.')
+      setAtualizacao((valor) => valor + 1)
+    } catch (falha) {
+      setMensagem(falha instanceof Error ? falha.message : 'Não foi possível cancelar o horário.')
+    }
+  }
+
+  return <div className="admin-shell" id="inicio">
     <header className="admin-mobile-header">
-      <a className="admin-mobile-brand" href="/" aria-label="Corte Rápido, início"><span>CR</span><strong>Painel</strong></a>
-      <div className="admin-mobile-context"><strong>{painel?.barbearia.nome ?? 'Corte Rápido'}</strong><span>Administração</span></div>
+      <a className="admin-mobile-brand" href="/" aria-label="Voltar para a página inicial"><span>CR</span><strong>Início</strong></a>
+      <div className="admin-mobile-context"><strong>{painel?.barbearia.nome ?? 'Barbearia'}</strong><span>Administração</span></div>
       <Button variant="unstyled" className="admin-menu-button" type="button" aria-controls="admin-navigation" aria-expanded={menuAberto} aria-label={menuAberto ? 'Fechar menu' : 'Abrir menu'} onClick={() => setMenuAberto((aberto) => !aberto)}>
         {menuAberto ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
       </Button>
     </header>
     {menuAberto && <Button variant="unstyled" className="admin-mobile-backdrop" type="button" aria-label="Fechar menu" onClick={() => setMenuAberto(false)} />}
     <aside className={`admin-sidebar${menuAberto ? ' is-open' : ''}`} id="admin-navigation">
-      <a className="admin-brand" href="/"><span>CR</span> Corte Rápido</a>
-      <nav aria-label="Navegação administrativa">{menu.map((item) => <a className={item === 'Dashboard' ? 'active' : ''} href={item === 'Dashboard' ? `/admin/${slug}/dashboard` : '#conteudo'} key={item} onClick={() => setMenuAberto(false)}>{item}</a>)}</nav>
+      <a className="admin-brand" href="/"><span>CR</span> Barbearia</a>
+      <nav aria-label="Navegação administrativa">{menu.map((item) => <a className={item.nome === 'Dashboard' ? 'active' : ''} href={item.destino} key={item.nome} onClick={() => setMenuAberto(false)}>{item.nome}</a>)}</nav>
       <div className="admin-account"><strong>{usuario.nome}</strong><span>{painel?.barbearia.nome ?? 'Carregando barbearia…'}</span><Button variant="unstyled" type="button" onClick={() => { encerrarSessao(); window.location.assign('/') }}>Sair</Button></div>
     </aside>
     <main className="admin-main" id="conteudo">
-      <header className="admin-header"><div><p>Visão geral</p><h1>Dashboard</h1></div><div className="admin-header-meta"><span>{painel?.barbearia.nome}</span><time>{painel ? new Date(`${painel.data}T12:00:00`).toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' }) : ''}</time></div></header>
+      <header className="admin-header"><div><p>Visão geral</p><h1>Dashboard</h1></div><div className="admin-header-actions"><div className="admin-header-meta"><span>{painel?.barbearia.nome}</span><time>{painel ? new Date(`${painel.data}T12:00:00`).toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' }) : ''}</time></div><Button asChild variant="unstyled"><Link className="admin-home-link" to="/"><Home size={16} /> Ir para a home</Link></Button></div></header>
       {erro && <section className="admin-state" role="alert"><CircleAlert />{erro}</section>}
+      {mensagem && <section className="admin-feedback" role="status">{mensagem}</section>}
       {!painel && !erro && <section className="admin-state">Carregando dados da operação…</section>}
       {painel && <>
         <section className="admin-metrics" aria-label="Indicadores do dia">
@@ -68,11 +115,18 @@ export function DashboardPage() {
           <Metric icon={<Users />} label="Cancelamentos" value={painel.indicadores.cancelados} />
         </section>
         <section className="admin-grid">
-          <article className="admin-card admin-agenda"><div className="admin-card-title"><div><p>Operação de hoje</p><h2>Agenda</h2></div><span>{painel.agenda.length} itens</span></div>
-            {painel.agenda.length === 0 ? <Empty text="Nenhum agendamento para hoje." /> : <ol className="admin-agenda-list">{painel.agenda.map((item) => <li key={item.id}><time>{item.inicio}<small>{item.fim}</small></time><div><strong>{item.cliente.nome}</strong><span>{item.servico.nome} · {item.profissional.nome}</span></div><em className={`status-${item.status}`}>{status[item.status] ?? item.status}</em></li>)}</ol>}
+          <article className="admin-card admin-agenda" id="agenda"><div className="admin-card-title"><div><p>Operação de hoje</p><h2>Agenda</h2></div><span>{painel.agenda.length} itens</span></div>
+            {painel.agenda.length === 0 ? <Empty text="Nenhum agendamento para hoje." /> : <ol className="admin-agenda-list">{painel.agenda.map((item) => <li key={item.id}><time>{item.inicio}<small>{item.fim}</small></time><div><strong>{item.cliente.nome}</strong><span>{item.servico.nome} · {item.profissional.nome}</span></div><div className="admin-agenda-actions"><em className={`status-${item.status}`}>{status[item.status] ?? item.status}</em>{['pendente', 'confirmado'].includes(item.status) && <Button variant="unstyled" className="admin-cancel-button" type="button" onClick={() => void cancelarHorario(item.id)}>Cancelar horário</Button>}</div></li>)}</ol>}
           </article>
-          <article className="admin-card"><div className="admin-card-title"><div><p>Equipe</p><h2>Profissionais</h2></div></div>
+          <article className="admin-card" id="profissionais"><div className="admin-card-title"><div><p>Equipe</p><h2>Profissionais</h2></div></div>
             {painel.profissionais.length === 0 ? <Empty text="Nenhum profissional ativo." /> : <ul className="admin-team">{painel.profissionais.map((profissional) => <li key={profissional.id}><span className="avatar">{profissional.nome.slice(0, 2).toUpperCase()}</span><div><strong>{profissional.nome}</strong><small>{profissional.jornada_configurada ? `${profissional.agendamentos_hoje} agendamentos · próximo: ${profissional.proximo_atendimento ?? 'sem próximos'}` : 'Jornada não configurada'}</small></div><b>{profissional.concluidos_hoje} concluídos</b></li>)}</ul>}
+            <form className="admin-barber-form" onSubmit={cadastrarBarbeiro}>
+              <h3>Cadastrar barbeiro</h3>
+              <label>Nome<input name="nome" type="text" autoComplete="name" required maxLength={255} /></label>
+              <label>Telefone<input name="telefone" type="tel" autoComplete="tel" maxLength={30} /></label>
+              <label>E-mail<input name="email" type="email" autoComplete="email" maxLength={255} /></label>
+              <Button variant="unstyled" className="button button-copper" type="submit">Cadastrar barbeiro</Button>
+            </form>
           </article>
         </section>
         <section className="admin-grid admin-bottom">

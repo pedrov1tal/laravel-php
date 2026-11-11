@@ -3,6 +3,8 @@
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\AgendamentoController;
 use App\Http\Controllers\Api\V1\Admin\DashboardController;
+use App\Http\Controllers\Api\V1\Admin\BarbeiroController;
+use App\Http\Controllers\Api\V1\Admin\AgendamentoController as AdminAgendamentoController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->scopeBindings()->group(function () {
@@ -27,5 +29,7 @@ Route::prefix('v1')->scopeBindings()->group(function () {
 
     Route::prefix('/admin/barbearias/{barbearia}')->middleware('exigirAdministradorBarbearia')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'show'])->name('api.v1.admin.dashboard');
+        Route::post('/barbeiros', [BarbeiroController::class, 'store'])->name('api.v1.admin.barbeiros.store');
+        Route::patch('/agendamentos/{agendamento}/cancelamento', [AdminAgendamentoController::class, 'cancelar'])->name('api.v1.admin.agendamentos.cancelar');
     });
 });

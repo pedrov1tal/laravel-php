@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import { LayoutDashboard } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   autenticarUsuario,
@@ -107,14 +108,20 @@ export function RegisterPage() {
 function App() {
   const usuario = obterUsuarioAutenticado()
   const primeiroNome = usuario?.nome.trim().split(/\s+/)[0]
-  const navigationItems = usuarioAutenticadoEhCliente() ? clientSiteNavigationItems : siteNavigationItems
+  const destinoAdmin = destinoInicialDaSessao()
+  const ehAdmin = destinoAdmin.startsWith('/admin/')
+  const navigationItems = usuarioAutenticadoEhCliente()
+    ? clientSiteNavigationItems
+    : ehAdmin
+      ? [...siteNavigationItems, { name: 'Dashboard', url: destinoAdmin, icon: LayoutDashboard }]
+      : siteNavigationItems
 
   return (
     <div className="site-shell">
       <header className="site-header">
         <a className="brand" href="#inicio" aria-label="Nexo Agenda, início"><span className="brand-mark">N</span><span>NEXO <small>AGENDA PARA BARBEARIAS</small></span></a>
         <TubelightNavbar items={navigationItems} />
-        <Button asChild variant="unstyled"><a className="button button-dark header-button" href={usuario ? '/conta' : '/login'}>{primeiroNome ? `Olá, ${primeiroNome}` : 'Login'} <span>↗</span></a></Button>
+        <Button asChild variant="unstyled"><a className="button button-dark header-button" href={ehAdmin ? destinoAdmin : usuario ? '/conta' : '/login'}>{ehAdmin ? 'Dashboard' : primeiroNome ? `Olá, ${primeiroNome}` : 'Login'} <span>↗</span></a></Button>
       </header>
 
       <main>

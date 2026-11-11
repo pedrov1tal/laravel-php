@@ -32,6 +32,8 @@ Endpoints disponíveis sob o prefixo `/api/v1`:
 - `POST /api/v1/auth/registro` com `{ "nome", "email", "senha" }`;
 - `POST /api/v1/auth/login` com `{ "email", "senha" }`;
 - `GET /api/v1/auth/me` com `Authorization: Bearer <token>`.
+- `POST /api/v1/admin/barbearias/{barbearia}/barbeiros` com `{ "nome", "telefone", "email" }` para administradores da barbearia;
+- `PATCH /api/v1/admin/barbearias/{barbearia}/agendamentos/{agendamento}/cancelamento` com `{ "motivo" }` para cancelar agendamentos pendentes ou confirmados.
 
 As requisições `POST`, `PUT`, `PATCH` e `DELETE` da API exigem token, com
 exceção das rotas de registro e login. Os endpoints `GET` continuam públicos,
@@ -41,6 +43,16 @@ O seed cria o seguinte usuário de teste:
 
 - E-mail: `ana@exemplo.com`
 - Senha: `senha123`
+
+Para testar o painel administrativo, o seed também cria:
+
+- E-mail: `admin@exemplo.com`
+- Senha: `senha123`
+- Painel: `/admin/barbearia-teste/dashboard`
+
+Execute `php artisan db:seed` (ou `docker compose exec api php artisan db:seed`)
+para criar essas contas e a barbearia de demonstração. O seed pode ser executado
+novamente sem duplicar os registros de demonstração.
 
 
 
@@ -87,4 +99,4 @@ docker compose -f compose.prod.yaml up --build
 - API Laravel: http://localhost:3001 (health check: `/health`)
 - O SQLite fica no volume nomeado `api_data`; `docker compose -f compose.prod.yaml down` o preserva. `down -v` remove o banco.
 - Execute a migração inicial como `www-data`: `docker compose -f compose.prod.yaml exec -u www-data api php artisan migrate --force`.
-- `VITE_API_URL` é passada como argumento de build público para o serviço `web`; o frontend atual ainda não consome essa variável no código.
+- `VITE_API_URL` configura a base usada pelo frontend; no Compose de produção ela aponta para a API em `http://localhost:3001/api/v1`.

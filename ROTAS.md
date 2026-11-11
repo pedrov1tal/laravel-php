@@ -1,14 +1,10 @@
-| rota               | tela        | parâmetro | protegida |
-| /                  | Home        |     —     | não       |  FEITO
-| /agendar           | Novo agendamento | estabelecimento (query, opcional) | não | FEITO
-| /login             | Login       |     —     | não       |  FEITO
-| /cadastro          | Cadastro    |     —     | não       |  FEITO
-| /conta             | Conta do cliente | —     | sim       |  FEITO
-| /agendamentos      | Lista       |     —     | não       |
-| /agendamentos/:id  | Detalhe     |     id    | não       |
-| /meus-agendamentos | Agendamentos|     —     | sim       |
-| /dashboard         | Dashboard   |     —     | sim       |
-| /meus-agendamentos | Agendamentos|     —     | sim       |
+| rota | tela | acesso | status |
+| --- | --- | --- | --- |
+| `/` | Home | Público; administradores autenticados veem acesso ao dashboard | Feito |
+| `/login` | Login | Público | Feito |
+| `/cadastro` | Cadastro de cliente | Público | Feito |
+| `/conta` | Conta do cliente | Cliente autenticado | Feito |
+| `/agendar` | Novo agendamento | Público até confirmar; confirmação exige login | Feito |
+| `/admin/:slug/dashboard` | Dashboard administrativo, cadastro de barbeiros e agenda do dia | Administrador da barbearia | Feito |
 
-Em `/agendar`, serviço, profissional e horário podem ser escolhidos sem sessão. Para avançar à identificação e confirmação, o cliente precisa entrar ou criar uma conta; o rascunho é retomado após o retorno.
-
+No dashboard, o administrador cadastra barbeiros e cancela agendamentos pendentes ou confirmados. O cancelamento registra o usuário responsável e o motivo, e libera o horário para nova reserva.

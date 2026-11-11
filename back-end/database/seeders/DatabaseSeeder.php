@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Barbearia;
 use App\Models\Cliente;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -32,5 +33,22 @@ class DatabaseSeeder extends Seeder
             'nome' => 'Ana Martins',
             'telefone' => '(11) 99999-0000',
         ]);
+
+        $administrador = User::query()->updateOrCreate([
+            'email' => 'admin@exemplo.com',
+        ], [
+            'name' => 'Administrador de Teste',
+            'password' => Hash::make('senha123'),
+            'deve_trocar_senha' => false,
+        ]);
+
+        $barbearia = Barbearia::query()->updateOrCreate([
+            'slug' => 'barbearia-teste',
+        ], [
+            'nome' => 'Barbearia de Teste',
+            'ativa' => true,
+        ]);
+
+        $barbearia->administradores()->syncWithoutDetaching([$administrador->getKey()]);
     }
 }

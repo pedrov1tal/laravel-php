@@ -8,12 +8,35 @@ use App\Models\Barbearia;
 use App\Models\Barbeiro;
 use App\Models\Cliente;
 use App\Models\Servico;
+use App\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class AgendamentoService
 {
+    public function cancelar(Agendamento $agendamento, User $usuario, string $motivo): Agendamento
+    {
+        return DB::transaction(function () use ($agendamento, $usuario, $motivo): Agendamento {
+            $agendamento = Agendamento::query()->lockForUpdate()->findOrFail($agendamento->getKey());
+
+            if (! in_array($agendamento->status, [StatusAgendamento::Pendente, StatusAgendamento::Confirmado], true)) {
+                throw ValidationException::withMessages([
+                    'agendamento' => ['Este horário já foi finalizado ou cancelado.'],
+                ]);
+            }
+
+            $agendamento->forceFill([
+                'status' => StatusAgendamento::Cancelado,
+                'cancelado_por_user_id' => $usuario->getKey(),
+                'cancelado_em' => now(),
+                'motivo_cancelamento' => $motivo,
+            ])->save();
+
+            return $agendamento;
+        });
+    }
+
     /** @param array{servico_id:int,barbeiro_id:int,data_hora:string,observacoes?:string|null} $dados */
     public function criar(Barbearia $barbearia, Cliente $cliente, array $dados): Agendamento
     {
