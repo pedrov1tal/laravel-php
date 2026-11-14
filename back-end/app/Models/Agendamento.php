@@ -15,6 +15,7 @@ class Agendamento extends Model
         'servico_id',
         'data_hora',
         'status',
+        'nao_compareceu',
         'cancelado_por_user_id',
         'cancelado_em',
         'motivo_cancelamento',
@@ -24,6 +25,7 @@ class Agendamento extends Model
     protected $casts = [
         'data_hora' => 'datetime',
         'status' => StatusAgendamento::class,
+        'nao_compareceu' => 'boolean',
         'cancelado_em' => 'datetime',
     ];
 

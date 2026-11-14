@@ -57,7 +57,9 @@ class Barbearia extends Model
 
     public function clientes(): BelongsToMany
     {
-        return $this->belongsToMany(Cliente::class, 'barbearia_cliente')->withTimestamps();
+        return $this->belongsToMany(Cliente::class, 'barbearia_cliente')
+            ->withPivot(['observacoes_internas', 'bloqueado'])
+            ->withTimestamps();
     }
 
     public function horariosFuncionamento(): HasMany

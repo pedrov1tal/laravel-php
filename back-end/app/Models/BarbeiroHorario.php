@@ -14,6 +14,8 @@ class BarbeiroHorario extends Model
         'dia_semana',
         'inicia_as',
         'termina_as',
+        'pausa_inicio',
+        'pausa_fim',
         'indisponivel',
     ];
 

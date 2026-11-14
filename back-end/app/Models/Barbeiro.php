@@ -49,6 +49,11 @@ class Barbeiro extends Model
         return $this->hasMany(BarbeiroHorario::class);
     }
 
+    public function ausencias(): HasMany
+    {
+        return $this->hasMany(BarbeiroAusencia::class);
+    }
+
     public function scopeAtivos(Builder $query): void
     {
         $query->where('ativo', true);
