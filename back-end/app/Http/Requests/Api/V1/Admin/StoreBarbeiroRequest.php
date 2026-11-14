@@ -22,6 +22,11 @@ class StoreBarbeiroRequest extends FormRequest
                 'nullable', 'email', 'max:255',
                 Rule::unique('barbeiros', 'email')->where('barbearia_id', $this->route('barbearia')?->id),
             ],
+            'servico_ids' => ['sometimes', 'array'],
+            'servico_ids.*' => [
+                'required', 'integer',
+                Rule::exists('servicos', 'id')->where('barbearia_id', $this->route('barbearia')?->id),
+            ],
         ];
     }
 }
