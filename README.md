@@ -34,10 +34,23 @@ Endpoints disponíveis sob o prefixo `/api/v1`:
 - `GET /api/v1/auth/me` com `Authorization: Bearer <token>`.
 - `POST /api/v1/admin/barbearias/{barbearia}/barbeiros` com `{ "nome", "telefone", "email" }` para administradores da barbearia;
 - `PATCH /api/v1/admin/barbearias/{barbearia}/agendamentos/{agendamento}/cancelamento` com `{ "motivo" }` para cancelar agendamentos pendentes ou confirmados.
+- `PATCH /api/v1/admin/barbearias/{barbearia}/agendamentos/{agendamento}/conclusao` para registrar a conclusão após o término previsto do atendimento.
+- `PATCH /api/v1/admin/barbearias/{barbearia}/agendamentos/{agendamento}/nao-comparecimento` registra uma falta após o término previsto, separada de cancelamento voluntário.
+- `GET /api/v1/cliente/agendamentos` lista apenas os agendamentos do cliente autenticado; `PATCH /api/v1/cliente/agendamentos/{agendamento}/cancelamento` cancela somente reservas próprias dentro do prazo definido pela barbearia.
+- `GET`, `POST`, `PUT` e `DELETE /api/v1/admin/barbearias/{barbearia}/servicos` para consultar e gerenciar o catálogo da unidade; serviços com histórico não podem ser excluídos, mas podem ser desativados.
+- `POST /api/v1/admin/barbearias/{barbearia}/barbeiros` recebe também `servico_ids` e só aceita serviços cadastrados na própria unidade.
+- `GET`, `PUT /api/v1/admin/barbearias/{barbearia}/barbeiros/{barbeiro}`, `PUT .../jornada` e endpoints aninhados em `/ausencias` gerenciam perfil, escala semanal, pausas e ausências sem afetar outra barbearia.
+- `GET /api/v1/admin/barbearias/{barbearia}/clientes?busca=...`, `GET .../clientes/{cliente}` e `PATCH .../clientes/{cliente}` para pesquisar, consultar histórico, salvar observações internas e bloquear reservas por unidade.
+- `GET` e `PATCH /api/v1/admin/barbearias/{barbearia}/configuracoes` para dados gerais, identidade de cores, fuso horário e antecedência de cancelamento; `PUT .../horarios-funcionamento` salva os sete dias da semana.
+- `GET /api/v1/admin/barbearias/{barbearia}/agendamentos` lista a agenda paginada com filtros de período, profissional, status e cliente.
+- `GET /api/v1/admin/barbearias/{barbearia}/dashboard?periodo=7|30` retorna métricas e análises limitadas aos dados da unidade; `PATCH .../agendamentos/{agendamento}/confirmacao` revalida a disponibilidade antes de confirmar.
+- `POST /api/v1/admin/barbearias/{barbearia}/agendamentos` permite cadastro manual usando cliente vinculado, serviço e profissional da unidade; a disponibilidade é revalidada pelo mesmo serviço de domínio do agendamento público.
 
-As requisições `POST`, `PUT`, `PATCH` e `DELETE` da API exigem token, com
-exceção das rotas de registro e login. Os endpoints `GET` continuam públicos,
-exceto `/api/v1/auth/me`.
+As rotas de administração da barbearia exigem token e associação do usuário
+àquela unidade. O contexto público de agendamento e o health check não exigem
+login. Registro e login também são públicos; as operações de cliente e todas
+as demais rotas devem seguir o middleware e as permissões definidos em
+`back-end/routes/api.php`.
 
 O seed cria o seguinte usuário de teste:
 
@@ -51,8 +64,10 @@ Para testar o painel administrativo, o seed também cria:
 - Painel: `/admin/barbearia-teste/dashboard`
 
 Execute `php artisan db:seed` (ou `docker compose exec api php artisan db:seed`)
-para criar essas contas e a barbearia de demonstração. O seed pode ser executado
-novamente sem duplicar os registros de demonstração.
+para criar essas contas, a barbearia de demonstração, três serviços, um barbeiro
+com jornada semanal, horários de funcionamento, a cliente vinculada e dois
+agendamentos de demonstração (um concluído e um confirmado). O seed pode ser
+executado novamente sem duplicar esses registros.
 
 
 
@@ -61,6 +76,50 @@ novamente sem duplicar os registros de demonstração.
 ALTERAÇÕES FUTURAS: 
 
 Tirar o agendar da home, pois é uma funcionalidade do sistema e não deve estar no site, e sim na pagina do usuario
+
+## Estado atual e próximos módulos
+
+Implementado no código atual:
+
+- Autenticação JWT e separação administrativa por barbearia.
+- Fluxo público de agendamento com validação de duração, conflitos, expediente,
+  escala, pausas, ausências e bloqueio de cliente na unidade.
+- Gestão administrativa de serviços, profissionais, jornadas/ausências e
+  clientes, com consultas limitadas à barbearia da rota.
+- Agenda administrativa paginada com filtros, cancelamento e conclusão de
+  atendimentos, cadastro manual validado no backend, além do expediente e perfil
+  básico configuráveis.
+- Dashboard operacional diário com agenda, equipe, alertas e indicadores de
+  clientes, confirmações, cancelamentos e faltas calculados no banco.
+
+Ainda não implementado ou não comprovado como funcional:
+
+- Faturamento e avaliações por período ainda não podem ser analisados porque o
+  banco não registra pagamentos nem avaliações. O dashboard já mostra gráficos
+  CSS de volume diário (7/30 dias), serviços concluídos, desempenho da equipe e
+  distribuição de estados, sem adicionar dependência de gráficos.
+- Registro de pagamentos, métodos de pagamento, comissões e faturamento real;
+  o preço de um serviço concluído ainda não é evidência de pagamento recebido.
+- Avaliações e notificações. Faltas são registradas e aparecem nos indicadores
+  básicos do dashboard e do perfil do cliente.
+- Configurações avançadas da barbearia (logo/capa, WhatsApp/redes sociais,
+  intervalos, feriados, horários especiais e fechamento temporário) e descoberta
+  pública de estabelecimentos. O perfil básico e o expediente semanal já podem
+  ser editados pelo admin.
+- Área do cliente ainda sem edição de perfil, favoritos, reagendamento da mesma
+  reserva e notificações.
+- Super Admin, planos, assinaturas e integração com gateway de pagamento.
+- Perfis e permissões individuais para barbeiros.
+- Verificação ponta a ponta de responsividade e isolamento multi-tenant após as
+  alterações mais recentes.
+
+Próximos passos recomendados: restabelecer o ambiente Docker e confirmar os
+dados persistidos; executar migrations incrementais e testes isolados em SQLite
+em memória; completar ações da agenda e configuração da unidade; implementar
+pagamentos/comissões antes de exibir faturamento; depois desenvolver área do
+cliente, avaliações/notificações e Super Admin. O banco de desenvolvimento usa
+SQLite em volume persistente; o PostgreSQL citado na proposta ainda não está
+configurado neste repositório.
 
 ## Rodando com Docker
 
