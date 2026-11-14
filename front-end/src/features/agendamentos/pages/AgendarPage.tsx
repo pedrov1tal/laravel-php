@@ -73,7 +73,8 @@ export function AgendarPage() {
       dispatch({ type: 'reiniciar' })
     }
 
-    carregarContextoAgendamento(slug)
+    setCarregamento({ slug, contexto: null, erro: null })
+    carregarContextoAgendamento(slug, estado.rascunho.servicoId)
       .then((resultado) => {
         if (ativo) {
           setCarregamento({ slug, contexto: resultado, erro: null })
@@ -94,7 +95,7 @@ export function AgendarPage() {
     return () => {
       ativo = false
     }
-  }, [slug])
+  }, [slug, estado.rascunho.servicoId])
 
   const contexto = carregamento.slug === slug ? carregamento.contexto : null
   const erro = carregamento.slug === slug ? carregamento.erro : null

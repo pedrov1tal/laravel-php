@@ -3,9 +3,10 @@ import { obterToken } from '../../autenticacao/session'
 
 const apiUrl = import.meta.env.VITE_API_URL ?? '/api/v1'
 
-export async function carregarContextoAgendamento(slug?: string): Promise<ContextoAgendamento> {
+export async function carregarContextoAgendamento(slug?: string, servicoId?: string | null): Promise<ContextoAgendamento> {
   if (!slug) throw new Error('Escolha uma barbearia para agendar.')
-  const resposta = await fetch(`${apiUrl}/barbearias/${encodeURIComponent(slug)}/contexto-agendamento`)
+  const parametros = servicoId ? `?servico_id=${encodeURIComponent(servicoId)}` : ''
+  const resposta = await fetch(`${apiUrl}/barbearias/${encodeURIComponent(slug)}/contexto-agendamento${parametros}`)
   if (!resposta.ok) throw new Error('Barbearia não encontrada ou indisponível.')
   return resposta.json() as Promise<ContextoAgendamento>
 }
