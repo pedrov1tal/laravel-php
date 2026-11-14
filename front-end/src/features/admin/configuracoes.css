@@ -1,0 +1,22 @@
+.admin-settings-main { max-width: 1160px; }
+.admin-settings-form { display: grid; gap: 18px; }
+.admin-settings-card { padding: 25px; }
+.admin-settings-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 22px; }
+.admin-settings-fields label, .admin-hours-row label { display: grid; gap: 7px; color: #647169; font-size: 12px; }
+.admin-settings-fields input, .admin-settings-fields textarea, .admin-hours-row input:not([type=checkbox]) { width: 100%; min-height: 42px; padding: 10px 12px; color: #17231f; background: #fbfaf8; border: 1px solid #e5dfd5; border-radius: 7px; font: inherit; }
+.admin-settings-fields input[type=color] { padding: 4px; }
+.admin-settings-fields textarea { resize: vertical; }
+.admin-settings-wide { grid-column: 1 / -1; }
+.admin-hours-list { margin-top: 18px; }
+.admin-hours-row { display: grid; grid-template-columns: minmax(140px, 1fr) minmax(110px, .7fr) minmax(130px, .7fr) minmax(130px, .7fr); align-items: center; gap: 16px; padding: 14px 0; border-top: 1px solid #eee9e2; }
+.admin-hours-row strong { font-size: 13px; }
+.admin-hours-row .admin-hours-closed { display: flex; align-items: center; gap: 7px; }
+.admin-hours-row input:disabled { opacity: .5; }
+.admin-settings-submit { justify-self: start; min-width: 190px; }
+.admin-settings-limit { color: #647169; font-size: 12px; line-height: 1.6; }
+@media (max-width: 700px) {
+  .admin-settings-card { padding: 18px; }
+  .admin-settings-fields { grid-template-columns: 1fr; }
+  .admin-settings-wide { grid-column: auto; }
+  .admin-hours-row { grid-template-columns: 1fr 1fr; gap: 12px; }
+}

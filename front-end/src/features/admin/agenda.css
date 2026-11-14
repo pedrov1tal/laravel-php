@@ -1,0 +1,26 @@
+.admin-calendar-main { max-width: 1420px; }
+.admin-calendar-create-toggle { display: flex; justify-content: flex-end; margin: 14px 0; }
+.admin-manual-booking { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; padding: 22px; margin-bottom: 18px; }
+.admin-manual-booking h2 { grid-column: 1 / -1; margin: 0; font: 500 25px Georgia, serif; }
+.admin-manual-booking label { display: grid; gap: 7px; color: #647169; font-size: 11px; }
+.admin-manual-booking input, .admin-manual-booking select { width: 100%; min-height: 40px; padding: 8px 10px; background: #fbfaf8; border: 1px solid #e5dfd5; border-radius: 7px; color: #17231f; font: inherit; }
+.admin-manual-booking button[type=submit] { align-self: end; min-height: 42px; }
+.admin-calendar-filters { display: grid; grid-template-columns: repeat(5, minmax(120px, 1fr)); align-items: end; gap: 13px; padding: 18px; margin-bottom: 18px; }
+.admin-calendar-filters label { display: grid; gap: 7px; color: #647169; font-size: 11px; }
+.admin-calendar-filters input, .admin-calendar-filters select { width: 100%; min-height: 40px; padding: 8px 10px; background: #fbfaf8; border: 1px solid #e5dfd5; border-radius: 7px; color: #17231f; font: inherit; }
+.admin-calendar-search { grid-column: span 1; }
+.admin-calendar-card { padding: 23px; }
+.admin-calendar-table-wrap { width: 100%; overflow-x: auto; }
+.admin-calendar-table { width: 100%; border-collapse: collapse; text-align: left; }
+.admin-calendar-table th { padding: 12px 10px; color: #8c5c45; border-bottom: 1px solid #e5dfd5; font-size: 10px; text-transform: uppercase; letter-spacing: .06em; }
+.admin-calendar-table td { padding: 14px 10px; border-bottom: 1px solid #eee9e2; font-size: 12px; vertical-align: top; }
+.admin-calendar-table td small { display: block; margin-top: 5px; color: #647169; font-size: 10px; }
+.admin-calendar-table td em { font-style: normal; white-space: nowrap; }
+.admin-calendar-actions { display: grid; gap: 7px; }
+.admin-calendar-actions button { padding: 0; color: #8c5c45; background: transparent; border: 0; cursor: pointer; font-size: 11px; text-align: left; }
+.admin-calendar-pagination { display: flex; align-items: center; justify-content: center; gap: 18px; padding-top: 18px; color: #647169; font-size: 12px; }
+.admin-calendar-pagination button { color: #8c5c45; }
+.admin-calendar-pagination button:disabled { opacity: .45; }
+@media (max-width: 950px) { .admin-calendar-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 950px) { .admin-manual-booking { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .admin-calendar-filters, .admin-manual-booking { grid-template-columns: 1fr; } .admin-manual-booking h2 { grid-column: auto; } .admin-calendar-card { padding: 14px; } .admin-calendar-table { min-width: 760px; } }

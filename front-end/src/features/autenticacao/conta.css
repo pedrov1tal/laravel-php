@@ -56,6 +56,88 @@
   border-top: 1px solid var(--line);
 }
 
+.account-bookings {
+  grid-column: 1 / -1;
+  width: 100%;
+  margin-top: 12px;
+  border-top: 1px solid var(--line);
+  padding-top: 28px;
+}
+
+.account-bookings-heading,
+.account-booking-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.account-bookings-heading > div > span {
+  color: var(--copper);
+  font: 9px 'DM Mono', monospace;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.account-bookings-heading h2 {
+  margin: 6px 0 0;
+  font: 500 27px 'Playfair Display', Georgia, serif;
+}
+
+.account-bookings-heading > a,
+.account-booking-actions > a {
+  color: var(--copper);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.account-bookings-list {
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.account-bookings-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 0;
+  border-top: 1px solid var(--line);
+}
+
+.account-booking-info {
+  display: grid;
+  gap: 5px;
+}
+
+.account-booking-info strong { font-size: 14px; }
+.account-booking-info span,
+.account-booking-info time,
+.account-bookings-empty,
+.account-booking-message { color: var(--muted); font-size: 12px; }
+
+.account-booking-status {
+  color: var(--green);
+  font: 9px 'DM Mono', monospace;
+  text-transform: uppercase;
+}
+
+.account-booking-status.status-cancelado { color: #9b4a42; }
+.account-booking-status.status-pendente { color: var(--copper); }
+
+.account-cancel-booking {
+  color: #9b4a42;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.account-booking-message { margin: 16px 0 0; }
+.account-bookings-empty { padding: 18px 0; }
+
 .account-profile {
   display: flex;
   align-items: center;
@@ -206,6 +288,12 @@
     align-items: flex-start;
     flex-direction: column;
     gap: 22px;
+  }
+
+  .account-bookings-list li,
+  .account-booking-actions {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .account-footer {
