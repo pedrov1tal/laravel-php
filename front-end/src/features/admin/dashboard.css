@@ -83,5 +83,31 @@
 .admin-upcoming-list li > div:nth-child(2) > span { overflow: hidden; color: #647169; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
 .admin-upcoming-actions { display: flex; align-items: center; justify-content: end; flex-wrap: wrap; gap: 7px; }
 .admin-upcoming-actions em { color: #356b50; font-size: 11px; font-style: normal; }
+.admin-shell { --admin-ink: #18241f; --admin-muted: #66736c; --admin-copper: #a95f3d; background: #f4f2ed; }
+.admin-main { padding-top: 38px; }
+.admin-header { align-items: center; padding-bottom: 22px; border-bottom: 1px solid #e4dfd5; }
+.admin-header h1 { font-size: 40px; letter-spacing: -.035em; }
+.admin-header > div:first-child > p { margin-bottom: 8px; }
+.admin-header-meta span { color: var(--admin-ink); font-weight: 700; }
+.admin-dashboard-actions { flex-wrap: wrap; justify-content: flex-end; }
+.dashboard-agenda-link { min-height: 40px; border-color: #ded8ce; border-radius: 9px; color: #34423a; transition: background .16s ease, border-color .16s ease, transform .16s ease; }
+.dashboard-agenda-link:hover { border-color: #b87454; background: #fbf7f2; color: #874a30; transform: translateY(-1px); }
+.dashboard-agenda-link.is-primary { border-color: var(--admin-copper); background: var(--admin-copper); color: #fff; }
+.dashboard-agenda-link.is-primary:hover { border-color: #914c30; background: #914c30; color: #fff; }
+.admin-metric { position: relative; overflow: hidden; border-color: #e4dfd5; border-radius: 13px; box-shadow: 0 4px 14px rgba(35, 39, 33, .035); }
+.admin-metrics > .admin-metric:first-child { background: #20372d; border-color: #20372d; color: #fff; }
+.admin-metrics > .admin-metric:first-child small, .admin-metrics > .admin-metric:first-child span { color: #e8b49b; }
+.admin-metrics > .admin-metric:first-child strong { color: #fff; }
+.admin-secondary-metrics .admin-metric { border-radius: 11px; }
+.admin-card { border-color: #e4dfd5; border-radius: 13px; box-shadow: 0 4px 14px rgba(35, 39, 33, .035); }
+.admin-chart-card, .admin-card { transition: box-shadow .18s ease, border-color .18s ease; }
+.admin-chart-card:hover { border-color: #d8cabc; box-shadow: 0 8px 22px rgba(35, 39, 33, .065); }
+.admin-bar-track { border-radius: 6px 6px 0 0; }
+.admin-bar-track i { background: linear-gradient(180deg, #c7825f, #a95f3d); }
+.admin-rank-track i { background: linear-gradient(90deg, #c7825f, #a95f3d); }
+.admin-agenda-list li, .admin-upcoming-list li { transition: background .15s ease; }
+.admin-agenda-list li:hover, .admin-upcoming-list li:hover { background: #fbfaf7; }
+.admin-dashboard-actions a:focus-visible, .admin-home-link:focus-visible, .admin-upcoming .admin-card-title > a:focus-visible { outline: 3px solid #c9825d; outline-offset: 3px; }
+@media (max-width: 850px) { .admin-header { align-items: flex-start; } }
 @media (max-width: 850px) { .admin-analytics-grid { grid-template-columns: 1fr; } }
-@media (max-width: 570px) { .admin-analytics-heading { align-items: start; } .admin-analytics-heading h2 { font-size: 23px; } .admin-bar-chart { gap: 4px; } .admin-bar-chart.is-month { grid-template-columns: repeat(10, minmax(0, 1fr)); grid-auto-rows: 135px; } .admin-bar-chart.is-long { grid-template-columns: repeat(15, minmax(0, 1fr)); grid-auto-rows: 120px; } .admin-upcoming-list li { grid-template-columns: 48px minmax(0, 1fr); } .admin-upcoming-actions { grid-column: 2; justify-content: start; } }
+@media (max-width: 570px) { .admin-header h1 { font-size: 34px; } .admin-header-actions { justify-content: flex-start; } .admin-header-meta { display: none; } .admin-dashboard-actions { display: grid; width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); } .dashboard-agenda-link { white-space: normal; text-align: center; } .admin-analytics-heading { align-items: start; } .admin-analytics-heading h2 { font-size: 23px; } .admin-bar-chart { gap: 4px; } .admin-bar-chart.is-month { grid-template-columns: repeat(10, minmax(0, 1fr)); grid-auto-rows: 135px; } .admin-bar-chart.is-long { grid-template-columns: repeat(15, minmax(0, 1fr)); grid-auto-rows: 120px; } .admin-upcoming-list li { grid-template-columns: 48px minmax(0, 1fr); } .admin-upcoming-actions { grid-column: 2; justify-content: start; } }
