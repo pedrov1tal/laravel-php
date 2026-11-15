@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
-import { Link, Navigate, useParams } from 'react-router-dom'
+import { Link, Navigate, useParams, useSearchParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { obterToken, obterUsuarioAutenticado } from '../autenticacao/session'
 import './admin.css'
@@ -25,6 +25,7 @@ function adicionarDias(data: string, quantidade: number) {
 
 export function AgendaPage() {
   const { slug } = useParams()
+  const [searchParams] = useSearchParams()
   const usuario = obterUsuarioAutenticado()
   const [agendamentos, setAgendamentos] = useState<Agendamento[]>([])
   const [barbeiros, setBarbeiros] = useState<Barbeiro[]>([])
@@ -40,7 +41,7 @@ export function AgendaPage() {
   const [erro, setErro] = useState<string | null>(null)
   const [mensagem, setMensagem] = useState<string | null>(null)
   const [atualizacao, setAtualizacao] = useState(0)
-  const [formAberto, setFormAberto] = useState(false)
+  const [formAberto, setFormAberto] = useState(() => searchParams.get('novo') === '1')
   const [clienteId, setClienteId] = useState('')
   const [servicoId, setServicoId] = useState('')
   const [profissionalId, setProfissionalId] = useState('')
