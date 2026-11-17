@@ -1,7 +1,11 @@
 # syntax=docker/dockerfile:1
 FROM php:8.3-apache-bookworm AS php-base
 
-RUN a2enmod rewrite
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libpq-dev \
+    && docker-php-ext-install pdo_pgsql \
+    && rm -rf /var/lib/apt/lists/* \
+    && a2enmod rewrite
 
 WORKDIR /app
 COPY docker/apache-vhost.conf /etc/apache2/sites-available/000-default.conf
