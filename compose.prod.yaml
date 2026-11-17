@@ -5,14 +5,14 @@ services:
       target: prod
     env_file:
       - ./back-end/.env
+      - ./.env.local
     environment:
       APP_ENV: production
       APP_DEBUG: "false"
-      APP_URL: http://localhost:3001
-      DB_CONNECTION: sqlite
-      DB_DATABASE: /app/data/database.sqlite
+      APP_URL: http://localhost:${API_PORT:-3001}
+      DB_CONNECTION: pgsql
     ports:
-      - "3001:80"
+      - "${API_PORT:-3001}:80"
     volumes:
       - api_data:/app/data
     restart: unless-stopped
@@ -21,7 +21,7 @@ services:
         - CMD
         - php
         - -r
-        - "exit(@file_get_contents('http://127.0.0.1/health') === false ? 1 : 0);"
+        - "exit(@file_get_contents('http://127.0.0.1/api/v1/health') === false ? 1 : 0);"
       interval: 30s
       timeout: 5s
       retries: 5
@@ -32,9 +32,9 @@ services:
       context: ./front-end
       target: prod
       args:
-        VITE_API_URL: http://localhost:3001/api/v1
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:3001/api/v1}
     ports:
-      - "8080:80"
+      - "${WEB_PORT:-8080}:80"
     depends_on:
       api:
         condition: service_healthy
