@@ -37,9 +37,7 @@ RUN composer dump-autoload --no-interaction --optimize --no-scripts \
     && mkdir -p /app/data \
     && chown -R www-data:www-data /app/storage /app/bootstrap/cache /app/data
 
-ENV APP_ENV=local \
-    DB_CONNECTION=sqlite \
-    DB_DATABASE=/app/data/database.sqlite
+ENV APP_ENV=local
 EXPOSE 8000
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000", "--no-reload"]
 
@@ -56,9 +54,7 @@ RUN composer dump-autoload --no-dev --no-interaction --optimize --no-scripts \
     && rm -f /usr/bin/composer
 
 ENV APP_ENV=production \
-    APP_DEBUG=false \
-    DB_CONNECTION=sqlite \
-    DB_DATABASE=/app/data/database.sqlite
+    APP_DEBUG=false
 VOLUME ["/app/data"]
 EXPOSE 80
 CMD ["apache2-foreground"]
