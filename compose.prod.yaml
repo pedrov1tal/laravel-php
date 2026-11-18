@@ -11,7 +11,7 @@ services:
       APP_URL: http://localhost:${API_PORT:-3001}
       DB_CONNECTION: pgsql
     ports:
-      - "${API_PORT:-3001}:80"
+      - "${API_PORT:-5001}:80"
     volumes:
       - api_data:/app/data
     restart: unless-stopped
@@ -35,7 +35,7 @@ services:
       args:
         VITE_API_URL: /api/v1
     ports:
-      - "${WEB_PORT:-5001}:80"
+      - "${WEB_PORT:-3001}:80"
     depends_on:
       api:
         condition: service_healthy
