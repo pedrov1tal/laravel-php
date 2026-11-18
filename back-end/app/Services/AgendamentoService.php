@@ -37,9 +37,14 @@ class AgendamentoService
                 ->where('barbeiro_id', $agendamento->barbeiro_id)
                 ->where('id', '<>', $agendamento->id)
                 ->whereIn('status', [StatusAgendamento::Pendente->value, StatusAgendamento::Confirmado->value])
-                ->where('data_hora', '<', $fim->format('Y-m-d H:i:s'))
-                ->whereRaw("datetime(data_hora, '+' || (select duracao_minutos from servicos where servicos.id = agendamentos.servico_id) || ' minutes') > ?", [$inicio->format('Y-m-d H:i:s')])
-                ->exists();
+                ->with('servico')
+                ->get()
+                ->contains(function (Agendamento $existente) use ($inicio, $fim, $barbearia): bool {
+                    $inicioExistente = CarbonImmutable::parse($existente->getRawOriginal('data_hora'), $barbearia->fuso_horario);
+                    $fimExistente = $inicioExistente->addMinutes($existente->servico->duracao_minutos);
+
+                    return $inicioExistente->lessThan($fim) && $fimExistente->greaterThan($inicio);
+                });
             if ($conflito) {
                 throw ValidationException::withMessages(['agendamento' => ['O horário não está mais disponível para confirmação.']]);
             }
@@ -191,11 +196,17 @@ class AgendamentoService
             $fim = $inicio->addMinutes($servico->duracao_minutos);
             $this->validarHorario($barbearia, $barbeiro, $inicio, $fim);
 
-            $conflito = Agendamento::query()->where('barbeiro_id', $barbeiro->id)
+            $conflito = Agendamento::query()
+                ->where('barbeiro_id', $barbeiro->id)
                 ->whereIn('status', [StatusAgendamento::Pendente->value, StatusAgendamento::Confirmado->value])
-                ->where('data_hora', '<', $fim->format('Y-m-d H:i:s'))
-                ->whereRaw("datetime(data_hora, '+' || (select duracao_minutos from servicos where servicos.id = agendamentos.servico_id) || ' minutes') > ?", [$inicio->format('Y-m-d H:i:s')])
-                ->exists();
+                ->with('servico')
+                ->get()
+                ->contains(function (Agendamento $existente) use ($inicio, $fim, $barbearia): bool {
+                    $inicioExistente = CarbonImmutable::parse($existente->getRawOriginal('data_hora'), $barbearia->fuso_horario);
+                    $fimExistente = $inicioExistente->addMinutes($existente->servico->duracao_minutos);
+
+                    return $inicioExistente->lessThan($fim) && $fimExistente->greaterThan($inicio);
+                });
             if ($conflito) {
                 throw ValidationException::withMessages(['data_hora' => ['Este horário acabou de ser reservado. Escolha outro.']]);
             }
