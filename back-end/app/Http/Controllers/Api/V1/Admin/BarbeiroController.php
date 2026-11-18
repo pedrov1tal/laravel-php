@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
+use Carbon\CarbonImmutable;
 
 class BarbeiroController extends Controller
 {
@@ -93,11 +94,18 @@ class BarbeiroController extends Controller
     {
         abort_unless($barbeiro->barbearia_id === $barbearia->id, 404);
         $dados = $request->validated();
+        $inicioAusencia = CarbonImmutable::parse($dados['inicio_em'], $barbearia->fuso_horario);
+        $fimAusencia = CarbonImmutable::parse($dados['fim_em'], $barbearia->fuso_horario);
         $conflito = $barbeiro->agendamentos()
             ->whereIn('status', [StatusAgendamento::Pendente->value, StatusAgendamento::Confirmado->value])
-            ->where('data_hora', '<', $dados['fim_em'])
-            ->whereRaw("datetime(data_hora, '+' || (select duracao_minutos from servicos where servicos.id = agendamentos.servico_id) || ' minutes') > ?", [$dados['inicio_em']])
-            ->exists();
+            ->with('servico')
+            ->get()
+            ->contains(function ($agendamento) use ($inicioAusencia, $fimAusencia, $barbearia): bool {
+                $inicioAgendamento = CarbonImmutable::parse($agendamento->getRawOriginal('data_hora'), $barbearia->fuso_horario);
+                $fimAgendamento = $inicioAgendamento->addMinutes($agendamento->servico->duracao_minutos);
+
+                return $inicioAgendamento->lessThan($fimAusencia) && $fimAgendamento->greaterThan($inicioAusencia);
+            });
 
         if ($conflito) {
             return response()->json(['message' => 'Há agendamentos ativos nesse período. Reorganize a agenda antes de registrar a ausência.'], 409);
