@@ -136,7 +136,7 @@ Depois, suba os serviços:
 docker compose up --build
 ```
 
-- Frontend: http://localhost:3001
+- Frontend: http://localhost:3003
 - API: http://localhost:8000 (health check: `/api/v1/health`)
 - As chamadas `/api` do Vite são encaminhadas ao serviço `api` dentro da rede Docker.
 - A primeira vez, crie as tabelas como o usuário Apache para manter a permissão de escrita do SQLite: `docker compose exec -u www-data api php artisan migrate --force`.
@@ -154,8 +154,8 @@ docker compose -f compose.prod.yaml run --build --rm api php artisan key:generat
 docker compose -f compose.prod.yaml up --build
 ```
 
-- Frontend estático servido por Nginx: http://localhost:8080
-- API Laravel: http://localhost:3001 (health check: `/health`)
-- O SQLite fica no volume nomeado `api_data`; `docker compose -f compose.prod.yaml down` o preserva. `down -v` remove o banco.
-- Execute a migração inicial como `www-data`: `docker compose -f compose.prod.yaml exec -u www-data api php artisan migrate --force`.
-- `VITE_API_URL` configura a base usada pelo frontend; no Compose de produção ela aponta para a API em `http://localhost:3001/api/v1`.
+- Frontend estático servido por Nginx na porta 3001 do host; no servidor, o domínio `https://pedro.frameworksweb.com.br` deve encaminhar o tráfego HTTPS para essa porta.
+- A API Laravel fica na rede interna do Compose e é encaminhada pelo Nginx em `/api/v1`; health check: `/api/v1/health`.
+- A produção usa PostgreSQL via `DATABASE_URL` definido em `back-end/.env` (Neon). O volume `api_data` guarda apenas arquivos locais da aplicação; `docker compose -f compose.prod.yaml down -v` o remove.
+- Para migrations do Neon, configure também `DATABASE_URL_UNPOOLED` com a conexão direta e execute como `www-data`, usando `DB_CONNECTION=pgsql_unpooled` apenas no comando: `docker compose -f compose.prod.yaml exec -u www-data -e DB_CONNECTION=pgsql_unpooled api php artisan migrate --force`.
+- `VITE_API_URL` configura a base usada pelo frontend; no Compose de produção ela aponta para `/api/v1` no mesmo domínio.
