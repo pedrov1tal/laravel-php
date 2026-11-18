@@ -5,15 +5,11 @@ services:
       target: dev
     env_file:
       - ./back-end/.env
-    environment:
-      DB_CONNECTION: sqlite
-      DB_DATABASE: /app/data/database.sqlite
     ports:
       - "8000:8000"
     volumes:
       - ./back-end:/app
       - laravel_vendor:/app/vendor
-      - laravel_data:/app/data
 
   web:
     build:
@@ -33,6 +29,5 @@ services:
       - frontend_node_modules:/app/node_modules
 
 volumes:
-  laravel_data:
   laravel_vendor:
   frontend_node_modules:
