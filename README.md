@@ -154,6 +154,8 @@ docker compose -f compose.prod.yaml run --build --rm api php artisan key:generat
 docker compose -f compose.prod.yaml up --build
 ```
 
+No servidor, crie `back-end/.env` a partir de `back-end/.env.production.example`, informe a URL pooled do Neon em `DATABASE_URL` e gere `APP_KEY`. Esse arquivo é privado e deve existir antes de executar o Compose. O health check de produção confirma a conexão com o Neon; se ela falhar, o container `api` fica indisponível e o frontend não é iniciado.
+
 - Frontend estático servido por Nginx na porta 3001 do host; no servidor, o domínio `https://pedro.frameworksweb.com.br` deve encaminhar o tráfego HTTPS para essa porta.
 - A API Laravel fica na rede interna do Compose e é encaminhada pelo Nginx em `/api/v1`; health check: `/api/v1/health`.
 - A produção usa PostgreSQL via `DATABASE_URL` definido em `back-end/.env` (Neon). Use a URL **pooled** do Neon, incluindo `sslmode=require`, e mantenha `DB_CONNECTION=pgsql` e `DB_SSLMODE=require`. O volume `api_data` guarda apenas arquivos locais da aplicação; `docker compose -f compose.prod.yaml down -v` o remove.

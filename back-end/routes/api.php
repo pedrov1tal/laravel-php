@@ -8,13 +8,17 @@ use App\Http\Controllers\Api\V1\Admin\AgendamentoController as AdminAgendamentoC
 use App\Http\Controllers\Api\V1\Admin\ServicoController;
 use App\Http\Controllers\Api\V1\Admin\ClienteController;
 use App\Http\Controllers\Api\V1\Admin\ConfiguracaoController;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->scopeBindings()->group(function () {
     Route::get('/health', function () {
+        DB::connection()->getPdo();
+
         return response()->json([
             'status' => 'ok',
             'message' => 'Backend conectado com sucesso.',
+            'database' => 'connected',
             'timestamp' => now()->toISOString(),
         ]);
     })->name('api.v1.health');
