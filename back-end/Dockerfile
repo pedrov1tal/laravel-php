@@ -42,6 +42,9 @@ EXPOSE 8000
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000", "--no-reload"]
 
 FROM php-base AS prod
+RUN printf '\nprecedence ::ffff:0:0/96  100\n' >> /etc/gai.conf
+# Prefer IPv4 because the production VPS has no IPv6 route to Neon.
+RUN printf '\nprecedence ::ffff:0:0/96  100\n' >> /etc/gai.conf
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /app
 COPY composer.json composer.lock ./
