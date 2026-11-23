@@ -4,7 +4,7 @@
 | `/login` | Login | Público | Feito |
 | `/cadastro` | Cadastro de cliente | Público | Feito |
 | `/conta` | Conta do cliente | Cliente autenticado | Feito |
-| `/agendar` | Novo agendamento | Público até confirmar; confirmação exige login | Feito |
+| `/agendar` | Lista as barbearias ativas; com `?estabelecimento=<slug>` abre diretamente o fluxo da unidade | Público até confirmar; confirmação exige login | Feito |
 | `/admin/:slug/dashboard` | Indicadores, gráficos operacionais e receita estimada (7/30/90 dias e mês atual), agenda diária e agenda completa dos próximos sete dias | Administrador da barbearia | Feito |
 | `/admin/:slug/agenda` | Agenda paginada, filtros, cadastro manual, cancelamento, conclusão e faltas | Administrador da barbearia | Feito |
 | `/admin/:slug/barbeiros` | Equipe, serviços atendidos, jornada semanal, pausas e ausências | Administrador da barbearia | Feito |

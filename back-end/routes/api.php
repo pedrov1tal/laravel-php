@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\AgendamentoController;
+use App\Http\Controllers\Api\V1\BarbeariaController;
 use App\Http\Controllers\Api\V1\Admin\DashboardController;
 use App\Http\Controllers\Api\V1\Admin\BarbeiroController;
 use App\Http\Controllers\Api\V1\Admin\AgendamentoController as AdminAgendamentoController;
@@ -30,6 +31,7 @@ Route::prefix('v1')->scopeBindings()->group(function () {
         Route::put('/senha', 'alterarSenha')->name('api.v1.auth.senha.update');
     });
 
+    Route::get('/barbearias', [BarbeariaController::class, 'index'])->name('api.v1.barbearias.index');
     Route::get('/barbearias/{barbearia}/contexto-agendamento', [AgendamentoController::class, 'contexto'])->name('api.v1.barbearias.contexto');
     Route::post('/barbearias/{barbearia}/agendamentos', [AgendamentoController::class, 'store'])->name('api.v1.barbearias.agendamentos.store');
     Route::get('/cliente/agendamentos', [AgendamentoController::class, 'meus'])->name('api.v1.cliente.agendamentos');

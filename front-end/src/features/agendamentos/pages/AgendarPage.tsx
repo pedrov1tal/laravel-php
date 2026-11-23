@@ -11,6 +11,7 @@ import { RevisaoAgendamento } from '../components/RevisaoAgendamento'
 import { SelecaoDataHorario } from '../components/SelecaoDataHorario'
 import { SelecaoProfissional } from '../components/SelecaoProfissional'
 import { SelecaoServico } from '../components/SelecaoServico'
+import { SelecaoBarbearia } from '../components/SelecaoBarbearia'
 import {
   agendaParaProfissional,
   carregarContextoAgendamento,
@@ -49,9 +50,18 @@ const descricoes: Record<Exclude<EtapaAgendamento, 'confirmacao'>, string> = {
 
 export function AgendarPage() {
   const [searchParams] = useSearchParams()
+  const slug = searchParams.get('estabelecimento') ?? undefined
+
+  return slug ? <FluxoAgendamento slug={slug} /> : <SelecaoBarbearia />
+}
+
+interface FluxoAgendamentoProps {
+  slug: string
+}
+
+function FluxoAgendamento({ slug }: FluxoAgendamentoProps) {
   const navigate = useNavigate()
   const location = useLocation()
-  const slug = searchParams.get('estabelecimento') ?? undefined
   const [carregamento, setCarregamento] = useState<{
     slug: string | undefined
     contexto: ContextoAgendamento | null
