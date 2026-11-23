@@ -12,6 +12,7 @@ import {
   usuarioAutenticadoEhCliente,
 } from './features/autenticacao/session'
 import { CircularTestimonials } from './features/home/components/CircularTestimonials'
+import { ClienteHomePage } from './features/home/ClienteHomePage'
 import { TubelightNavbar } from './shared/components/TubelightNavbar'
 import { clientSiteNavigationItems, siteNavigationItems } from './shared/navigation/siteNavigation'
 import './App.css'
@@ -107,6 +108,9 @@ export function RegisterPage() {
 
 function App() {
   const usuario = obterUsuarioAutenticado()
+  if (usuarioAutenticadoEhCliente() && usuario) {
+    return <ClienteHomePage />
+  }
   const primeiroNome = usuario?.nome.trim().split(/\s+/)[0]
   const destinoAdmin = destinoInicialDaSessao()
   const ehAdmin = destinoAdmin.startsWith('/admin/')

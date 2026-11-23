@@ -81,7 +81,7 @@ export function usuarioAutenticadoEhCliente() {
 
 export function destinoInicialDaSessao() {
   const sessao = lerJson<{ adminSlug?: string } | null>(CHAVE_SESSAO, null)
-  return sessao?.adminSlug ? `/admin/${sessao.adminSlug}/dashboard` : '/conta'
+  return sessao?.adminSlug ? `/admin/${sessao.adminSlug}/dashboard` : '/'
 }
 
 export function encerrarSessao() {

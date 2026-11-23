@@ -1,6 +1,6 @@
 | rota | tela | acesso | status |
 | --- | --- | --- | --- |
-| `/` | Home | Público; administradores autenticados veem acesso ao dashboard | Feito |
+| `/` | Home | Público; clientes autenticados veem a página inicial do cliente; administradores autenticados veem acesso ao dashboard | Feito |
 | `/login` | Login | Público | Feito |
 | `/cadastro` | Cadastro de cliente | Público | Feito |
 | `/conta` | Conta do cliente | Cliente autenticado | Feito |
