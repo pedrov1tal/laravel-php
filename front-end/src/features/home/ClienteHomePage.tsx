@@ -1,9 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { CalendarDays, Heart, LogOut, Plus } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
-import { TubelightNavbar } from '../../shared/components/TubelightNavbar'
-import { clientSiteNavigationItems } from '../../shared/navigation/siteNavigation'
 import { carregarBarbearias } from '../agendamentos/data/barbeariasApi'
 import type { BarbeariaDisponivel } from '../agendamentos/types/agendamento'
 import {
@@ -49,7 +46,6 @@ function chaveLocalData(data: Date) {
 }
 
 export function ClienteHomePage() {
-  const navigate = useNavigate()
   const usuario = obterUsuarioAutenticado()
   const primeiroNome = usuario?.nome.trim().split(/\s+/)[0] ?? 'Cliente'
   const [barbearias, setBarbearias] = useState<BarbeariaDisponivel[]>([])
@@ -133,7 +129,7 @@ export function ClienteHomePage() {
 
   function sair() {
     encerrarSessao()
-    navigate('/', { replace: true })
+    window.location.replace('/')
   }
 
   const hojeChave = chaveLocalData(new Date())
@@ -157,12 +153,22 @@ export function ClienteHomePage() {
           <span className="brand-mark">C</span>
           <span>CORTE RÁPIDO <small>AGENDA PARA BARBEARIAS</small></span>
         </a>
-        <TubelightNavbar items={clientSiteNavigationItems} />
-        <Button asChild variant="unstyled">
-          <a className="button button-dark client-home-account" href="/conta">
-            Olá, {primeiroNome} <span aria-hidden="true">↗</span>
-          </a>
-        </Button>
+        <div className="client-home-header-actions">
+          <Button asChild variant="unstyled">
+            <a className="button button-dark client-home-account" href="/conta">
+              Olá, {primeiroNome} <span aria-hidden="true">↗</span>
+            </a>
+          </Button>
+          <Button
+            variant="unstyled"
+            className="client-home-logout"
+            type="button"
+            onClick={sair}
+          >
+            <LogOut size={14} strokeWidth={1.8} aria-hidden="true" />
+            Sair
+          </Button>
+        </div>
       </header>
 
       <main className="client-home-main">
@@ -280,10 +286,6 @@ export function ClienteHomePage() {
 
       <footer className="client-home-footer">
         <span>© 2026 Corte Rápido</span>
-        <Button variant="unstyled" type="button" onClick={sair}>
-          <LogOut size={14} strokeWidth={1.8} aria-hidden="true" />
-          Sair
-        </Button>
       </footer>
     </div>
   )

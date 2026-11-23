@@ -27,6 +27,30 @@
   text-overflow: ellipsis;
 }
 
+.client-home-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.client-home-logout {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.client-home-logout:hover {
+  color: var(--copper);
+}
+
 .client-home-main {
   padding: 62px 0 110px;
 }
@@ -358,18 +382,6 @@
   letter-spacing: .08em;
 }
 
-.client-home-footer button {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--ink);
-  background: transparent;
-  border: 0;
-  cursor: pointer;
-  font: 800 10px 'Manrope', sans-serif;
-  text-transform: uppercase;
-}
-
 .client-home-shell button:focus-visible,
 .client-home-shell a:focus-visible {
   outline: 2px solid var(--copper);
@@ -404,6 +416,15 @@
 
   .client-home-account span {
     display: none;
+  }
+
+  .client-home-header-actions {
+    gap: 10px;
+  }
+
+  .client-home-logout {
+    min-height: 40px;
+    gap: 5px;
   }
 
   .client-home-main {
