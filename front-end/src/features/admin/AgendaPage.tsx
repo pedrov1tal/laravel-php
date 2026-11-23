@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
 import { Link, Navigate, useParams, useSearchParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { obterToken, obterUsuarioAutenticado } from '../autenticacao/session'
+import { AdminSidebar } from './AdminSidebar'
 import './admin.css'
 import './agenda.css'
 
@@ -150,7 +151,7 @@ export function AgendaPage() {
   }
 
   return <div className="admin-shell">
-    <aside className="admin-sidebar"><Link className="admin-brand" to={`/admin/${slug}/dashboard`}><span>CR</span> Barbearia</Link><nav aria-label="Navegação administrativa"><Link to={`/admin/${slug}/dashboard`}>Dashboard</Link><Link className="active" to={`/admin/${slug}/agenda`}>Agenda</Link><Link to={`/admin/${slug}/barbeiros`}>Barbeiros</Link><Link to={`/admin/${slug}/servicos`}>Serviços</Link><Link to={`/admin/${slug}/clientes`}>Clientes</Link><Link to={`/admin/${slug}/configuracoes`}>Configurações</Link></nav><div className="admin-account"><strong>{usuario.nome}</strong><span>Administração</span><Link to="/">Ir para a home</Link></div></aside>
+    <AdminSidebar slug={slug ?? ''} active="agenda" nomeUsuario={usuario.nome} />
     <main className="admin-main admin-calendar-main">
       <header className="admin-header"><div><p>Gestão da barbearia</p><h1>Agenda</h1></div><Link className="admin-home-link" to={`/admin/${slug}/dashboard`}>Voltar ao dashboard</Link></header>
       <section className="admin-card admin-calendar-filters" aria-label="Filtros da agenda">

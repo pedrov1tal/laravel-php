@@ -1,8 +1,9 @@
-import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
-import { CalendarDays, CircleAlert, Home, Menu, Scissors, Users, UserPlus, BadgeCheck, Percent, X, DollarSign } from 'lucide-react'
+import { useEffect, useState, type ReactNode } from 'react'
+import { CalendarDays, CircleAlert, Home, Scissors, Users, UserPlus, BadgeCheck, Percent, DollarSign } from 'lucide-react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
-import { encerrarSessao, obterToken, obterUsuarioAutenticado } from '../autenticacao/session'
+import { obterToken, obterUsuarioAutenticado } from '../autenticacao/session'
+import { AdminSidebar } from './AdminSidebar'
 import './admin.css'
 import './dashboard.css'
 
@@ -15,7 +16,6 @@ type Painel = {
   indicadores: { agendamentos_hoje: number; pendentes: number; concluidos: number; cancelados: number; faltas: number; faltas_mes: number; confirmados: number; clientes: number; novos_clientes_mes: number; taxa_cancelamento_mes: number; taxa_faltas_mes: number; receita_estimada_mes_centavos: number; receita_estimada_periodo_centavos: number }
   agenda: Array<{ id: number; inicio: string; fim: string; status: string; nao_compareceu: boolean; cliente: { nome: string; telefone: string }; profissional: { nome: string }; servico: { nome: string; preco: string } }>
   profissionais: Array<{ id: number; nome: string; agendamentos_hoje: number; concluidos_hoje: number; proximo_atendimento: string | null; jornada_configurada: boolean; servicos: Array<{ id: number; nome: string }> }>
-  servicos: Array<{ id: number; nome: string }>
   analiticos: {
     agendamentos_por_dia: Array<{ data: string; quantidade: number }>
     receita_estimada_por_dia: Array<{ data: string; centavos: number }>
@@ -29,16 +29,6 @@ type Painel = {
   limites: { financeiro: string }
 }
 
-const menu = [
-  { nome: 'Dashboard', destino: '#inicio' },
-  { nome: 'Agenda do dia', destino: '#agenda' },
-  { nome: 'Agenda completa', destino: '/agenda' },
-  { nome: 'Profissionais', destino: '#profissionais' },
-  { nome: 'Barbeiros', destino: '/barbeiros' },
-  { nome: 'Serviços', destino: '/servicos' },
-  { nome: 'Clientes', destino: '/clientes' },
-  { nome: 'Configurações', destino: '/configuracoes' },
-]
 const status: Record<string, string> = { pendente: 'Pendente', confirmado: 'Confirmado', concluido: 'Concluído', cancelado: 'Cancelado', nao_compareceu: 'Não compareceu' }
 
 export function DashboardPage() {
@@ -47,10 +37,8 @@ export function DashboardPage() {
   const [painel, setPainel] = useState<Painel | null>(null)
   const [erro, setErro] = useState<string | null>(null)
   const [mensagem, setMensagem] = useState<string | null>(null)
-  const [menuAberto, setMenuAberto] = useState(false)
   const [atualizacao, setAtualizacao] = useState(0)
   const [periodo, setPeriodo] = useState<7 | 30 | 90>(7)
-  const [salvandoBarbeiro, setSalvandoBarbeiro] = useState(false)
 
   useEffect(() => {
     const token = obterToken()
@@ -71,32 +59,6 @@ export function DashboardPage() {
   }, [slug, atualizacao, periodo])
 
   if (!usuario) return <Navigate to={`/login?retorno=${encodeURIComponent(`/admin/${slug ?? ''}/dashboard`)}`} replace />
-
-  async function cadastrarBarbeiro(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    if (!slug) return
-    const form = event.currentTarget
-    const dadosForm = new FormData(form)
-    const servicoIds = dadosForm.getAll('servico_ids[]').map(Number)
-    const token = obterToken()
-    setSalvandoBarbeiro(true)
-    try {
-      const resposta = await fetch(`${apiUrl}/admin/barbearias/${encodeURIComponent(slug)}/barbeiros`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ nome: dadosForm.get('nome'), telefone: dadosForm.get('telefone'), email: dadosForm.get('email') || null, servico_ids: servicoIds }),
-      })
-      const corpo = await resposta.json().catch(() => ({}))
-      if (!resposta.ok) throw new Error(corpo.message ?? 'Não foi possível cadastrar o barbeiro.')
-      form.reset()
-      setMensagem('Barbeiro cadastrado com sucesso.')
-      setAtualizacao((valor) => valor + 1)
-    } catch (falha) {
-      setMensagem(falha instanceof Error ? falha.message : 'Não foi possível cadastrar o barbeiro.')
-    } finally {
-      setSalvandoBarbeiro(false)
-    }
-  }
 
   async function confirmarAgendamento(id: number) {
     if (!slug || !window.confirm('Confirmar este agendamento? A disponibilidade será validada novamente.')) return
@@ -166,21 +128,9 @@ export function DashboardPage() {
   }
 
   return <div className="admin-shell" id="inicio">
-    <header className="admin-mobile-header">
-      <a className="admin-mobile-brand" href="/" aria-label="Voltar para a página inicial"><span>CR</span><strong>Início</strong></a>
-      <div className="admin-mobile-context"><strong>{painel?.barbearia.nome ?? 'Barbearia'}</strong><span>Administração</span></div>
-      <Button variant="unstyled" className="admin-menu-button" type="button" aria-controls="admin-navigation" aria-expanded={menuAberto} aria-label={menuAberto ? 'Fechar menu' : 'Abrir menu'} onClick={() => setMenuAberto((aberto) => !aberto)}>
-        {menuAberto ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
-      </Button>
-    </header>
-    {menuAberto && <Button variant="unstyled" className="admin-mobile-backdrop" type="button" aria-label="Fechar menu" onClick={() => setMenuAberto(false)} />}
-    <aside className={`admin-sidebar${menuAberto ? ' is-open' : ''}`} id="admin-navigation">
-      <a className="admin-brand" href="/"><span>CR</span> Barbearia</a>
-      <nav aria-label="Navegação administrativa">{menu.map((item) => <Link className={item.nome === 'Dashboard' ? 'active' : ''} to={item.destino.startsWith('/') ? `/admin/${slug}${item.destino}` : item.destino} key={item.nome} onClick={() => setMenuAberto(false)}>{item.nome}</Link>)}</nav>
-      <div className="admin-account"><strong>{usuario.nome}</strong><span>{painel?.barbearia.nome ?? 'Carregando barbearia…'}</span><Button variant="unstyled" type="button" onClick={() => { encerrarSessao(); window.location.assign('/') }}>Sair</Button></div>
-    </aside>
+    <AdminSidebar slug={slug ?? ''} active="dashboard" nomeUsuario={usuario.nome} contexto={painel?.barbearia.nome ?? 'Barbearia'} />
     <main className="admin-main" id="conteudo">
-      <header className="admin-header"><div><p>Visão geral</p><h1>Dashboard</h1></div><div className="admin-header-actions"><div className="admin-header-meta"><span>{painel?.barbearia.nome}</span><time>{painel ? new Date(`${painel.data}T12:00:00`).toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' }) : ''}</time></div><nav className="admin-dashboard-actions" aria-label="Acesso rápido"><Link className="dashboard-agenda-link is-primary" to={`/admin/${slug}/agenda?novo=1`}>Novo agendamento</Link><a className="dashboard-agenda-link" href="#dashboard-cadastrar-barbeiro">Novo barbeiro</a><Link className="dashboard-agenda-link" to={`/admin/${slug}/servicos`}>Novo serviço</Link><a className="dashboard-agenda-link" href="#agenda">Ver agenda de hoje</a></nav><Button asChild variant="unstyled"><Link className="admin-home-link" to="/"><Home size={16} /> Ir para a home</Link></Button></div></header>
+      <header className="admin-header"><div><p>Visão geral</p><h1>Dashboard</h1></div><div className="admin-header-actions"><div className="admin-header-meta"><span>{painel?.barbearia.nome}</span><time>{painel ? new Date(`${painel.data}T12:00:00`).toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' }) : ''}</time></div><nav className="admin-dashboard-actions" aria-label="Acesso rápido"><Link className="dashboard-agenda-link is-primary" to={`/admin/${slug}/agenda?novo=1`}>Novo agendamento</Link><Link className="dashboard-agenda-link" to={`/admin/${slug}/barbeiros`}>Novo barbeiro</Link><Link className="dashboard-agenda-link" to={`/admin/${slug}/servicos`}>Novo serviço</Link><a className="dashboard-agenda-link" href="#agenda">Ver agenda de hoje</a></nav><Button asChild variant="unstyled"><Link className="admin-home-link" to="/"><Home size={16} /> Ir para a home</Link></Button></div></header>
       {erro && <section className="admin-state" role="alert"><CircleAlert /><span>{erro}</span><Button variant="unstyled" type="button" onClick={() => setAtualizacao((valor) => valor + 1)}>Tentar novamente</Button></section>}
       {mensagem && <section className="admin-feedback" role="status">{mensagem}</section>}
       {!painel && !erro && <section className="admin-state">Carregando dados da operação…</section>}
@@ -240,19 +190,6 @@ export function DashboardPage() {
         <section className="admin-grid admin-bottom">
           <article className="admin-card"><div className="admin-card-title"><div><p>Atenção</p><h2>Pendências reais</h2></div></div>{painel.alertas.length ? <ul className="admin-alerts">{painel.alertas.map((alerta, index) => <li key={index}><CircleAlert />{alerta.mensagem}</li>)}</ul> : <Empty text="Nenhuma pendência de configuração encontrada." />}</article>
           <article className="admin-card"><div className="admin-card-title"><div><p>Serviços concluídos</p><h2>Como ler os valores</h2></div></div><p className="admin-note">{painel.limites.financeiro}</p></article>
-        </section>
-        <section className="admin-card admin-dashboard-barber-form" aria-labelledby="dashboard-cadastrar-barbeiro">
-          <div className="admin-card-title"><div><p>Equipe</p><h2 id="dashboard-cadastrar-barbeiro">Cadastrar barbeiro</h2></div></div>
-          <p className="admin-note">Cadastre um profissional diretamente pelo dashboard. Você pode associar serviços agora ou depois.</p>
-          <form className="admin-barber-form" onSubmit={cadastrarBarbeiro}>
-            <label>Nome<input name="nome" type="text" autoComplete="name" required maxLength={255} /></label>
-            <label>Telefone<input name="telefone" type="tel" autoComplete="tel" maxLength={30} /></label>
-            <label>E-mail<input name="email" type="email" autoComplete="email" maxLength={255} /></label>
-            <fieldset className="admin-barber-services"><legend>Serviços que realiza (opcional)</legend>
-              {painel.servicos.length === 0 ? <p>Nenhum serviço ativo. Você pode adicionar serviços depois pela área de serviços.</p> : painel.servicos.map((servico) => <label key={servico.id}><input type="checkbox" name="servico_ids[]" value={servico.id} />{servico.nome}</label>)}
-            </fieldset>
-            <Button variant="unstyled" className="button button-copper" type="submit" disabled={salvandoBarbeiro}>{salvandoBarbeiro ? 'Cadastrando…' : 'Cadastrar barbeiro'}</Button>
-          </form>
         </section>
       </>}
     </main>

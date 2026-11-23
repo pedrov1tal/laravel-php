@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { obterToken, obterUsuarioAutenticado } from '../autenticacao/session'
+import { AdminSidebar } from './AdminSidebar'
 import './admin.css'
 import './configuracoes.css'
 
@@ -67,7 +68,7 @@ export function ConfiguracoesPage() {
   }
 
   return <div className="admin-shell">
-    <aside className="admin-sidebar"><Link className="admin-brand" to={`/admin/${slug}/dashboard`}><span>CR</span> Barbearia</Link><nav aria-label="Navegação administrativa"><Link to={`/admin/${slug}/dashboard`}>Dashboard</Link><Link to={`/admin/${slug}/barbeiros`}>Barbeiros</Link><Link to={`/admin/${slug}/servicos`}>Serviços</Link><Link to={`/admin/${slug}/clientes`}>Clientes</Link><Link className="active" to={`/admin/${slug}/configuracoes`}>Configurações</Link></nav><div className="admin-account"><strong>{usuario.nome}</strong><span>{dados?.nome ?? 'Barbearia'}</span><Link to={`/admin/${slug}/dashboard`}>Voltar ao painel</Link></div></aside>
+    <AdminSidebar slug={slug ?? ''} active="configuracoes" nomeUsuario={usuario.nome} contexto={dados?.nome ?? 'Barbearia'} />
     <main className="admin-main admin-settings-main">
       <header className="admin-header"><div><p>Unidade</p><h1>Configurações</h1></div><Link className="admin-home-link" to={`/admin/${slug}/dashboard`}>Voltar ao dashboard</Link></header>
       {erro && <section className="admin-state" role="alert">{erro}</section>}

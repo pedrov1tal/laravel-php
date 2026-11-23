@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { obterToken, obterUsuarioAutenticado } from '../autenticacao/session'
+import { AdminSidebar } from './AdminSidebar'
 import './clientes.css'
 
 const apiUrl = import.meta.env.VITE_API_URL ?? '/api/v1'
@@ -86,7 +87,9 @@ export function ClientesPage() {
     await carregarClientes()
   }
 
-  return <main className="admin-clients-shell">
+  return <div className="admin-shell">
+    <AdminSidebar slug={slug ?? ''} active="clientes" nomeUsuario={usuario.nome} />
+    <main className="admin-clients-shell">
     <header className="admin-clients-header"><div><p>Gestão da barbearia</p><h1>Clientes</h1><span>Consulte visitas e mantenha observações privadas desta unidade.</span></div><div><Button asChild variant="unstyled"><Link to={`/admin/${slug}/dashboard`}>Voltar ao dashboard</Link></Button><Button asChild variant="unstyled"><Link to="/">Ir para a home</Link></Button></div></header>
     {mensagem && <p className="admin-clients-feedback" role="status">{mensagem}</p>}{erro && <p className="admin-clients-error" role="alert">{erro}</p>}
     <section className="admin-clients-layout">
@@ -100,5 +103,6 @@ export function ClientesPage() {
         <section className="admin-client-history"><h3>Histórico de agendamentos</h3>{clienteSelecionado.agendamentos?.length ? <ul>{clienteSelecionado.agendamentos.map((agendamento) => <li key={agendamento.id}><time>{new Date(`${agendamento.data_hora.replace(' ', 'T')}:00`).toLocaleString('pt-BR')}</time><span>{agendamento.servico?.nome ?? 'Serviço'} · {agendamento.barbeiro?.nome ?? 'Barbeiro'}</span><em>{agendamento.nao_compareceu ? 'Não compareceu' : agendamento.status}</em></li>)}</ul> : <p>Nenhum agendamento no histórico desta unidade.</p>}</section>
       </section> : <section className="admin-client-profile admin-client-placeholder"><p>Selecione um cliente para consultar as visitas, o histórico e as observações.</p></section>}
     </section>
-  </main>
+    </main>
+  </div>
 }

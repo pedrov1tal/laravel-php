@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { obterToken, obterUsuarioAutenticado } from '../autenticacao/session'
+import { AdminSidebar } from './AdminSidebar'
 import './barbeiros.css'
 
 const apiUrl = import.meta.env.VITE_API_URL ?? '/api/v1'
@@ -132,7 +133,9 @@ export function BarbeirosPage() {
     setJornada((diasAtuais) => diasAtuais.map((item, index) => index === indice ? { ...item, [campo]: valor } : item))
   }
 
-  return <main className="admin-barbers-shell">
+  return <div className="admin-shell">
+    <AdminSidebar slug={slug ?? ''} active="barbeiros" nomeUsuario={usuario.nome} />
+    <main className="admin-barbers-shell">
     <header className="admin-barbers-header"><div><p>Gestão da barbearia</p><h1>Barbeiros</h1><span>Equipe, serviços atendidos, jornada e ausências.</span></div><div><Button asChild variant="unstyled"><Link to={`/admin/${slug}/dashboard`}>Voltar ao dashboard</Link></Button><Button asChild variant="unstyled"><Link to="/">Ir para a home</Link></Button></div></header>
     {mensagem && <p className="admin-barbers-feedback" role="status">{mensagem}</p>}{erro && <p className="admin-barbers-error" role="alert">{erro}</p>}
     <section className="admin-barbers-layout"><section className="admin-barbers-list"><header><h2>Equipe cadastrada</h2><span>{barbeiros.length} nesta página</span></header>{carregando ? <p>Carregando barbeiros…</p> : barbeiros.length === 0 ? <p>Nenhum barbeiro cadastrado.</p> : <ul>{barbeiros.map((barbeiro) => <li key={barbeiro.id}><button className={selecionado?.id === barbeiro.id ? 'is-selected' : ''} onClick={() => void abrir(barbeiro)} type="button"><span className="admin-barber-avatar">{barbeiro.nome.slice(0, 2).toUpperCase()}</span><span><strong>{barbeiro.nome}</strong><small>{barbeiro.ativo ? 'Ativo' : 'Inativo'} · {barbeiro.servicos.length} serviços</small></span></button></li>)}</ul>}</section>
@@ -143,7 +146,8 @@ export function BarbeirosPage() {
         <section className="admin-barber-appointments"><h3>Agenda individual recente</h3>{selecionado.agendamentos?.length ? <ul>{selecionado.agendamentos.map((item) => <li key={item.id}><time>{horarioAusencia(item.data_hora)}</time><span>{item.cliente ?? 'Cliente'} · {item.servico ?? 'Serviço'}</span><em>{item.status}</em></li>)}</ul> : <p>Nenhum atendimento no histórico.</p>}</section>
       </section> : <section className="admin-barber-detail admin-barber-placeholder">Selecione um barbeiro para editar dados e horários.</section>}
     </section>
-  </main>
+    </main>
+  </div>
 }
 
 function horarioAusencia(valor: string) { return valor.replace('T', ' ').slice(0, 16) }

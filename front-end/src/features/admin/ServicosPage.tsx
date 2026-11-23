@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { obterToken, obterUsuarioAutenticado } from '../autenticacao/session'
+import { AdminSidebar } from './AdminSidebar'
 import './servicos.css'
 
 const apiUrl = import.meta.env.VITE_API_URL ?? '/api/v1'
@@ -106,7 +107,9 @@ export function ServicosPage() {
     }
   }
 
-  return <main className="admin-services-shell">
+  return <div className="admin-shell">
+    <AdminSidebar slug={slug ?? ''} active="servicos" nomeUsuario={usuario.nome} />
+    <main className="admin-services-shell">
     <header className="admin-services-header"><div><p>Gestão da barbearia</p><h1>Serviços</h1><span>Defina preços e duração usados no agendamento.</span></div><div><Button asChild variant="unstyled"><Link to={`/admin/${slug}/dashboard`}>Voltar ao dashboard</Link></Button><Button asChild variant="unstyled"><Link to="/">Ir para a home</Link></Button></div></header>
     {mensagem && <p className="admin-services-feedback" role="status">{mensagem}</p>}
     {erro && <p className="admin-services-error" role="alert">{erro}</p>}
@@ -122,5 +125,6 @@ export function ServicosPage() {
         {carregando ? <p className="admin-services-empty">Carregando serviços…</p> : servicos.length === 0 ? <p className="admin-services-empty">Nenhum serviço cadastrado.</p> : <ul>{servicos.map((servico) => <li key={servico.id}><div><h3>{servico.nome}{!servico.ativo && <span className="admin-services-inactive">Inativo</span>}</h3><p>{servico.descricao || 'Sem descrição'}</p><strong>{servico.duracao_minutos} min · R$ {Number(servico.preco).toFixed(2).replace('.', ',')}</strong></div><div className="admin-services-item-actions"><Button variant="unstyled" type="button" onClick={() => iniciarEdicao(servico)}>Editar</Button><Button variant="unstyled" type="button" onClick={() => void alterarAtivo(servico)}>{servico.ativo ? 'Desativar' : 'Reativar'}</Button><Button variant="unstyled" type="button" onClick={() => void excluir(servico)}>Excluir</Button></div></li>)}</ul>}
       </section>
     </section>
-  </main>
+    </main>
+  </div>
 }
