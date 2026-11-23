@@ -4,8 +4,8 @@
 FROM php:8.3-apache-bookworm AS php-base
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends libpq-dev \
-    && docker-php-ext-install pdo_pgsql \
+    && apt-get install -y --no-install-recommends libicu-dev libpq-dev \
+    && docker-php-ext-install intl pdo_pgsql \
     && rm -rf /var/lib/apt/lists/* \
     && a2enmod rewrite
 
