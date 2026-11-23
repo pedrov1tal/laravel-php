@@ -18,9 +18,33 @@ const contexto = {
     ...barbearia,
     iniciais: 'ES',
   },
-  servicos: [],
-  profissionais: [],
-  agendaPorProfissional: {},
+  servicos: [
+    {
+      id: 's1',
+      nome: 'Corte masculino',
+      descricao: 'Corte personalizado.',
+      duracaoMinutos: 45,
+      precoCentavos: 4500,
+    },
+  ],
+  profissionais: [
+    {
+      id: 'p1',
+      nome: 'Alex Martins',
+      especialidade: 'Cortes e acabamento',
+      iniciais: 'AM',
+      servicoIds: ['s1'],
+    },
+  ],
+  agendaPorProfissional: {
+    p1: [
+      {
+        data: '2026-11-24',
+        disponivel: true,
+        horarios: [{ horario: '14:00', disponivel: true }],
+      },
+    ],
+  },
 }
 
 function respostaJson(corpo: unknown, status = 200) {
@@ -35,9 +59,49 @@ function renderizarAgendamento(entrada = '/agendar') {
     <MemoryRouter initialEntries={[entrada]}>
       <Routes>
         <Route path="/agendar" element={<AgendarPage />} />
+        <Route path="/login" element={<h1>Entre para continuar</h1>} />
       </Routes>
     </MemoryRouter>,
   )
+}
+
+function simularApiDoFluxo() {
+  vi.stubGlobal('fetch', vi.fn(async (entrada: RequestInfo | URL) => {
+    const url = String(entrada)
+    return url.includes('/contexto-agendamento')
+      ? respostaJson(contexto)
+      : respostaJson({}, 201)
+  }))
+}
+
+function salvarSessaoCliente() {
+  localStorage.setItem('nexo:sessao-cliente', JSON.stringify({
+    token: 'token-de-teste',
+    usuario: {
+      id: '1',
+      nome: 'Ana Souza',
+      telefone: '(11) 99999-0000',
+      email: 'ana@exemplo.com',
+    },
+    adminSlug: null,
+    cliente: true,
+    possuiPerfilOperacional: false,
+  }))
+}
+
+async function selecionarAteHorario(user: ReturnType<typeof userEvent.setup>) {
+  await screen.findByRole('heading', { name: 'Escolha o serviço' })
+  await user.click(screen.getByRole('button', { name: /Corte masculino/ }))
+  await user.click(screen.getByRole('button', { name: 'Continuar' }))
+  await user.click(screen.getByRole('button', { name: /Alex Martins/ }))
+  await user.click(screen.getByRole('button', { name: 'Continuar' }))
+
+  const primeiraDataDisponivel = screen
+    .getAllByRole('button', { name: /^Selecionar / })
+    .find((button) => !button.hasAttribute('disabled'))
+  expect(primeiraDataDisponivel).toBeDefined()
+  await user.click(primeiraDataDisponivel!)
+  await user.click(screen.getByRole('button', { name: '14:00' }))
 }
 
 describe('AgendarPage', () => {
@@ -128,6 +192,57 @@ describe('AgendarPage', () => {
 
     expect(
       await screen.findByRole('heading', { name: 'Escolha o serviço' }),
+    ).toBeInTheDocument()
+  })
+
+  it('usa os dados da sessão e conclui o agendamento', async () => {
+    salvarSessaoCliente()
+    simularApiDoFluxo()
+    const user = userEvent.setup()
+    renderizarAgendamento('/agendar?estabelecimento=estudio-central')
+
+    await selecionarAteHorario(user)
+    await user.click(screen.getByRole('button', { name: 'Continuar' }))
+
+    expect(
+      screen.getByRole('heading', { name: 'Confirme sua conta' }),
+    ).toBeInTheDocument()
+    expect(screen.getByText('Ana Souza')).toBeInTheDocument()
+    expect(screen.queryByLabelText('Nome')).not.toBeInTheDocument()
+    await user.click(
+      screen.getByRole('button', { name: 'Continuar para revisão' }),
+    )
+    await user.click(
+      screen.getByRole('button', { name: 'Confirmar agendamento' }),
+    )
+
+    expect(
+      await screen.findByRole('heading', { name: 'Seu horário está marcado.' }),
+    ).toBeInTheDocument()
+  })
+
+  it('envia ao login e preserva o rascunho quando não há sessão', async () => {
+    simularApiDoFluxo()
+    const user = userEvent.setup()
+    renderizarAgendamento('/agendar?estabelecimento=estudio-central')
+
+    await selecionarAteHorario(user)
+    await user.click(screen.getByRole('button', { name: 'Continuar' }))
+
+    expect(
+      screen.getByRole('heading', { name: 'Entre para continuar' }),
+    ).toBeInTheDocument()
+    expect(sessionStorage.getItem('nexo:agendamento-pendente')).toContain('s1')
+  })
+
+  it('mostra erro para uma barbearia desconhecida', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => respostaJson({}, 404)))
+    renderizarAgendamento('/agendar?estabelecimento=inexistente')
+
+    expect(
+      await screen.findByRole('heading', {
+        name: 'Barbearia não encontrada ou indisponível.',
+      }),
     ).toBeInTheDocument()
   })
 })
