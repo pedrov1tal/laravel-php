@@ -1,0 +1,53 @@
+.swal2-container {
+  z-index: 1200;
+}
+
+.swal2-popup.app-swal-modal {
+  max-width: calc(100vw - 32px);
+  max-height: calc(100dvh - 32px);
+  padding: 28px;
+  overflow: hidden;
+  border: 1px solid #d9d6ce;
+  border-radius: 14px;
+  background: #fbfaf7;
+  color: #17231f;
+  box-shadow: 0 24px 80px rgba(23, 35, 31, .24);
+}
+
+.swal2-popup .app-swal-modal-title {
+  padding: 0 36px;
+  color: #17231f;
+  font: 500 30px/1.15 'Playfair Display', Georgia, serif;
+}
+
+.swal2-popup .app-swal-modal-content {
+  max-height: min(68dvh, 720px);
+  margin: 18px 0 0;
+  padding: 0 2px 2px;
+  overflow: auto;
+  color: #17231f;
+  text-align: left;
+}
+
+.swal2-popup .app-swal-modal-close {
+  color: #747a72;
+}
+
+.swal2-popup .app-swal-modal-close:hover {
+  color: #bd704c;
+}
+
+@media (max-width: 600px) {
+  .swal2-popup.app-swal-modal {
+    padding: 22px 18px;
+  }
+
+  .swal2-popup .app-swal-modal-title {
+    padding: 0 30px;
+    font-size: 25px;
+  }
+
+  .swal2-popup .app-swal-modal-content {
+    max-height: 72dvh;
+  }
+}

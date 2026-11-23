@@ -4,6 +4,7 @@ import { LogOut } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { TubelightNavbar } from '../../shared/components/TubelightNavbar'
 import { clientSiteNavigationItems, siteNavigationItems } from '../../shared/navigation/siteNavigation'
+import { confirmarAcao } from '../../shared/ui/alerts'
 import { encerrarSessao, obterToken, obterUsuarioAutenticado, usuarioAutenticadoEhCliente } from './session'
 import './conta.css'
 
@@ -68,7 +69,7 @@ export function ContaPage() {
 
   async function cancelarAgendamento(id: number) {
     const token = obterToken()
-    if (!token || !window.confirm('Deseja cancelar este agendamento?')) return
+    if (!token || !(await confirmarAcao('Deseja cancelar este agendamento?'))) return
     setMensagem(null)
     try {
       const resposta = await fetch(`${apiUrl}/cliente/agendamentos/${id}/cancelamento`, {

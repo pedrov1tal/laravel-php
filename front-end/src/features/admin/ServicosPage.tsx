@@ -3,6 +3,8 @@ import { Link, Navigate, useParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { obterToken, obterUsuarioAutenticado } from '../autenticacao/session'
 import { AdminSidebar } from './AdminSidebar'
+import { confirmarAcao } from '../../shared/ui/alerts'
+import { SweetAlertModal } from '../../shared/ui/SweetAlertModal'
 import './servicos.css'
 
 const apiUrl = import.meta.env.VITE_API_URL ?? '/api/v1'
@@ -17,6 +19,7 @@ export function ServicosPage() {
   const [servicos, setServicos] = useState<Servico[]>([])
   const [campos, setCampos] = useState<CamposServico>(camposVazios)
   const [editando, setEditando] = useState<number | null>(null)
+  const [formAberto, setFormAberto] = useState(false)
   const [carregando, setCarregando] = useState(true)
   const [mensagem, setMensagem] = useState<string | null>(null)
   const [erro, setErro] = useState<string | null>(null)
@@ -47,17 +50,31 @@ export function ServicosPage() {
     setEditando(servico.id)
     setCampos({ nome: servico.nome, descricao: servico.descricao ?? '', duracao_minutos: String(servico.duracao_minutos), preco: String(servico.preco) })
     setMensagem(null)
+    setErro(null)
+    setFormAberto(true)
+  }
+
+  function iniciarCadastro() {
+    setEditando(null)
+    setCampos(camposVazios)
+    setMensagem(null)
+    setErro(null)
+    setFormAberto(true)
   }
 
   function limparFormulario() {
     setEditando(null)
     setCampos(camposVazios)
+    setFormAberto(false)
+    setErro(null)
   }
 
   async function salvar(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (!slug) return
+    const eraEdicao = editando !== null
     setMensagem(null)
+    setErro(null)
     try {
       const resposta = await fetch(`${apiUrl}/admin/barbearias/${encodeURIComponent(slug)}/servicos${editando ? `/${editando}` : ''}`, {
         method: editando ? 'PUT' : 'POST',
@@ -67,10 +84,10 @@ export function ServicosPage() {
       const corpo = await resposta.json().catch(() => ({}))
       if (!resposta.ok) throw new Error(corpo.message ?? 'Não foi possível salvar o serviço.')
       limparFormulario()
-      setMensagem(editando ? 'Serviço atualizado.' : 'Serviço cadastrado.')
+      setMensagem(eraEdicao ? 'Serviço atualizado.' : 'Serviço cadastrado.')
       await carregarServicos()
     } catch (falha) {
-      setMensagem(falha instanceof Error ? falha.message : 'Não foi possível salvar o serviço.')
+      setErro(falha instanceof Error ? falha.message : 'Não foi possível salvar o serviço.')
     }
   }
 
@@ -93,7 +110,7 @@ export function ServicosPage() {
   }
 
   async function excluir(servico: Servico) {
-    if (!slug || !window.confirm(`Excluir o serviço “${servico.nome}”?`)) return
+    if (!slug || !(await confirmarAcao(`Excluir o serviço “${servico.nome}”?`))) return
     try {
       const resposta = await fetch(`${apiUrl}/admin/barbearias/${encodeURIComponent(slug)}/servicos/${servico.id}`, {
         method: 'DELETE', headers: { Authorization: `Bearer ${obterToken()}` },
@@ -110,21 +127,24 @@ export function ServicosPage() {
   return <div className="admin-shell">
     <AdminSidebar slug={slug ?? ''} active="servicos" nomeUsuario={usuario.nome} />
     <main className="admin-services-shell">
-    <header className="admin-services-header"><div><p>Gestão da barbearia</p><h1>Serviços</h1><span>Defina preços e duração usados no agendamento.</span></div><div><Button asChild variant="unstyled"><Link to={`/admin/${slug}/dashboard`}>Voltar ao dashboard</Link></Button><Button asChild variant="unstyled"><Link to="/">Ir para a home</Link></Button></div></header>
+    <header className="admin-services-header"><div><p>Gestão da barbearia</p><h1>Serviços</h1><span>Defina preços e duração usados no agendamento.</span></div><div><Button variant="unstyled" className="admin-services-add" type="button" onClick={iniciarCadastro}>Adicionar serviço</Button><Button asChild variant="unstyled"><Link to={`/admin/${slug}/dashboard`}>Voltar ao dashboard</Link></Button><Button asChild variant="unstyled"><Link to="/">Ir para a home</Link></Button></div></header>
     {mensagem && <p className="admin-services-feedback" role="status">{mensagem}</p>}
     {erro && <p className="admin-services-error" role="alert">{erro}</p>}
     <section className="admin-services-layout">
-      <form className="admin-services-form" onSubmit={salvar}>
-        <p>{editando ? 'Atualizar cadastro' : 'Novo serviço'}</p><h2>{editando ? 'Editar serviço' : 'Cadastrar serviço'}</h2>
-        <label>Nome<input value={campos.nome} maxLength={120} required onChange={(event) => setCampos({ ...campos, nome: event.target.value })} /></label>
-        <label>Descrição<textarea value={campos.descricao} maxLength={1000} rows={3} onChange={(event) => setCampos({ ...campos, descricao: event.target.value })} /></label>
-        <div className="admin-services-form-row"><label>Duração (minutos)<input type="number" min={5} max={480} step={5} value={campos.duracao_minutos} required onChange={(event) => setCampos({ ...campos, duracao_minutos: event.target.value })} /></label><label>Preço (R$)<input type="number" min={0} max={100000} step="0.01" value={campos.preco} required onChange={(event) => setCampos({ ...campos, preco: event.target.value })} /></label></div>
-        <div className="admin-services-form-actions"><Button variant="unstyled" className="admin-services-primary" type="submit">{editando ? 'Salvar alterações' : 'Cadastrar serviço'}</Button>{editando && <Button variant="unstyled" className="admin-services-secondary" type="button" onClick={limparFormulario}>Cancelar edição</Button>}</div>
-      </form>
       <section className="admin-services-list" aria-label="Serviços cadastrados"><header><div><p>Catálogo</p><h2>Serviços da barbearia</h2></div><span>{servicos.length} itens</span></header>
         {carregando ? <p className="admin-services-empty">Carregando serviços…</p> : servicos.length === 0 ? <p className="admin-services-empty">Nenhum serviço cadastrado.</p> : <ul>{servicos.map((servico) => <li key={servico.id}><div><h3>{servico.nome}{!servico.ativo && <span className="admin-services-inactive">Inativo</span>}</h3><p>{servico.descricao || 'Sem descrição'}</p><strong>{servico.duracao_minutos} min · R$ {Number(servico.preco).toFixed(2).replace('.', ',')}</strong></div><div className="admin-services-item-actions"><Button variant="unstyled" type="button" onClick={() => iniciarEdicao(servico)}>Editar</Button><Button variant="unstyled" type="button" onClick={() => void alterarAtivo(servico)}>{servico.ativo ? 'Desativar' : 'Reativar'}</Button><Button variant="unstyled" type="button" onClick={() => void excluir(servico)}>Excluir</Button></div></li>)}</ul>}
       </section>
     </section>
+    <SweetAlertModal open={formAberto} title={editando ? 'Editar serviço' : 'Adicionar serviço'} onClose={limparFormulario}>
+      <form className="admin-services-form" onSubmit={(event) => void salvar(event)}>
+        {erro && <p className="admin-services-error" role="alert">{erro}</p>}
+        <p>{editando ? 'Atualizar cadastro' : 'Novo serviço'}</p><h2>{editando ? 'Editar serviço' : 'Cadastrar serviço'}</h2>
+        <label>Nome<input value={campos.nome} maxLength={120} required onChange={(event) => setCampos({ ...campos, nome: event.target.value })} /></label>
+        <label>Descrição<textarea value={campos.descricao} maxLength={1000} rows={3} onChange={(event) => setCampos({ ...campos, descricao: event.target.value })} /></label>
+        <div className="admin-services-form-row"><label>Duração (minutos)<input type="number" min={5} max={480} step={5} value={campos.duracao_minutos} required onChange={(event) => setCampos({ ...campos, duracao_minutos: event.target.value })} /></label><label>Preço (R$)<input type="number" min={0} max={100000} step="0.01" value={campos.preco} required onChange={(event) => setCampos({ ...campos, preco: event.target.value })} /></label></div>
+        <div className="admin-services-form-actions"><Button variant="unstyled" className="admin-services-primary" type="submit">{editando ? 'Salvar alterações' : 'Cadastrar serviço'}</Button><Button variant="unstyled" className="admin-services-secondary" type="button" onClick={limparFormulario}>Cancelar</Button></div>
+      </form>
+    </SweetAlertModal>
     </main>
   </div>
 }

@@ -3,6 +3,8 @@ import { Link, Navigate, useParams, useSearchParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { obterToken, obterUsuarioAutenticado } from '../autenticacao/session'
 import { AdminSidebar } from './AdminSidebar'
+import { confirmarAcao } from '../../shared/ui/alerts'
+import { SweetAlertModal } from '../../shared/ui/SweetAlertModal'
 import './admin.css'
 import './agenda.css'
 
@@ -88,9 +90,9 @@ export function AgendaPage() {
 
   async function executarAcao(item: Agendamento, acao: 'cancelamento' | 'conclusao' | 'nao-comparecimento') {
     if (!slug) return
-    if (acao === 'cancelamento' && !window.confirm('Cancelar este agendamento?')) return
-    if (acao === 'conclusao' && !window.confirm('Marcar este atendimento como concluído?')) return
-    if (acao === 'nao-comparecimento' && !window.confirm('Registrar que o cliente não compareceu?')) return
+    if (acao === 'cancelamento' && !(await confirmarAcao('Cancelar este agendamento?'))) return
+    if (acao === 'conclusao' && !(await confirmarAcao('Marcar este atendimento como concluído?'))) return
+    if (acao === 'nao-comparecimento' && !(await confirmarAcao('Registrar que o cliente não compareceu?'))) return
     const token = obterToken()
     if (!token) { setErro('Sua sessão expirou. Entre novamente para continuar.'); return }
     try {
@@ -150,6 +152,19 @@ export function AgendaPage() {
     }
   }
 
+  function fecharFormularioManual() {
+    setFormAberto(false)
+    setClienteId('')
+    setServicoId('')
+    setProfissionalId('')
+    setDataManual(hojeLocal())
+    setHoraManual('09:00')
+    setStatusManual('confirmado')
+    setBuscaCliente('')
+    setClientes([])
+    setErro(null)
+  }
+
   return <div className="admin-shell">
     <AdminSidebar slug={slug ?? ''} active="agenda" nomeUsuario={usuario.nome} />
     <main className="admin-main admin-calendar-main">
@@ -161,9 +176,10 @@ export function AgendaPage() {
         <label>Status<select value={statusFiltro} onChange={(event) => { setStatusFiltro(event.target.value); setPagina(1) }}><option value="">Todos</option>{Object.entries(statusLabels).map(([valor, nome]) => <option key={valor} value={valor}>{nome}</option>)}</select></label>
         <label className="admin-calendar-search">Buscar cliente<input value={busca} onChange={(event) => { setBusca(event.target.value); setPagina(1) }} placeholder="Nome, telefone ou e-mail" /></label>
       </section>
-      <div className="admin-calendar-create-toggle"><Button variant="unstyled" className="button button-copper" type="button" onClick={() => setFormAberto((aberto) => !aberto)}>{formAberto ? 'Fechar formulário' : 'Novo agendamento manual'}</Button></div>
-      {formAberto && <form className="admin-card admin-manual-booking" onSubmit={(event) => void criarAgendamento(event)}>
-        <h2>Novo agendamento</h2>
+      <div className="admin-calendar-create-toggle"><Button variant="unstyled" className="button button-copper" type="button" onClick={() => setFormAberto(true)}>Novo agendamento manual</Button></div>
+      <SweetAlertModal open={formAberto} title="Novo agendamento manual" onClose={fecharFormularioManual}>
+        <form className="admin-card admin-manual-booking" onSubmit={(event) => void criarAgendamento(event)}>
+        {erro && <p className="admin-state" role="alert">{erro}</p>}
         <label>Buscar cliente<input required minLength={2} value={buscaCliente} onChange={(event) => void buscarClientes(event.target.value)} placeholder="Digite nome, telefone ou e-mail" /></label>
         <label>Cliente<select required value={clienteId} onChange={(event) => setClienteId(event.target.value)}><option value="">Selecione um cliente</option>{clientes.map((cliente) => <option key={cliente.id} value={cliente.id}>{cliente.nome} · {cliente.telefone}</option>)}</select></label>
         <label>Serviço<select required value={servicoId} onChange={(event) => { setServicoId(event.target.value); setProfissionalId('') }}><option value="">Selecione um serviço</option>{servicos.map((servico) => <option key={servico.id} value={servico.id}>{servico.nome} · {servico.duracao_minutos} min</option>)}</select></label>
@@ -172,7 +188,8 @@ export function AgendaPage() {
         <label>Horário<input required type="time" step={1800} value={horaManual} onChange={(event) => setHoraManual(event.target.value)} /></label>
         <label>Status inicial<select value={statusManual} onChange={(event) => setStatusManual(event.target.value)}><option value="confirmado">Confirmado</option><option value="pendente">Pendente</option></select></label>
         <Button variant="unstyled" className="button button-copper" type="submit">Criar agendamento</Button>
-      </form>}
+        </form>
+      </SweetAlertModal>
       {erro && <section className="admin-state" role="alert">{erro}</section>}
       {mensagem && <section className="admin-feedback" role="status">{mensagem}</section>}
       <section className="admin-card admin-calendar-card"><div className="admin-card-title"><div><p>Período selecionado</p><h2>{agendamentos.length} agendamentos nesta página</h2></div></div>

@@ -5,7 +5,10 @@
 .admin-services-header span{display:block;margin-top:8px;color:#647169;font-size:14px}
 .admin-services-header>div:last-child{display:flex;gap:9px;flex-wrap:wrap}
 .admin-services-header a,.admin-services-secondary{display:inline-flex;align-items:center;min-height:40px;padding:9px 12px;border:1px solid #d8d2c8;border-radius:8px;color:#33443b;text-decoration:none;font-size:13px}
-.admin-services-layout{display:grid;grid-template-columns:minmax(260px,.75fr) minmax(0,1.5fr);gap:20px;align-items:start}
+.admin-services-add{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:9px 12px;border:0;border-radius:8px;background:#bd704c;color:#fff;font-size:13px;font-weight:600;cursor:pointer}
+.admin-services-add:hover{background:#9f5c3d}
+.admin-services-add:focus-visible{outline:2px solid #bd704c;outline-offset:2px}
+.admin-services-layout{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start}
 .admin-services-form,.admin-services-list{padding:24px;background:#fff;border:1px solid #e5dfd5;border-radius:14px}
 .admin-services-form{display:grid;gap:14px}
 .admin-services-form h2,.admin-services-list h2{font-size:23px}

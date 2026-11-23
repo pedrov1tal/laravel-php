@@ -4,6 +4,7 @@ import { Link, Navigate, useParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { obterToken, obterUsuarioAutenticado } from '../autenticacao/session'
 import { AdminSidebar } from './AdminSidebar'
+import { confirmarAcao } from '../../shared/ui/alerts'
 import './admin.css'
 import './dashboard.css'
 
@@ -61,7 +62,7 @@ export function DashboardPage() {
   if (!usuario) return <Navigate to={`/login?retorno=${encodeURIComponent(`/admin/${slug ?? ''}/dashboard`)}`} replace />
 
   async function confirmarAgendamento(id: number) {
-    if (!slug || !window.confirm('Confirmar este agendamento? A disponibilidade será validada novamente.')) return
+    if (!slug || !(await confirmarAcao('Confirmar este agendamento? A disponibilidade será validada novamente.'))) return
     const token = obterToken()
     try {
       const resposta = await fetch(`${apiUrl}/admin/barbearias/${encodeURIComponent(slug)}/agendamentos/${id}/confirmacao`, {
@@ -77,7 +78,7 @@ export function DashboardPage() {
   }
 
   async function cancelarHorario(id: number) {
-    if (!slug || !window.confirm('Deseja cancelar este horário? O agendamento será liberado para uma nova reserva.')) return
+    if (!slug || !(await confirmarAcao('Deseja cancelar este horário? O agendamento será liberado para uma nova reserva.'))) return
     const token = obterToken()
     try {
       const resposta = await fetch(`${apiUrl}/admin/barbearias/${encodeURIComponent(slug)}/agendamentos/${id}/cancelamento`, {
@@ -95,7 +96,7 @@ export function DashboardPage() {
   }
 
   async function concluirAtendimento(id: number) {
-    if (!slug || !window.confirm('Marcar este atendimento como concluído?')) return
+    if (!slug || !(await confirmarAcao('Marcar este atendimento como concluído?'))) return
     const token = obterToken()
     try {
       const resposta = await fetch(`${apiUrl}/admin/barbearias/${encodeURIComponent(slug)}/agendamentos/${id}/conclusao`, {
@@ -112,7 +113,7 @@ export function DashboardPage() {
   }
 
   async function registrarFalta(id: number) {
-    if (!slug || !window.confirm('Registrar que o cliente não compareceu?')) return
+    if (!slug || !(await confirmarAcao('Registrar que o cliente não compareceu?'))) return
     const token = obterToken()
     try {
       const resposta = await fetch(`${apiUrl}/admin/barbearias/${encodeURIComponent(slug)}/agendamentos/${id}/nao-comparecimento`, {
