@@ -556,6 +556,73 @@
   padding: 40px;
 }
 
+.booking-selection-layout {
+  width: min(1180px, calc(100% - 80px));
+  margin: 0 auto;
+  padding: 72px 0 110px;
+}
+
+.booking-selection-layout > section {
+  max-width: 920px;
+}
+
+.booking-selection-layout h1 {
+  max-width: 780px;
+  margin: 18px 0 22px;
+  font: 500 clamp(48px, 6vw, 78px)/.98 'Playfair Display', Georgia, serif;
+  letter-spacing: -.045em;
+}
+
+.booking-barbershop-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid var(--line);
+}
+
+.booking-barbershop-card {
+  display: flex;
+  min-height: 260px;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 28px;
+  color: inherit;
+  border-bottom: 1px solid var(--line);
+  transition: background .2s ease, box-shadow .2s ease;
+}
+
+.booking-barbershop-card:nth-child(even) {
+  border-left: 1px solid var(--line);
+}
+
+.booking-barbershop-card:hover {
+  background: #f0ece3;
+  box-shadow: inset 3px 0 0 var(--copper);
+}
+
+.booking-barbershop-card strong {
+  margin: 30px 0 10px;
+  font: 600 24px 'Playfair Display', Georgia, serif;
+}
+
+.booking-barbershop-card p,
+.booking-barbershop-card address {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-style: normal;
+  line-height: 1.65;
+}
+
+.booking-barbershop-card address {
+  margin-top: 12px;
+}
+
+.booking-barbershop-card b {
+  margin-top: auto;
+  padding-top: 28px;
+  font: 12px 'DM Mono', monospace;
+}
+
 .booking-confirmation {
   max-width: 740px;
 }
@@ -637,7 +704,8 @@
 
 @media (max-width: 600px) {
   .booking-header,
-  .booking-layout {
+  .booking-layout,
+  .booking-selection-layout {
     width: min(100% - 40px, 560px);
   }
 
@@ -703,6 +771,19 @@
     border-left: 0;
   }
 
+  .booking-barbershop-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-barbershop-card {
+    min-height: 220px;
+    padding: 24px 18px;
+  }
+
+  .booking-barbershop-card:nth-child(even) {
+    border-left: 0;
+  }
+
   .booking-time-grid {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -743,7 +824,8 @@
 
 @media (max-width: 360px) {
   .booking-header,
-  .booking-layout {
+  .booking-layout,
+  .booking-selection-layout {
     width: calc(100% - 32px);
   }
 

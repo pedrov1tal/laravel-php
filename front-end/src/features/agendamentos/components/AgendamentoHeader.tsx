@@ -5,7 +5,7 @@ import { siteNavigationItems } from '../../../shared/navigation/siteNavigation'
 import type { Estabelecimento } from '../types/agendamento'
 
 interface AgendamentoHeaderProps {
-  estabelecimento: Estabelecimento
+  estabelecimento?: Estabelecimento
   retorno: string
 }
 
@@ -24,7 +24,9 @@ export function AgendamentoHeader({
       <a
         className="booking-brand brand"
         href="/"
-        aria-label={`Voltar para o início. Agendamento para ${estabelecimento.nome}.`}
+        aria-label={estabelecimento
+          ? `Voltar para o início. Agendamento para ${estabelecimento.nome}.`
+          : 'Voltar para o início.'}
       >
       </a>
       <TubelightNavbar items={siteNavigationItems} />

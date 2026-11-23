@@ -6,6 +6,15 @@ export type EtapaAgendamento =
   | 'revisao'
   | 'confirmacao'
 
+export interface BarbeariaDisponivel {
+  id: string
+  slug: string
+  nome: string
+  descricao: string
+  endereco: string
+  telefone: string
+}
+
 export interface Estabelecimento {
   id: string
   slug: string
