@@ -100,3 +100,233 @@
 :root[data-theme='dark'] .login-feedback.login-error {
   color: #e39a89;
 }
+
+:root[data-theme='dark'] .client-home-shell {
+  color: var(--ink);
+  background: var(--paper);
+}
+
+:root[data-theme='dark'] .client-home-shell .client-favorite-card,
+:root[data-theme='dark'] .client-home-shell .client-week {
+  background: var(--theme-surface);
+  border-color: var(--line);
+}
+
+:root[data-theme='dark'] .client-home-shell .client-favorite-cover,
+:root[data-theme='dark'] .client-home-shell .client-favorite-cover.cover-1,
+:root[data-theme='dark'] .client-home-shell .client-favorite-cover.cover-2 {
+  background: var(--theme-surface-hover);
+}
+
+:root[data-theme='dark'] .client-home-shell .client-favorite-cover button {
+  color: var(--ink);
+  background: rgba(22, 29, 25, .92);
+}
+
+:root[data-theme='dark'] .admin-shell,
+:root[data-theme='dark'] .admin-barbers-shell,
+:root[data-theme='dark'] .admin-services-shell,
+:root[data-theme='dark'] .admin-clients-shell {
+  --admin-ink: var(--ink);
+  --admin-muted: var(--muted);
+  --admin-copper: var(--copper);
+  color: var(--ink);
+  background: var(--paper);
+}
+
+:root[data-theme='dark'] .admin-shell :is(
+  .admin-card,
+  .admin-metric,
+  .admin-state,
+  .admin-barbers-list,
+  .admin-barber-detail,
+  .admin-barber-create,
+  .admin-services-form,
+  .admin-services-list,
+  .admin-clients-list,
+  .admin-client-profile,
+  .admin-settings-summary,
+  .admin-client-stats div
+) {
+  color: var(--ink);
+  background: var(--theme-surface);
+  border-color: var(--line);
+}
+
+:root[data-theme='dark'] .admin-shell :is(
+  input:not([type='checkbox']):not([type='color']),
+  textarea,
+  select
+) {
+  color: var(--ink);
+  background: var(--theme-surface-alt);
+  border-color: var(--line);
+}
+
+:root[data-theme='dark'] .admin-shell :is(
+  .admin-home-link,
+  .admin-barbers-header a,
+  .admin-services-header a,
+  .admin-services-secondary,
+  .admin-clients-header a,
+  .admin-clients-pagination button,
+  .admin-services-item-actions button,
+  .admin-barber-confirm-remove button,
+  .admin-settings-cancel
+) {
+  color: var(--ink);
+  background: var(--theme-surface-alt);
+  border-color: var(--line);
+}
+
+:root[data-theme='dark'] .admin-shell :is(
+  .admin-header-meta time,
+  .admin-card-title > span,
+  .admin-metric small,
+  .admin-agenda-list time small,
+  .admin-agenda-list span,
+  .admin-team small,
+  .admin-team b,
+  .admin-note,
+  .admin-empty,
+  .admin-state,
+  .admin-barbers-header span,
+  .admin-clients-header span,
+  .admin-services-header span,
+  .admin-clients-list > header > span,
+  .admin-clients-row-info small,
+  .admin-clients-row-visits,
+  .admin-clients-pagination,
+  .admin-clients-empty,
+  .admin-client-placeholder p,
+  .admin-client-stats small,
+  .admin-client-history li span,
+  .admin-client-history time,
+  .admin-services-list li strong,
+  .admin-services-list > header > span,
+  .admin-services-list li p,
+  .admin-services-empty,
+  .admin-settings-fields label,
+  .admin-hours-row label,
+  .admin-settings-limit,
+  .admin-manual-booking label,
+  .admin-calendar-filters label,
+  .admin-calendar-table td small,
+  .admin-calendar-pagination,
+  .admin-barbers-list > header > span,
+  .admin-barbers-list small,
+  .admin-barber-create-fields label,
+  .admin-barber-create-services legend,
+  .admin-barber-create-services p,
+  .admin-barber-profile-form label,
+  .admin-barber-day > label:not(.admin-barber-day-closed),
+  .admin-barber-day-closed,
+  .admin-barber-day > span,
+  .admin-barber-absence > p,
+  .admin-barber-appointments > p,
+  .admin-barber-list > p,
+  .admin-barber-placeholder
+) {
+  color: var(--muted);
+}
+
+:root[data-theme='dark'] .admin-shell .admin-alerts li,
+:root[data-theme='dark'] .admin-shell .admin-barber-appointments li em {
+  color: #dfc3ad;
+}
+
+:root[data-theme='dark'] .admin-shell :is(
+  .status-confirmado,
+  .status-concluido
+) {
+  color: #91cfa4;
+}
+
+:root[data-theme='dark'] .admin-shell .status-cancelado {
+  color: #e39a89;
+}
+
+:root[data-theme='dark'] .admin-shell :is(
+  .admin-header p,
+  .admin-card-title p,
+  .admin-analytics-heading p,
+  .admin-upcoming .admin-card-title > a,
+  .admin-clients-header p,
+  .admin-clients-list > header p,
+  .admin-client-profile > header p,
+  .admin-services-header p,
+  .admin-services-form > p,
+  .admin-services-list header p,
+  .admin-barbers-header p,
+  .admin-barber-detail > header p,
+  .admin-barber-create > header p,
+  .admin-settings-summary dt,
+  .admin-calendar-table th,
+  .admin-calendar-actions button,
+  .admin-calendar-pagination button
+) {
+  color: var(--copper);
+}
+
+:root[data-theme='dark'] .admin-shell :is(
+  .admin-agenda-list li,
+  .admin-team li,
+  .admin-alerts li,
+  .admin-hours-row,
+  .admin-settings-summary dl div,
+  .admin-calendar-table th,
+  .admin-calendar-table td,
+  .admin-clients-list li,
+  .admin-client-notes,
+  .admin-client-history li,
+  .admin-services-list li,
+  .admin-barbers-list li,
+  .admin-barber-profile-form,
+  .admin-barber-schedule-form,
+  .admin-barber-absence,
+  .admin-barber-appointments,
+  .admin-barber-day
+) {
+  border-color: var(--line);
+}
+
+:root[data-theme='dark'] .admin-shell :is(
+  .admin-clients-list li > button,
+  .admin-barbers-list li button
+) {
+  color: var(--ink);
+  background: transparent;
+}
+
+:root[data-theme='dark'] .admin-shell :is(
+  .admin-clients-list li > button:hover,
+  .admin-clients-list li > button.is-selected,
+  .admin-barbers-list li button:hover,
+  .admin-barbers-list li button.is-selected,
+  .admin-services-item-actions button:hover,
+  .admin-services-header a:hover,
+  .admin-services-secondary:hover,
+  .admin-settings-cancel:hover,
+  .admin-home-link:hover
+) {
+  background: var(--theme-surface-hover);
+}
+
+:root[data-theme='dark'] .admin-shell .admin-agenda-list li:hover,
+:root[data-theme='dark'] .admin-shell .admin-upcoming-list li:hover {
+  background: var(--theme-surface-hover);
+}
+
+:root[data-theme='dark'] .admin-shell .admin-metrics > .admin-metric:first-child {
+  background: #20372d;
+  border-color: #3b5948;
+}
+
+:root[data-theme='dark'] .admin-shell .admin-bar-track {
+  background: linear-gradient(to top, var(--line) 1px, transparent 1px);
+}
+
+:root[data-theme='dark'] .admin-shell .admin-calendar-filters,
+:root[data-theme='dark'] .admin-shell .admin-manual-booking {
+  background: var(--theme-surface);
+}

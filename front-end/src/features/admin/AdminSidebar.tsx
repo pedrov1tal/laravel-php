@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import { LogOut, Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { encerrarSessao } from '../autenticacao/session'
+import { BrandLogo } from '../../shared/components/BrandLogo'
+import { ThemeToggleButton } from '../../shared/components/ThemeToggleButton'
 import './admin-sidebar.css'
 
 type AdminSection =
@@ -46,8 +48,7 @@ export function AdminSidebar({
     <>
       <header className="admin-mobile-header">
         <Link className="admin-mobile-brand" to={`/admin/${slug}/dashboard`} aria-label="Abrir dashboard">
-          <span>CR</span>
-          <strong>Barbearia</strong>
+          <BrandLogo />
         </Link>
         <div className="admin-mobile-context">
           <strong>{contexto}</strong>
@@ -78,8 +79,8 @@ export function AdminSidebar({
         className={`admin-sidebar${menuAberto ? ' is-open' : ''}`}
         id="admin-navigation"
       >
-        <Link className="admin-brand" to={`/admin/${slug}/dashboard`}>
-          <span>CR</span> Barbearia
+        <Link className="admin-brand" to={`/admin/${slug}/dashboard`} aria-label="Abrir dashboard">
+          <BrandLogo />
         </Link>
         <nav aria-label="Navegação administrativa">
           {opcoes.map((opcao) => (
@@ -97,6 +98,7 @@ export function AdminSidebar({
         <div className="admin-account">
           <strong>{nomeUsuario}</strong>
           <span>{contexto}</span>
+          <ThemeToggleButton className="admin-theme-toggle" mostrarTexto />
           <Link to="/">Ir para a home</Link>
           <Button
             variant="unstyled"

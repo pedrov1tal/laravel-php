@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { LogOut } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { BrandLogo } from '../../shared/components/BrandLogo'
 import { TubelightNavbar } from '../../shared/components/TubelightNavbar'
 import { clientSiteNavigationItems, siteNavigationItems } from '../../shared/navigation/siteNavigation'
 import { confirmarAcao } from '../../shared/ui/alerts'
@@ -88,10 +89,7 @@ export function ContaPage() {
   return (
     <div className="account-shell">
       <header className="account-header">
-        <a className="brand" href="/" aria-label="Nexo Agenda, início">
-          <span className="brand-mark">N</span>
-          <span>NEXO <small>AGENDA PARA BARBEARIAS</small></span>
-        </a>
+        <a className="brand" href="/" aria-label="Corte Rápido, início"><BrandLogo /></a>
         <TubelightNavbar items={navigationItems} />
         <Button asChild variant="unstyled">
           <a className="account-back-link" href="/">
@@ -164,7 +162,7 @@ export function ContaPage() {
       </main>
 
       <footer className="account-footer">
-        <span>© 2026 Nexo Agenda</span>
+        <span>© 2026 Corte Rápido</span>
         <span>Seus dados permanecem neste navegador.</span>
       </footer>
     </div>

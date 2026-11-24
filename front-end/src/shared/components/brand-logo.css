@@ -1,0 +1,27 @@
+.brand-logo {
+  display: inline-grid;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 3 / 1;
+  place-items: center;
+}
+
+.brand-logo__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  grid-area: 1 / 1;
+  object-fit: contain;
+}
+
+.brand-logo__image--clara {
+  display: none;
+}
+
+:root[data-theme='dark'] .brand-logo__image--escura {
+  display: none;
+}
+
+:root[data-theme='dark'] .brand-logo__image--clara {
+  display: block;
+}

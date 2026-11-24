@@ -3,6 +3,8 @@ import { CalendarDays, Heart, LogOut, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { carregarBarbearias } from '../agendamentos/data/barbeariasApi'
 import type { BarbeariaDisponivel } from '../agendamentos/types/agendamento'
+import { ThemeToggleButton } from '../../shared/components/ThemeToggleButton'
+import { BrandLogo } from '../../shared/components/BrandLogo'
 import { carregarBarbeariasFavoritas, definirBarbeariaFavorita } from './api/barbeariasFavoritasApi'
 import {
   encerrarSessao,
@@ -158,10 +160,10 @@ export function ClienteHomePage() {
     <div className="client-home-shell">
       <header className="client-home-header">
         <a className="brand" href="/" aria-label="Corte Rápido, início">
-          <span className="brand-mark">C</span>
-          <span>CORTE RÁPIDO <small>AGENDA PARA BARBEARIAS</small></span>
+          <BrandLogo />
         </a>
         <div className="client-home-header-actions">
+          <ThemeToggleButton className="client-home-theme-toggle" />
           <Button asChild variant="unstyled">
             <a className="button button-dark client-home-account" href="/conta">
               Olá, {primeiroNome} <span aria-hidden="true">↗</span>

@@ -13,6 +13,7 @@ import {
 } from './features/autenticacao/session'
 import { CircularTestimonials } from './features/home/components/CircularTestimonials'
 import { ClienteHomePage } from './features/home/ClienteHomePage'
+import { BrandLogo } from './shared/components/BrandLogo'
 import { TubelightNavbar } from './shared/components/TubelightNavbar'
 import { clientSiteNavigationItems, siteNavigationItems } from './shared/navigation/siteNavigation'
 import './App.css'
@@ -61,9 +62,9 @@ export function LoginPage() {
 
   return (
     <div className="login-shell">
-      <header className="login-header"><a className="brand" href="/" aria-label="Nexo Agenda, início"><span className="brand-mark">N</span><span>NEXO <small>AGENDA PARA BARBEARIAS</small></span></a><TubelightNavbar items={siteNavigationItems} /><Button asChild variant="unstyled"><a className="login-back-link" href="/">Voltar para o início <span>↗</span></a></Button></header>
+      <header className="login-header"><a className="brand" href="/" aria-label="Corte Rápido, início"><BrandLogo /></a><TubelightNavbar items={siteNavigationItems} /><Button asChild variant="unstyled"><a className="login-back-link" href="/">Voltar para o início <span>↗</span></a></Button></header>
       <main className="login-main"><section className="login-intro"><p className="eyebrow"><span /> Área do cliente</p><h1>Bom ter você<br /><em>por aqui.</em></h1><p>Entre para consultar seus horários, acompanhar seus agendamentos e manter sua operação em dia.</p></section><section className="login-panel" aria-labelledby="login-title"><div className="login-panel-heading"><p className="eyebrow"><span /> Acesso seguro</p><h2 id="login-title">Entrar na<br /><em>sua conta.</em></h2></div><form className="login-form" onSubmit={handleSubmit}><label htmlFor="email">E-mail<input id="email" name="email" type="email" placeholder="voce@email.com" autoComplete="email" required /></label><label htmlFor="password">Senha<div className="password-field"><input id="password" name="password" type={showPassword ? 'text' : 'password'} placeholder="Digite sua senha" autoComplete="current-password" required /><Button variant="unstyled" type="button" onClick={() => setShowPassword((visible) => !visible)}>{showPassword ? 'Ocultar' : 'Mostrar'}</Button></div></label><Button variant="unstyled" className="button button-copper login-submit" type="submit" disabled={entrando} aria-busy={entrando}>{entrando ? 'Entrando…' : <>Entrar na minha conta <span>↗</span></>}</Button>{erro && <p className="login-feedback login-error" role="alert">{erro}</p>}</form><p className="login-signup">Ainda não tem uma conta?</p><Button asChild variant="unstyled"><a className="button button-outline login-create-account" href={`/cadastro?retorno=${encodeURIComponent(retorno)}`}>Criar minha conta <span>↗</span></a></Button></section></main>
-      <footer className="login-footer"><span>© 2026 Nexo Agenda</span><span>Privacidade · Termos de uso</span></footer>
+      <footer className="login-footer"><span>© 2026 Corte Rápido</span><span>Privacidade · Termos de uso</span></footer>
     </div>
   )
 }
@@ -100,7 +101,7 @@ export function RegisterPage() {
   return (
     <div className="login-shell">
       <header className="login-header">
-        <a className="brand" href="/" aria-label="Nexo Agenda, início"><span className="brand-mark">N</span><span>NEXO <small>AGENDA PARA BARBEARIAS</small></span></a>
+        <a className="brand" href="/" aria-label="Corte Rápido, início"><BrandLogo /></a>
         <TubelightNavbar items={siteNavigationItems} />
         <Button asChild variant="unstyled"><a className="login-back-link" href={`/login?retorno=${encodeURIComponent(retorno)}`}>Já tenho uma conta <span>↗</span></a></Button>
       </header>
@@ -119,7 +120,7 @@ export function RegisterPage() {
           <p className="login-signup">Já possui uma conta? <a href={`/login?retorno=${encodeURIComponent(retorno)}`}>Entrar agora</a></p>
         </section>
       </main>
-      <footer className="login-footer"><span>© 2026 Nexo Agenda</span><span>Privacidade · Termos de uso</span></footer>
+      <footer className="login-footer"><span>© 2026 Corte Rápido</span><span>Privacidade · Termos de uso</span></footer>
     </div>
   )
 }
@@ -141,7 +142,7 @@ function App() {
   return (
     <div className="site-shell">
       <header className="site-header">
-        <a className="brand" href="#inicio" aria-label="Corte Rápido, início"><span className="brand-mark">C</span><span>CORTE RÁPIDO <small>AGENDA PARA BARBEARIAS</small></span></a>
+        <a className="brand" href="#inicio" aria-label="Corte Rápido, início"><BrandLogo /></a>
         <TubelightNavbar items={navigationItems} />
         <Button asChild variant="unstyled"><a className="button button-dark header-button" href={ehAdmin ? destinoAdmin : usuario ? '/conta' : '/login'}>{ehAdmin ? 'Dashboard' : primeiroNome ? `Olá, ${primeiroNome}` : 'Login'} <span>↗</span></a></Button>
       </header>
@@ -166,7 +167,7 @@ function App() {
         <section className="final-cta"><p className="eyebrow light"><span /> O próximo passo é seu</p><h2>Abra espaço para<br /><em>o que faz crescer.</em></h2><Button asChild variant="unstyled"><a className="button button-copper" href="#contato">Conhecer o Corte Rápido <span>↗</span></a></Button></section>
       </main>
 
-      <footer className="site-footer"><a className="brand" href="#inicio"><span className="brand-mark">C</span><span>CORTE RÁPIDO <small>AGENDA PARA BARBEARIAS</small></span></a><p>© 2026 Corte Rápido. Tecnologia para o seu negócio.</p><div><a href="#recursos">Recursos</a><a href="mailto:oi@nexoagenda.com">Contato</a></div></footer>
+      <footer className="site-footer"><a className="brand" href="#inicio" aria-label="Corte Rápido, início"><BrandLogo /></a><p>© 2026 Corte Rápido. Tecnologia para o seu negócio.</p><div><a href="#recursos">Recursos</a><a href="mailto:oi@nexoagenda.com">Contato</a></div></footer>
     </div>
   )
 }

@@ -36,19 +36,37 @@
 }
 
 .admin-shell .admin-brand {
-  margin: 0 10px 44px;
-  color: #fff;
+  display: inline-flex;
+  width: 198px;
+  max-width: calc(100% - 16px);
+  height: 66px;
+  margin: 0 8px 38px;
+  padding: 7px 9px;
+  align-items: center;
+  background: transparent;
   text-decoration: none;
-  font-family: Georgia, serif;
-  font-size: 22px;
 }
 
-.admin-shell .admin-brand span {
-  margin-right: 8px;
-  padding: 5px;
-  background: #bd704c;
-  border-radius: 7px;
-  font: 700 12px Inter, Arial, sans-serif;
+.admin-shell .admin-brand > .brand-logo,
+.admin-shell .admin-mobile-brand > .brand-logo {
+  display: inline-grid;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  font: inherit;
+}
+
+.admin-shell .admin-brand > .brand-logo .brand-logo__image--escura,
+.admin-shell .admin-mobile-brand > .brand-logo .brand-logo__image--escura {
+  display: none;
+}
+
+.admin-shell .admin-brand > .brand-logo .brand-logo__image--clara,
+.admin-shell .admin-mobile-brand > .brand-logo .brand-logo__image--clara {
+  display: block;
 }
 
 .admin-shell .admin-account {
@@ -62,6 +80,32 @@
 
 .admin-shell .admin-account span {
   color: #aeb9b1;
+}
+
+.admin-shell .admin-account .admin-theme-toggle {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 36px;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 0 0;
+  color: #e6aa8b;
+  background: transparent;
+  border: 0;
+  font-family: inherit;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.admin-shell .admin-account .admin-theme-toggle:hover,
+.admin-shell .admin-account .admin-theme-toggle:focus-visible {
+  color: #fff;
+}
+
+.admin-shell .admin-account .admin-theme-toggle:focus-visible {
+  outline: 2px solid #e6aa8b;
+  outline-offset: 3px;
 }
 
 .admin-shell .admin-account a,
@@ -189,27 +233,13 @@
   }
 
   .admin-shell .admin-mobile-brand {
-    display: flex;
+    display: inline-flex;
+    width: 112px;
+    height: 44px;
     align-items: center;
-    gap: 8px;
-    color: #fff;
+    padding: 4px 6px;
+    background: transparent;
     text-decoration: none;
-    font-family: Georgia, serif;
-  }
-
-  .admin-shell .admin-mobile-brand span {
-    display: grid;
-    width: 32px;
-    height: 32px;
-    place-items: center;
-    background: #bd704c;
-    border-radius: 7px;
-    font: 700 11px Inter, Arial, sans-serif;
-  }
-
-  .admin-shell .admin-mobile-brand strong {
-    font-size: 17px;
-    font-weight: 500;
   }
 
   .admin-shell .admin-mobile-context {
@@ -290,13 +320,9 @@
   }
 
   .admin-shell .admin-brand {
+    width: 180px;
+    height: 60px;
     margin: 0 8px 24px;
-    font-size: 20px;
-  }
-
-  .admin-shell .admin-brand span {
-    margin-right: 8px;
-    font-size: 11px;
   }
 
   .admin-shell .admin-sidebar nav a {

@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { obterUsuarioAutenticado } from '../../autenticacao/session'
+import { BrandLogo } from '../../../shared/components/BrandLogo'
 import { TubelightNavbar } from '../../../shared/components/TubelightNavbar'
 import { siteNavigationItems } from '../../../shared/navigation/siteNavigation'
 import type { Estabelecimento } from '../types/agendamento'
@@ -28,6 +29,7 @@ export function AgendamentoHeader({
           ? `Voltar para o início. Agendamento para ${estabelecimento.nome}.`
           : 'Voltar para o início.'}
       >
+        <BrandLogo />
       </a>
       <TubelightNavbar items={siteNavigationItems} />
       <Button asChild variant="unstyled">
