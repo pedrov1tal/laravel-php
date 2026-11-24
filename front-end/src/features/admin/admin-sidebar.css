@@ -64,15 +64,39 @@
   color: #aeb9b1;
 }
 
-.admin-shell .admin-account a {
+.admin-shell .admin-account a,
+.admin-shell .admin-account .admin-logout {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 36px;
+  align-items: center;
+  gap: 7px;
   padding-top: 8px;
   color: #e6aa8b;
   text-decoration: none;
   font-size: 12px;
 }
 
-.admin-shell .admin-account a:hover {
+.admin-shell .admin-account .admin-logout {
+  padding: 8px 0 0;
+  background: transparent;
+  border: 0;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.admin-shell .admin-account a:hover,
+.admin-shell .admin-account .admin-logout:hover,
+.admin-shell .admin-account a:focus-visible,
+.admin-shell .admin-account .admin-logout:focus-visible {
   color: #fff;
+}
+
+.admin-shell .admin-account a:focus-visible,
+.admin-shell .admin-account .admin-logout:focus-visible {
+  outline: 2px solid #e6aa8b;
+  outline-offset: 3px;
 }
 
 .admin-shell .admin-main {

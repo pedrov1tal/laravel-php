@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Menu, X } from 'lucide-react'
+import { LogOut, Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { encerrarSessao } from '../autenticacao/session'
 import './admin-sidebar.css'
 
 type AdminSection =
@@ -35,6 +36,11 @@ export function AdminSidebar({
   contexto = 'Administração',
 }: AdminSidebarProps) {
   const [menuAberto, setMenuAberto] = useState(false)
+
+  function sair() {
+    encerrarSessao()
+    window.location.replace('/')
+  }
 
   return (
     <>
@@ -92,6 +98,15 @@ export function AdminSidebar({
           <strong>{nomeUsuario}</strong>
           <span>{contexto}</span>
           <Link to="/">Ir para a home</Link>
+          <Button
+            variant="unstyled"
+            className="admin-logout"
+            type="button"
+            onClick={sair}
+          >
+            <LogOut size={15} strokeWidth={1.8} aria-hidden="true" />
+            Sair da conta
+          </Button>
         </div>
       </aside>
     </>
