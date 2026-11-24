@@ -30,4 +30,9 @@ class Cliente extends Model
     {
         return $this->belongsToMany(Barbearia::class, 'barbearia_cliente')->withTimestamps();
     }
+
+    public function barbeariasFavoritas(): BelongsToMany
+    {
+        return $this->belongsToMany(Barbearia::class, 'cliente_barbearia_favorita')->withTimestamps();
+    }
 }

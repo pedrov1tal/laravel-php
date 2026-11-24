@@ -47,7 +47,71 @@ class AgendamentoTenantTest extends TestCase
 
         $this->withToken($token)->postJson('/api/v1/barbearias/corte-rapido/agendamentos', $payload)->assertCreated();
         $this->withToken($token)->postJson('/api/v1/barbearias/corte-rapido/agendamentos', $payload)->assertUnprocessable();
+        $this->withToken($token)->postJson('/api/v1/barbearias/corte-rapido/agendamentos', [
+            ...$payload,
+            'data_hora' => $data->format('Y-m-d').' 10:30',
+        ])->assertUnprocessable();
         $this->withToken($token)->postJson('/api/v1/barbearias/corte-rapido/agendamentos', [...$payload, 'servico_id' => $servicoDeOutroTenant->id])->assertUnprocessable();
+    }
+
+    public function test_cliente_nao_cria_agendamento_em_horario_passado(): void
+    {
+        config()->set('jwt.secret', 'segredo-de-teste-com-tamanho-suficiente');
+        Carbon::setTestNow('2030-01-01 10:00:00 America/Sao_Paulo');
+        $barbearia = Barbearia::query()->create(['slug' => 'horario-passado', 'nome' => 'Horário Passado', 'ativa' => true]);
+        $barbeiro = Barbeiro::query()->create(['barbearia_id' => $barbearia->id, 'nome' => 'João', 'ativo' => true]);
+        $servico = Servico::query()->create(['barbearia_id' => $barbearia->id, 'nome' => 'Corte', 'duracao_minutos' => 30, 'preco' => 35, 'ativo' => true]);
+        $barbeiro->servicos()->attach($servico);
+        $usuario = User::factory()->create();
+        Cliente::query()->create(['user_id' => $usuario->id, 'nome' => $usuario->name, 'telefone' => '11999999999', 'email' => $usuario->email]);
+        $token = app(JwtService::class)->criarPara($usuario);
+
+        $this->withToken($token)->postJson('/api/v1/barbearias/horario-passado/agendamentos', [
+            'barbeiro_id' => $barbeiro->id,
+            'servico_id' => $servico->id,
+            'data_hora' => '2030-01-01 09:30',
+        ])->assertUnprocessable();
+
+        $this->assertDatabaseCount('agendamentos', 0);
+    }
+
+    public function test_agendamento_interpreta_data_hora_no_fuso_da_barbearia(): void
+    {
+        config()->set('jwt.secret', 'segredo-de-teste-com-tamanho-suficiente');
+        Carbon::setTestNow('2030-01-02 01:00:00 UTC');
+        $barbearia = Barbearia::query()->create([
+            'slug' => 'fuso-local',
+            'nome' => 'Fuso Local',
+            'ativa' => true,
+            'fuso_horario' => 'America/Sao_Paulo',
+        ]);
+        $agoraLocal = CarbonImmutable::now($barbearia->fuso_horario);
+        $data = $agoraLocal->format('Y-m-d');
+        BarbeariaHorario::query()->create([
+            'barbearia_id' => $barbearia->id,
+            'dia_semana' => $agoraLocal->dayOfWeek,
+            'abre_as' => '09:00',
+            'fecha_as' => '23:59',
+        ]);
+        $barbeiro = Barbeiro::query()->create(['barbearia_id' => $barbearia->id, 'nome' => 'João', 'ativo' => true]);
+        BarbeiroHorario::query()->create([
+            'barbeiro_id' => $barbeiro->id,
+            'dia_semana' => $agoraLocal->dayOfWeek,
+            'inicia_as' => '09:00',
+            'termina_as' => '23:59',
+        ]);
+        $servico = Servico::query()->create(['barbearia_id' => $barbearia->id, 'nome' => 'Corte', 'duracao_minutos' => 30, 'preco' => 35, 'ativo' => true]);
+        $barbeiro->servicos()->attach($servico);
+        $usuario = User::factory()->create();
+        Cliente::query()->create(['user_id' => $usuario->id, 'nome' => $usuario->name, 'telefone' => '11999999999', 'email' => $usuario->email]);
+        $token = app(JwtService::class)->criarPara($usuario);
+
+        $this->withToken($token)->postJson('/api/v1/barbearias/fuso-local/agendamentos', [
+            'barbeiro_id' => $barbeiro->id,
+            'servico_id' => $servico->id,
+            'data_hora' => "{$data} 23:00",
+        ])->assertCreated()
+            ->assertJsonPath('data_hora', "{$data} 23:00");
     }
 
     public function test_contexto_publico_oculta_horarios_conflitantes_considerando_duracao_do_servico(): void

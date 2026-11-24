@@ -38,25 +38,31 @@ const testimonials = [
 export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [erro, setErro] = useState('')
+  const [entrando, setEntrando] = useState(false)
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const retorno = destinoSeguro(searchParams.get('retorno'))
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (entrando) return
     const dados = new FormData(event.currentTarget)
+    setErro('')
+    setEntrando(true)
     try {
       await autenticarUsuario(String(dados.get('email') ?? ''), String(dados.get('password') ?? ''))
       navigate(retorno === '/' ? destinoInicialDaSessao() : retorno, { replace: true })
     } catch (falha) {
       setErro(falha instanceof Error ? falha.message : 'Não foi possível entrar.')
+    } finally {
+      setEntrando(false)
     }
   }
 
   return (
     <div className="login-shell">
       <header className="login-header"><a className="brand" href="/" aria-label="Nexo Agenda, início"><span className="brand-mark">N</span><span>NEXO <small>AGENDA PARA BARBEARIAS</small></span></a><TubelightNavbar items={siteNavigationItems} /><Button asChild variant="unstyled"><a className="login-back-link" href="/">Voltar para o início <span>↗</span></a></Button></header>
-      <main className="login-main"><section className="login-intro"><p className="eyebrow"><span /> Área do cliente</p><h1>Bom ter você<br /><em>por aqui.</em></h1><p>Entre para consultar seus horários, acompanhar seus agendamentos e manter sua operação em dia.</p></section><section className="login-panel" aria-labelledby="login-title"><div className="login-panel-heading"><p className="eyebrow"><span /> Acesso seguro</p><h2 id="login-title">Entrar na<br /><em>sua conta.</em></h2></div><form className="login-form" onSubmit={handleSubmit}><label htmlFor="email">E-mail<input id="email" name="email" type="email" placeholder="voce@email.com" autoComplete="email" required /></label><label htmlFor="password">Senha<div className="password-field"><input id="password" name="password" type={showPassword ? 'text' : 'password'} placeholder="Digite sua senha" autoComplete="current-password" required /><Button variant="unstyled" type="button" onClick={() => setShowPassword((visible) => !visible)}>{showPassword ? 'Ocultar' : 'Mostrar'}</Button></div></label><Button variant="unstyled" className="button button-copper login-submit" type="submit">Entrar na minha conta <span>↗</span></Button>{erro && <p className="login-feedback login-error" role="alert">{erro}</p>}</form><p className="login-signup">Ainda não tem uma conta?</p><Button asChild variant="unstyled"><a className="button button-outline login-create-account" href={`/cadastro?retorno=${encodeURIComponent(retorno)}`}>Criar minha conta <span>↗</span></a></Button></section></main>
+      <main className="login-main"><section className="login-intro"><p className="eyebrow"><span /> Área do cliente</p><h1>Bom ter você<br /><em>por aqui.</em></h1><p>Entre para consultar seus horários, acompanhar seus agendamentos e manter sua operação em dia.</p></section><section className="login-panel" aria-labelledby="login-title"><div className="login-panel-heading"><p className="eyebrow"><span /> Acesso seguro</p><h2 id="login-title">Entrar na<br /><em>sua conta.</em></h2></div><form className="login-form" onSubmit={handleSubmit}><label htmlFor="email">E-mail<input id="email" name="email" type="email" placeholder="voce@email.com" autoComplete="email" required /></label><label htmlFor="password">Senha<div className="password-field"><input id="password" name="password" type={showPassword ? 'text' : 'password'} placeholder="Digite sua senha" autoComplete="current-password" required /><Button variant="unstyled" type="button" onClick={() => setShowPassword((visible) => !visible)}>{showPassword ? 'Ocultar' : 'Mostrar'}</Button></div></label><Button variant="unstyled" className="button button-copper login-submit" type="submit" disabled={entrando} aria-busy={entrando}>{entrando ? 'Entrando…' : <>Entrar na minha conta <span>↗</span></>}</Button>{erro && <p className="login-feedback login-error" role="alert">{erro}</p>}</form><p className="login-signup">Ainda não tem uma conta?</p><Button asChild variant="unstyled"><a className="button button-outline login-create-account" href={`/cadastro?retorno=${encodeURIComponent(retorno)}`}>Criar minha conta <span>↗</span></a></Button></section></main>
       <footer className="login-footer"><span>© 2026 Nexo Agenda</span><span>Privacidade · Termos de uso</span></footer>
     </div>
   )
@@ -64,20 +70,31 @@ export function LoginPage() {
 
 export function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false)
+  const [erro, setErro] = useState('')
+  const [cadastrando, setCadastrando] = useState(false)
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const retorno = destinoSeguro(searchParams.get('retorno'))
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (cadastrando) return
     const dados = new FormData(event.currentTarget)
-    await cadastrarUsuario({
-      nome: String(dados.get('name') ?? ''),
-      telefone: String(dados.get('phone') ?? ''),
-      email: String(dados.get('email') ?? ''),
-      senha: String(dados.get('password') ?? ''),
-    })
-    navigate(`/login?retorno=${encodeURIComponent(retorno)}`, { replace: true })
+    setErro('')
+    setCadastrando(true)
+    try {
+      await cadastrarUsuario({
+        nome: String(dados.get('name') ?? ''),
+        telefone: String(dados.get('phone') ?? ''),
+        email: String(dados.get('email') ?? ''),
+        senha: String(dados.get('password') ?? ''),
+      })
+      navigate(`/login?retorno=${encodeURIComponent(retorno)}`, { replace: true })
+    } catch (falha) {
+      setErro(falha instanceof Error ? falha.message : 'Não foi possível criar a conta.')
+    } finally {
+      setCadastrando(false)
+    }
   }
 
   return (
@@ -96,7 +113,8 @@ export function RegisterPage() {
             <label htmlFor="register-phone">Telefone<input id="register-phone" name="phone" type="tel" inputMode="tel" autoComplete="tel" required /></label>
             <label htmlFor="register-email">E-mail<input id="register-email" name="email" type="email" autoComplete="email" required /></label>
             <label htmlFor="register-password">Crie uma senha<div className="password-field"><input id="register-password" name="password" type={showPassword ? 'text' : 'password'} minLength={8} autoComplete="new-password" required /><Button variant="unstyled" type="button" onClick={() => setShowPassword((visible) => !visible)}>{showPassword ? 'Ocultar' : 'Mostrar'}</Button></div></label>
-            <Button variant="unstyled" className="button button-copper login-submit" type="submit">Criar minha conta <span>↗</span></Button>
+            <Button variant="unstyled" className="button button-copper login-submit" type="submit" disabled={cadastrando} aria-busy={cadastrando}>{cadastrando ? 'Criando conta…' : <>Criar minha conta <span>↗</span></>}</Button>
+            {erro && <p className="login-feedback login-error" role="alert">{erro}</p>}
           </form>
           <p className="login-signup">Já possui uma conta? <a href={`/login?retorno=${encodeURIComponent(retorno)}`}>Entrar agora</a></p>
         </section>

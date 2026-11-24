@@ -37,6 +37,7 @@ Endpoints disponíveis sob o prefixo `/api/v1`:
 - `PATCH /api/v1/admin/barbearias/{barbearia}/agendamentos/{agendamento}/conclusao` para registrar a conclusão após o término previsto do atendimento.
 - `PATCH /api/v1/admin/barbearias/{barbearia}/agendamentos/{agendamento}/nao-comparecimento` registra uma falta após o término previsto, separada de cancelamento voluntário.
 - `GET /api/v1/cliente/agendamentos` lista apenas os agendamentos do cliente autenticado; `PATCH /api/v1/cliente/agendamentos/{agendamento}/cancelamento` cancela somente reservas próprias dentro do prazo definido pela barbearia.
+- `GET /api/v1/cliente/barbearias-favoritas`, `PUT .../{barbearia}` e `DELETE .../{barbearia}` consultam, adicionam e removem as barbearias favoritas da conta autenticada.
 - `GET`, `POST`, `PUT` e `DELETE /api/v1/admin/barbearias/{barbearia}/servicos` para consultar e gerenciar o catálogo da unidade; serviços com histórico não podem ser excluídos, mas podem ser desativados.
 - `POST /api/v1/admin/barbearias/{barbearia}/barbeiros` recebe também `servico_ids` e só aceita serviços cadastrados na própria unidade.
 - `GET`, `PUT /api/v1/admin/barbearias/{barbearia}/barbeiros/{barbeiro}`, `PUT .../jornada` e endpoints aninhados em `/ausencias` gerenciam perfil, escala semanal, pausas e ausências sem afetar outra barbearia.
@@ -51,6 +52,10 @@ As rotas de administração da barbearia exigem token e associação do usuário
 login. Registro e login também são públicos; as operações de cliente e todas
 as demais rotas devem seguir o middleware e as permissões definidos em
 `back-end/routes/api.php`.
+
+As respostas incluem `X-Request-ID`. Se esse cabeçalho for enviado com um valor
+válido, ele é preservado; erros registrados pelo Laravel incluem esse
+identificador, método, caminho e usuário autenticado para facilitar a correlação.
 
 O seed cria o seguinte usuário de teste:
 
@@ -154,11 +159,11 @@ docker compose -f compose.prod.yaml run --build --rm api php artisan key:generat
 docker compose -f compose.prod.yaml up --build
 ```
 
-No servidor, crie `back-end/.env` a partir de `back-end/.env.production.example`, informe a URL pooled do Neon em `DATABASE_URL` e gere `APP_KEY`. Esse arquivo é privado e deve existir antes de executar o Compose. O health check de produção confirma a conexão com o Neon; se ela falhar, o container `api` fica indisponível e o frontend não é iniciado.
+No servidor, crie `back-end/.env` a partir de `back-end/.env.production.example`, informe a URL pooled do Neon em `DATABASE_URL`, o host direto em `DB_DIRECT_HOST` e gere `APP_KEY`. Esse arquivo é privado e deve existir antes de executar o Compose. O health check de produção confirma a conexão com o Neon; se ela falhar, o container `api` fica indisponível e o frontend não é iniciado.
 
 - Frontend estático servido por Nginx na porta 3001 do host; no servidor, o domínio `https://pedro.frameworksweb.com.br` deve encaminhar o tráfego HTTPS para essa porta.
 - A API Laravel fica na rede interna do Compose e é encaminhada pelo Nginx em `/api/v1`; health check: `/api/v1/health`.
-- A produção usa PostgreSQL via `DATABASE_URL` definido em `back-end/.env` (Neon). Use a URL **pooled** do Neon, incluindo `sslmode=require`, e mantenha `DB_CONNECTION=pgsql` e `DB_SSLMODE=require`. O volume `api_data` guarda apenas arquivos locais da aplicação; `docker compose -f compose.prod.yaml down -v` o remove.
+- A produção usa PostgreSQL via `DATABASE_URL` definido em `back-end/.env` (Neon). Use a URL **pooled** do Neon, incluindo `sslmode=require`, e mantenha `DB_CONNECTION=pgsql`, `DB_SSLMODE=require` e `DB_POOLED=true`. O volume `api_data` guarda apenas arquivos locais da aplicação; `docker compose -f compose.prod.yaml down -v` o remove.
 - Defina `APP_KEY` e, de preferência, `JWT_SECRET` no mesmo arquivo. Quando `JWT_SECRET` não estiver definido, a API usa `APP_KEY` para assinar os tokens de login.
-- Para migrations do Neon, configure também `DATABASE_URL_UNPOOLED` com a conexão direta e execute como `www-data`, usando `DB_CONNECTION=pgsql_unpooled` apenas no comando: `docker compose -f compose.prod.yaml exec -u www-data -e DB_CONNECTION=pgsql_unpooled api php artisan migrate --force`.
+- Para migrations do Neon, configure `DB_DIRECT_HOST` com o host direto do mesmo projeto, sem o sufixo `-pooler`. O Laravel 13 seleciona automaticamente essa conexão para operações de schema: `docker compose -f compose.prod.yaml exec -u www-data api php artisan migrate --force`.
 - `VITE_API_URL` configura a base usada pelo frontend; no Compose de produção ela aponta para `/api/v1` no mesmo domínio.

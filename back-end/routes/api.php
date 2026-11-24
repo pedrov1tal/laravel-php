@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\AgendamentoController;
 use App\Http\Controllers\Api\V1\BarbeariaController;
+use App\Http\Controllers\Api\V1\ClienteBarbeariaFavoritaController;
 use App\Http\Controllers\Api\V1\Admin\DashboardController;
 use App\Http\Controllers\Api\V1\Admin\BarbeiroController;
 use App\Http\Controllers\Api\V1\Admin\AgendamentoController as AdminAgendamentoController;
@@ -34,6 +35,9 @@ Route::prefix('v1')->scopeBindings()->group(function () {
     Route::get('/barbearias', [BarbeariaController::class, 'index'])->name('api.v1.barbearias.index');
     Route::get('/barbearias/{barbearia}/contexto-agendamento', [AgendamentoController::class, 'contexto'])->name('api.v1.barbearias.contexto');
     Route::post('/barbearias/{barbearia}/agendamentos', [AgendamentoController::class, 'store'])->name('api.v1.barbearias.agendamentos.store');
+    Route::get('/cliente/barbearias-favoritas', [ClienteBarbeariaFavoritaController::class, 'index'])->name('api.v1.cliente.barbearias-favoritas.index');
+    Route::put('/cliente/barbearias-favoritas/{barbearia}', [ClienteBarbeariaFavoritaController::class, 'store'])->name('api.v1.cliente.barbearias-favoritas.store');
+    Route::delete('/cliente/barbearias-favoritas/{barbearia}', [ClienteBarbeariaFavoritaController::class, 'destroy'])->name('api.v1.cliente.barbearias-favoritas.destroy');
     Route::get('/cliente/agendamentos', [AgendamentoController::class, 'meus'])->name('api.v1.cliente.agendamentos');
     Route::patch('/cliente/agendamentos/{agendamento}/cancelamento', [AgendamentoController::class, 'cancelarMeu'])->name('api.v1.cliente.agendamentos.cancelar');
 

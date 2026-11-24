@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { CalendarDays, Heart, LogOut, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { carregarBarbearias } from '../agendamentos/data/barbeariasApi'
 import type { BarbeariaDisponivel } from '../agendamentos/types/agendamento'
+import { carregarBarbeariasFavoritas, definirBarbeariaFavorita } from './api/barbeariasFavoritasApi'
 import {
   encerrarSessao,
   obterToken,
@@ -19,17 +20,7 @@ type AgendamentoCliente = {
   barbeiro?: { nome: string }
 }
 
-const CHAVE_FAVORITOS = 'nexo:barbearias-favoritas'
 const apiUrl = import.meta.env.VITE_API_URL ?? '/api/v1'
-
-function lerFavoritos() {
-  try {
-    const favoritos = JSON.parse(localStorage.getItem(CHAVE_FAVORITOS) ?? '[]')
-    return Array.isArray(favoritos) ? favoritos.map(String) : []
-  } catch {
-    return []
-  }
-}
 
 function inicioDaSemanaHoje() {
   const hoje = new Date()
@@ -50,8 +41,24 @@ export function ClienteHomePage() {
   const primeiroNome = usuario?.nome.trim().split(/\s+/)[0] ?? 'Cliente'
   const [barbearias, setBarbearias] = useState<BarbeariaDisponivel[]>([])
   const [agendamentos, setAgendamentos] = useState<AgendamentoCliente[]>([])
-  const [favoritos, setFavoritos] = useState<string[]>(lerFavoritos)
+  const [favoritos, setFavoritos] = useState<string[]>([])
+  const [carregandoFavoritas, setCarregandoFavoritas] = useState(true)
+  const [favoritasSalvando, setFavoritasSalvando] = useState<Set<string>>(() => new Set())
+  const [erroFavoritas, setErroFavoritas] = useState<string | null>(null)
   const [erro, setErro] = useState<string | null>(null)
+
+  const carregarFavoritas = useCallback(async () => {
+    setCarregandoFavoritas(true)
+    setErroFavoritas(null)
+    try {
+      const resultado = await carregarBarbeariasFavoritas()
+      setFavoritos(resultado.map((barbearia) => barbearia.slug))
+    } catch (falha) {
+      setErroFavoritas(falha instanceof Error ? falha.message : 'Não foi possível carregar as barbearias favoritas.')
+    } finally {
+      setCarregandoFavoritas(false)
+    }
+  }, [])
 
   useEffect(() => {
     let ativo = true
@@ -74,17 +81,6 @@ export function ClienteHomePage() {
           if (ativo) {
             const lista = (corpo.data ?? []) as AgendamentoCliente[]
             setAgendamentos(lista)
-            if (lerFavoritos().length === 0) {
-              const recentes = [...new Set(
-                lista
-                  .map((item) => item.barbearia?.slug)
-                  .filter((slug): slug is string => Boolean(slug)),
-              )].slice(0, 3)
-              if (recentes.length > 0) {
-                localStorage.setItem(CHAVE_FAVORITOS, JSON.stringify(recentes))
-                setFavoritos(recentes)
-              }
-            }
           }
         })
         .catch((falha: unknown) => {
@@ -96,6 +92,10 @@ export function ClienteHomePage() {
       ativo = false
     }
   }, [])
+
+  useEffect(() => {
+    void carregarFavoritas()
+  }, [carregarFavoritas])
 
   const diasDaSemana = useMemo(() => {
     const segunda = inicioDaSemanaHoje()
@@ -117,14 +117,22 @@ export function ClienteHomePage() {
     return mapa
   }, [agendamentos])
 
-  function alternarFavorito(slug: string) {
-    setFavoritos((atuais) => {
-      const proximos = atuais.includes(slug)
-        ? atuais.filter((item) => item !== slug)
-        : [...atuais, slug]
-      localStorage.setItem(CHAVE_FAVORITOS, JSON.stringify(proximos))
-      return proximos
-    })
+  async function alternarFavorito(slug: string) {
+    if (carregandoFavoritas || erroFavoritas || favoritasSalvando.has(slug)) return
+
+    const favorita = !favoritos.includes(slug)
+    setFavoritasSalvando((atuais) => new Set(atuais).add(slug))
+    setErroFavoritas(null)
+    try {
+      await definirBarbeariaFavorita(slug, favorita)
+      setFavoritos((atuais) => favorita
+        ? [...new Set([...atuais, slug])]
+        : atuais.filter((item) => item !== slug))
+    } catch (falha) {
+      setErroFavoritas(falha instanceof Error ? falha.message : 'Não foi possível atualizar as barbearias favoritas.')
+    } finally {
+      setFavoritasSalvando((atuais) => new Set([...atuais].filter((item) => item !== slug)))
+    }
   }
 
   function sair() {
@@ -196,6 +204,7 @@ export function ClienteHomePage() {
               <a href="/agendar">Ver todas <span aria-hidden="true">↗</span></a>
             </div>
 
+            {erroFavoritas && <p className="client-home-feedback" role="alert">{erroFavoritas} <button type="button" onClick={() => void carregarFavoritas()}>Tentar novamente</button></p>}
             {erro && barbearias.length === 0 && <p className="client-home-feedback" role="alert">{erro}</p>}
 
             {barbearias.length === 0 && !erro ? (
@@ -213,6 +222,8 @@ export function ClienteHomePage() {
                           className={favorita ? 'is-favorite' : ''}
                           aria-label={`${favorita ? 'Remover' : 'Adicionar'} ${barbearia.nome} ${favorita ? 'dos' : 'aos'} favoritos`}
                           aria-pressed={favorita}
+                          aria-busy={favoritasSalvando.has(barbearia.slug)}
+                          disabled={carregandoFavoritas || Boolean(erroFavoritas) || favoritasSalvando.has(barbearia.slug)}
                           onClick={() => alternarFavorito(barbearia.slug)}
                         >
                           <Heart size={18} fill={favorita ? 'currentColor' : 'none'} aria-hidden="true" />

@@ -52,6 +52,7 @@ export function AgendaPage() {
   const [horaManual, setHoraManual] = useState('09:00')
   const [statusManual, setStatusManual] = useState('confirmado')
   const [buscaCliente, setBuscaCliente] = useState('')
+  const [criandoAgendamento, setCriandoAgendamento] = useState(false)
   const buscaClientesId = useRef(0)
 
   const carregar = useCallback(async () => {
@@ -132,10 +133,11 @@ export function AgendaPage() {
 
   async function criarAgendamento(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (!slug) return
+    if (!slug || criandoAgendamento) return
     const token = obterToken()
     if (!token) { setErro('Sua sessão expirou. Entre novamente para continuar.'); return }
     setErro(null)
+    setCriandoAgendamento(true)
     try {
       const resposta = await fetch(`${apiUrl}/admin/barbearias/${encodeURIComponent(slug)}/agendamentos`, {
         method: 'POST',
@@ -149,6 +151,8 @@ export function AgendaPage() {
       setAtualizacao((valor) => valor + 1)
     } catch (falha) {
       setErro(falha instanceof Error ? falha.message : 'Não foi possível criar o agendamento.')
+    } finally {
+      setCriandoAgendamento(false)
     }
   }
 
@@ -176,7 +180,7 @@ export function AgendaPage() {
         <label>Status<select value={statusFiltro} onChange={(event) => { setStatusFiltro(event.target.value); setPagina(1) }}><option value="">Todos</option>{Object.entries(statusLabels).map(([valor, nome]) => <option key={valor} value={valor}>{nome}</option>)}</select></label>
         <label className="admin-calendar-search">Buscar cliente<input value={busca} onChange={(event) => { setBusca(event.target.value); setPagina(1) }} placeholder="Nome, telefone ou e-mail" /></label>
       </section>
-      <div className="admin-calendar-create-toggle"><Button variant="unstyled" className="button button-copper" type="button" onClick={() => setFormAberto(true)}>Novo agendamento manual</Button></div>
+      <div className="admin-calendar-create-toggle"><Button variant="unstyled" className="button button-copper" type="button" onClick={() => { setErro(null); setFormAberto(true) }}>Novo agendamento manual</Button></div>
       <SweetAlertModal open={formAberto} title="Novo agendamento manual" onClose={fecharFormularioManual}>
         <form className="admin-card admin-manual-booking" onSubmit={(event) => void criarAgendamento(event)}>
         {erro && <p className="admin-state" role="alert">{erro}</p>}
@@ -187,7 +191,9 @@ export function AgendaPage() {
         <label>Data<input required type="date" min={hojeLocal()} value={dataManual} onChange={(event) => setDataManual(event.target.value)} /></label>
         <label>Horário<input required type="time" step={1800} value={horaManual} onChange={(event) => setHoraManual(event.target.value)} /></label>
         <label>Status inicial<select value={statusManual} onChange={(event) => setStatusManual(event.target.value)}><option value="confirmado">Confirmado</option><option value="pendente">Pendente</option></select></label>
-        <Button variant="unstyled" className="button button-copper" type="submit">Criar agendamento</Button>
+        <Button variant="unstyled" className="button button-copper" type="submit" disabled={criandoAgendamento} aria-busy={criandoAgendamento}>
+          {criandoAgendamento ? 'Criando…' : 'Criar agendamento'}
+        </Button>
         </form>
       </SweetAlertModal>
       {erro && <section className="admin-state" role="alert">{erro}</section>}

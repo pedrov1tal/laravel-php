@@ -21,6 +21,7 @@ export function ServicosPage() {
   const [editando, setEditando] = useState<number | null>(null)
   const [formAberto, setFormAberto] = useState(false)
   const [carregando, setCarregando] = useState(true)
+  const [salvando, setSalvando] = useState(false)
   const [mensagem, setMensagem] = useState<string | null>(null)
   const [erro, setErro] = useState<string | null>(null)
 
@@ -71,10 +72,11 @@ export function ServicosPage() {
 
   async function salvar(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (!slug) return
+    if (!slug || salvando) return
     const eraEdicao = editando !== null
     setMensagem(null)
     setErro(null)
+    setSalvando(true)
     try {
       const resposta = await fetch(`${apiUrl}/admin/barbearias/${encodeURIComponent(slug)}/servicos${editando ? `/${editando}` : ''}`, {
         method: editando ? 'PUT' : 'POST',
@@ -88,6 +90,8 @@ export function ServicosPage() {
       await carregarServicos()
     } catch (falha) {
       setErro(falha instanceof Error ? falha.message : 'Não foi possível salvar o serviço.')
+    } finally {
+      setSalvando(false)
     }
   }
 
@@ -142,7 +146,7 @@ export function ServicosPage() {
         <label>Nome<input value={campos.nome} maxLength={120} required onChange={(event) => setCampos({ ...campos, nome: event.target.value })} /></label>
         <label>Descrição<textarea value={campos.descricao} maxLength={1000} rows={3} onChange={(event) => setCampos({ ...campos, descricao: event.target.value })} /></label>
         <div className="admin-services-form-row"><label>Duração (minutos)<input type="number" min={5} max={480} step={5} value={campos.duracao_minutos} required onChange={(event) => setCampos({ ...campos, duracao_minutos: event.target.value })} /></label><label>Preço (R$)<input type="number" min={0} max={100000} step="0.01" value={campos.preco} required onChange={(event) => setCampos({ ...campos, preco: event.target.value })} /></label></div>
-        <div className="admin-services-form-actions"><Button variant="unstyled" className="admin-services-primary" type="submit">{editando ? 'Salvar alterações' : 'Cadastrar serviço'}</Button><Button variant="unstyled" className="admin-services-secondary" type="button" onClick={limparFormulario}>Cancelar</Button></div>
+        <div className="admin-services-form-actions"><Button variant="unstyled" className="admin-services-primary" type="submit" disabled={salvando} aria-busy={salvando}>{salvando ? 'Salvando…' : editando ? 'Salvar alterações' : 'Cadastrar serviço'}</Button><Button variant="unstyled" className="admin-services-secondary" type="button" onClick={limparFormulario} disabled={salvando}>Cancelar</Button></div>
       </form>
     </SweetAlertModal>
     </main>

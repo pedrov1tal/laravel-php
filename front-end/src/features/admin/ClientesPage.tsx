@@ -22,6 +22,7 @@ export function ClientesPage() {
   const [ultimaPagina, setUltimaPagina] = useState(1)
   const [observacoes, setObservacoes] = useState('')
   const [bloqueado, setBloqueado] = useState(false)
+  const [salvandoPerfil, setSalvandoPerfil] = useState(false)
   const [carregando, setCarregando] = useState(true)
   const [mensagem, setMensagem] = useState<string | null>(null)
   const [erro, setErro] = useState<string | null>(null)
@@ -52,6 +53,7 @@ export function ClientesPage() {
   async function abrirCliente(cliente: Cliente) {
     if (!slug) return
     setMensagem(null)
+    setErro(null)
     try {
       const resposta = await fetch(`${apiUrl}/admin/barbearias/${encodeURIComponent(slug)}/clientes/${cliente.id}`, { headers: { Authorization: `Bearer ${obterToken()}` } })
       const corpo = await resposta.json().catch(() => ({}))
@@ -72,20 +74,26 @@ export function ClientesPage() {
 
   async function salvarPerfil(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (!slug || !clienteSelecionado) return
-    const resposta = await fetch(`${apiUrl}/admin/barbearias/${encodeURIComponent(slug)}/clientes/${clienteSelecionado.id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${obterToken()}` },
-      body: JSON.stringify({ observacoes_internas: observacoes, bloqueado }),
-    })
-    const corpo = await resposta.json().catch(() => ({}))
-    if (!resposta.ok) {
-      setMensagem(corpo.message ?? 'Não foi possível salvar o perfil.')
-      return
+    if (!slug || !clienteSelecionado || salvandoPerfil) return
+    setErro(null)
+    setMensagem(null)
+    setSalvandoPerfil(true)
+    try {
+      const resposta = await fetch(`${apiUrl}/admin/barbearias/${encodeURIComponent(slug)}/clientes/${clienteSelecionado.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${obterToken()}` },
+        body: JSON.stringify({ observacoes_internas: observacoes, bloqueado }),
+      })
+      const corpo = await resposta.json().catch(() => ({}))
+      if (!resposta.ok) throw new Error(corpo.message ?? 'Não foi possível salvar o perfil.')
+      setMensagem('Perfil atualizado para esta barbearia.')
+      setClienteSelecionado({ ...clienteSelecionado, observacoes_internas: observacoes, bloqueado })
+      await carregarClientes()
+    } catch (falha) {
+      setErro(falha instanceof Error ? falha.message : 'Não foi possível salvar o perfil.')
+    } finally {
+      setSalvandoPerfil(false)
     }
-    setMensagem('Perfil atualizado para esta barbearia.')
-    setClienteSelecionado({ ...clienteSelecionado, observacoes_internas: observacoes, bloqueado })
-    await carregarClientes()
   }
 
   return <div className="admin-shell">
@@ -101,8 +109,9 @@ export function ClientesPage() {
       </section>
       {clienteSelecionado ? <SweetAlertModal open title="Perfil do cliente" onClose={() => setClienteSelecionado(null)} width={780}><section className="admin-client-profile"><header><p>Perfil do cliente</p><h2>{clienteSelecionado.nome}</h2><span>{clienteSelecionado.telefone}{clienteSelecionado.email ? ` · ${clienteSelecionado.email}` : ''}</span></header>
         {mensagem && <p className="admin-clients-feedback" role="status">{mensagem}</p>}
+        {erro && <p className="admin-clients-error" role="alert">{erro}</p>}
         <div className="admin-client-stats"><div><small>Atendimentos concluídos</small><strong>{clienteSelecionado.agendamentos_concluidos}</strong></div><div><small>Cancelamentos</small><strong>{clienteSelecionado.cancelamentos}</strong></div><div><small>Não comparecimentos</small><strong>{clienteSelecionado.faltas}</strong></div><div><small>Última visita</small><strong>{clienteSelecionado.ultima_visita ? new Date(clienteSelecionado.ultima_visita).toLocaleDateString('pt-BR') : '—'}</strong></div></div>
-        <form className="admin-client-notes" onSubmit={(event) => void salvarPerfil(event)}><label htmlFor="observacoes">Observações internas<textarea id="observacoes" rows={4} maxLength={5000} value={observacoes} onChange={(event) => setObservacoes(event.target.value)} /></label><label className="admin-client-block"><input type="checkbox" checked={bloqueado} onChange={(event) => setBloqueado(event.target.checked)} />Bloquear novos agendamentos nesta unidade</label><Button variant="unstyled" type="submit">Salvar perfil</Button></form>
+        <form className="admin-client-notes" onSubmit={(event) => void salvarPerfil(event)}><label htmlFor="observacoes">Observações internas<textarea id="observacoes" rows={4} maxLength={5000} value={observacoes} onChange={(event) => setObservacoes(event.target.value)} /></label><label className="admin-client-block"><input type="checkbox" checked={bloqueado} onChange={(event) => setBloqueado(event.target.checked)} />Bloquear novos agendamentos nesta unidade</label><Button variant="unstyled" type="submit" disabled={salvandoPerfil} aria-busy={salvandoPerfil}>{salvandoPerfil ? 'Salvando…' : 'Salvar perfil'}</Button></form>
         <section className="admin-client-history"><h3>Histórico de agendamentos</h3>{clienteSelecionado.agendamentos?.length ? <ul>{clienteSelecionado.agendamentos.map((agendamento) => <li key={agendamento.id}><time>{new Date(`${agendamento.data_hora.replace(' ', 'T')}:00`).toLocaleString('pt-BR')}</time><span>{agendamento.servico?.nome ?? 'Serviço'} · {agendamento.barbeiro?.nome ?? 'Barbeiro'}</span><em>{agendamento.nao_compareceu ? 'Não compareceu' : agendamento.status}</em></li>)}</ul> : <p>Nenhum agendamento no histórico desta unidade.</p>}</section>
       </section></SweetAlertModal> : <section className="admin-client-profile admin-client-placeholder"><p>Selecione um cliente para consultar as visitas, o histórico e as observações.</p></section>}
     </section>

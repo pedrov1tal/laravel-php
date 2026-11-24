@@ -43,7 +43,7 @@ export function ConfiguracoesPage() {
 
   async function salvar(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (!slug || !dados) return
+    if (!slug || !dados || salvando) return
     setErro(null)
     setMensagem(null)
     setSalvando(true)
@@ -120,7 +120,7 @@ export function ConfiguracoesPage() {
           <div className="admin-hours-list">{horarios.map((horario) => <div className="admin-hours-row" key={horario.dia_semana}><strong>{dias[horario.dia_semana]}</strong><label className="admin-hours-closed"><input type="checkbox" checked={horario.fechado} onChange={(event) => atualizarHorario(horario.dia_semana, { fechado: event.target.checked })} /> Fechado</label><label>Abre<input type="time" disabled={horario.fechado} required={!horario.fechado} value={horario.abre_as ?? ''} onChange={(event) => atualizarHorario(horario.dia_semana, { abre_as: event.target.value || null })} /></label><label>Fecha<input type="time" disabled={horario.fechado} required={!horario.fechado} value={horario.fecha_as ?? ''} onChange={(event) => atualizarHorario(horario.dia_semana, { fecha_as: event.target.value || null })} /></label></div>)}</div>
         </section>
         <div className="admin-settings-modal-actions">
-          <Button variant="unstyled" className="admin-settings-cancel" type="button" onClick={fecharModal}>Cancelar</Button>
+          <Button variant="unstyled" className="admin-settings-cancel" type="button" onClick={fecharModal} disabled={salvando}>Cancelar</Button>
           <Button variant="unstyled" className="button button-copper admin-settings-submit" type="submit" disabled={salvando}>{salvando ? 'Salvando…' : 'Salvar configurações'}</Button>
         </div>
       </form>}

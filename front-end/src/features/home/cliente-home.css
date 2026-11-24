@@ -194,6 +194,21 @@
   color: var(--copper);
 }
 
+.client-favorite-cover button:disabled {
+  cursor: wait;
+  opacity: .55;
+}
+
+.client-home-feedback button {
+  padding: 0;
+  color: var(--copper);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  text-decoration: underline;
+}
+
 .client-favorite-info {
   display: flex;
   min-height: 92px;
