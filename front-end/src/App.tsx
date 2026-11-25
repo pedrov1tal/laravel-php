@@ -81,16 +81,19 @@ export function RegisterPage() {
     event.preventDefault()
     if (cadastrando) return
     const dados = new FormData(event.currentTarget)
+    const email = String(dados.get('email') ?? '')
+    const senha = String(dados.get('password') ?? '')
     setErro('')
     setCadastrando(true)
     try {
       await cadastrarUsuario({
         nome: String(dados.get('name') ?? ''),
         telefone: String(dados.get('phone') ?? ''),
-        email: String(dados.get('email') ?? ''),
-        senha: String(dados.get('password') ?? ''),
+        email,
+        senha,
       })
-      navigate(`/login?retorno=${encodeURIComponent(retorno)}`, { replace: true })
+      await autenticarUsuario(email, senha)
+      navigate(retorno === '/' ? destinoInicialDaSessao() : retorno, { replace: true })
     } catch (falha) {
       setErro(falha instanceof Error ? falha.message : 'Não foi possível criar a conta.')
     } finally {

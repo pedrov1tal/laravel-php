@@ -52,6 +52,7 @@ export function autenticarUsuario(email: string, senha = ''): Promise<UsuarioAut
   try {
     const sessao = await requisitar('/auth/me', { method: 'GET', headers: { Authorization: `Bearer ${corpo.token}` } })
     const barbearias = (sessao.barbearias ?? []) as Array<{ slug: string; papeis: string[] }>
+    usuario.telefone = typeof sessao.cliente?.telefone === 'string' ? sessao.cliente.telefone : ''
     adminSlug = barbearias.find((barbearia) => barbearia.papeis.includes('administrador'))?.slug ?? null
     possuiPerfilOperacional = barbearias.some((barbearia) => barbearia.papeis.some((papel) => papel === 'administrador' || papel === 'barbeiro'))
     cliente = Boolean(sessao.cliente) || !possuiPerfilOperacional
